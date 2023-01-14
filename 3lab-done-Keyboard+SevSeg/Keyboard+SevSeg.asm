@@ -14,7 +14,6 @@
 .def MASK = R20
 
 
-
 //PROGRAMM
 //interrupt vectors
 .org 0x0
@@ -48,26 +47,13 @@ RESET:
 	out SPH, Acc0
 //init SFR (special function reg)
 	ldi Acc0, 0b11110000|(1<<LED)
-	out DDRB, Acc0 // ddr направление
+	out DDRB, Acc0 // ddr направление порта
 	
-	sbi DDRC, CLK // установить бит в регистр
-	sbi DDRC, DATA
+	sbi DDRC, CLK // установить бит в 0 регистр, настроено на выход
+	sbi DDRC, DATA // установить бит в 1 регистр, настроено на выход
 //Interrupt Enable
 //	sei
 //Main programm
-/*
-
-ldi Acc0, 0xF9
-rcall SevSeg 
-ldi Acc0, 0xA4
-rcall SevSeg 
-ldi Acc0, 0xB0
-rcall SevSeg 
-ldi Acc0, 0x99
-rcall SevSeg
-
-*/
-
 
 rjmp loop
 L1:
@@ -94,11 +80,11 @@ loop:
 //OUT: numkey - number of push key, if keyboard free -> numkey = 0 
 Key:
 //reg mask
-	ldi MASK, 0b11101111
+	ldi MASK, 0b11101111 // маска для бегущего нуля
 	clr numkey
 	ldi Acc2, 0x3
 //set portB
-//read mod write 
+//считать, модифицировать и записать
 K1:
 	ORI MASK, 0x1
 	in Acc0, PORTB
@@ -135,12 +121,12 @@ endkey:
 //Seven Segment
 //IN: Acc0 <- Data for Segment
 SevSeg:
-ldi Acc1, 8
+ldi Acc1, 8 // нужно вывести 8 битов для каждлого числа
 SS0:
 // set data
-lsl Acc0
-brcc SS1
-sbi PORTC, DATA
+lsl Acc0 // сдвиг слево, в бит С
+brcc SS1 // если флаг 0, то перейти на метку SS1
+sbi PORTC, DATA // на линию данных установить 1
 rjmp SS2
 SS1:
 cbi PORTC, DATA
@@ -148,14 +134,14 @@ SS2:
 // taсt
 nop
 nop
-sbi PORTC, CLK
+sbi PORTC, CLK // установить бит
 nop
 nop
-cbi PORTC, CLK
+cbi PORTC, CLK // сбросить бит
 // dec CNT
-dec Acc1
+dec Acc1 // декремент
 // test CNT
-brne SS0
+brne SS0 // переходить в SS0, пока флаг 0 не будет установлен
 
 ret
 

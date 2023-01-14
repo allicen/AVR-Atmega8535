@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.42  C:\helen\Assembler\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm Tue Dec 27 10:36:44 2022
+AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm Sat Jan 14 23:39:08 2023
 
 
 EQU  SIGNATURE_000 0000001e
