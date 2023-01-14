@@ -38,6 +38,16 @@ rjmp RESET ; Reset Handler
 .org 0x15
 RESET:
 //init stack pointer
+ldi Acc0, LOW(RAMEND) // RAMEND = 0x25F
+out SPL, Acc0 // SPL - спец регистр для стека
+ldi Acc0, HIGH(RAMEND)
+out SPH, Acc0 // SPH - спец регистр для стека
+//init SFR (special function reg)
+
+//Interrupt Enable
+// sei
+
+//Main programm
 
 ldi r18, 0x00 // загрузка константы в регистр
 // X, Z - сдвоенные регистры, основное назначение - косвенная адресация
@@ -46,11 +56,6 @@ ldi ZH, HIGH(DataByte*2) // HIGH - взять старший байт слова
 // (1) Запись по адресу 100
 ldi XL, LOW(0x100)
 ldi XH, HIGH(0x100)
-
-//Interrupt Enable
-// sei
-
-//Main programm
 
 ///SRAM
 // (1) Дозаписать все слова из словаря по адресу 100
@@ -71,18 +76,13 @@ ldi ZH, HIGH(DataByte*2)
 ldi R17, LOW(0x50)
 ldi R18, HIGH(0x50)
 ldi R20, 0x00
-lpm
-
-loop:
-	rcall Write_EEpr
-	rcall Delay
-	rjmp loop
+lpm // без аргументов - берет из Z и кладет в R0
 	
-
+// (2) Записать в память EEPROM
 Write_EEpr:
 	lpm R2,Z // память программ, с памятью программ работает только Z
 	mov R16,R2 // перемещение из регистра в регистр
-	//rcall EEPROM_write // вызов подпрограммы
+	rcall EEPROM_write // вызов подпрограммы
 	inc R17 // инкремент
 	inc ZL
 	inc R20
@@ -90,15 +90,13 @@ Write_EEpr:
 	brne Write_EEpr
 	ret
 
-
 lpm // без аргументов - берет из Z и кладет в R0
 ///EEPROM DATA - энергонезависимая память
 lpm R2,Z // Загрузка программной памяти
 ldi R17, LOW(0x50)
 ldi R18, HIGH(0x50)
 
-//rcall EEPROM_write // вызов подпрограммы
-
+rcall EEPROM_write // вызов подпрограммы
 
 //SubProgamm
 // Код из документации 

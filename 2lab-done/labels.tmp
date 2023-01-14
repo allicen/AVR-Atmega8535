@@ -20,14 +20,14 @@
  </OUTPUT_FILES>
  <LABELS>
   <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>39</LINE></RESET>
-  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>152</LINE></DataByte>
-  <Write_SRAM><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>58</LINE></Write_SRAM>
-  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>77</LINE></loop>
-  <Write_EEpr><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>83</LINE></Write_EEpr>
-  <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>135</LINE></Delay>
-  <EEPROM_write><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>106</LINE></EEPROM_write>
-  <EEPROM_read><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>122</LINE></EEPROM_read>
-  <EXT_INT0><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>141</LINE></EXT_INT0>
-  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>154</LINE></DataWord>
+  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>157</LINE></DataByte>
+  <Write_SRAM><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>63</LINE></Write_SRAM>
+  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>82</LINE></loop>
+  <Write_EEpr><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>88</LINE></Write_EEpr>
+  <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>140</LINE></Delay>
+  <EEPROM_write><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>111</LINE></EEPROM_write>
+  <EEPROM_read><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>127</LINE></EEPROM_read>
+  <EXT_INT0><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>146</LINE></EXT_INT0>
+  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>159</LINE></DataWord>
  </LABELS>
 </ASSEMBLER_INFO>
