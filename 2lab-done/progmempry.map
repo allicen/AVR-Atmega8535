@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.42  C:\helen\Assembler\2lab-done\progmempry.asm Sat Jan 14 16:23:33 2023
+AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm Sat Jan 14 18:55:52 2023
 
 
 EQU  SIGNATURE_000 0000001e
@@ -598,9 +598,10 @@ DEF  Acc1         r17
 CSEG RESET        00000015
 CSEG DataByte     00000100
 CSEG Write_SRAM   0000001a
-CSEG Write_EEpr   00000027
-CSEG EEPROM_write 00000037
-CSEG Delay        00000034
-CSEG EEPROM_read  0000003f
-CSEG EXT_INT0     00000046
+CSEG loop         00000027
+CSEG Write_EEpr   0000002a
+CSEG Delay        00000045
+CSEG EEPROM_write 00000036
+CSEG EEPROM_read  0000003e
+CSEG EXT_INT0     00000048
 CSEG DataWord     00000105
