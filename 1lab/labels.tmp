@@ -1,0 +1,31 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.1.42</VERSION>
+ <DEVICE>ATmega8535</DEVICE>
+ <WORKING_DIR>C:\helen\Assembler\1lab</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR>C:\Program Files (x86)\Atmel\AVR Tools\AvrAssembler2\Appnotes</DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>C:\helen\Assembler\1lab\1lab.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>C:\Program Files (x86)\Atmel\AVR Tools\AvrAssembler2\Appnotes\m8535def.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>C:\helen\Assembler\1lab\1lab.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>C:\helen\Assembler\1lab\1lab.hex</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>C:\helen\Assembler\1lab\1lab.map</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <RESET><FILE>C:\helen\Assembler\1lab\1lab.asm</FILE><LINE>40</LINE></RESET>
+  <loop><FILE>C:\helen\Assembler\1lab\1lab.asm</FILE><LINE>54</LINE></loop>
+  <Check_two_btn><FILE>C:\helen\Assembler\1lab\1lab.asm</FILE><LINE>82</LINE></Check_two_btn>
+  <Delay><FILE>C:\helen\Assembler\1lab\1lab.asm</FILE><LINE>76</LINE></Delay>
+  <Control_led><FILE>C:\helen\Assembler\1lab\1lab.asm</FILE><LINE>87</LINE></Control_led>
+  <EXT_INTO><FILE>C:\helen\Assembler\1lab\1lab.asm</FILE><LINE>99</LINE></EXT_INTO>
+  <DataByte><FILE>C:\helen\Assembler\1lab\1lab.asm</FILE><LINE>108</LINE></DataByte>
+  <DataWord><FILE>C:\helen\Assembler\1lab\1lab.asm</FILE><LINE>110</LINE></DataWord>
+ </LABELS>
+</ASSEMBLER_INFO>
