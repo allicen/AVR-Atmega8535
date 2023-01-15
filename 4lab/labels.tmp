@@ -1,0 +1,31 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.1.42</VERSION>
+ <DEVICE>ATmega8535</DEVICE>
+ <WORKING_DIR>C:\helen\Assembler\AVR-Atmega8535\4lab</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR>C:\Program Files (x86)\Atmel\AVR Tools\AvrAssembler2\Appnotes</DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>C:\Program Files (x86)\Atmel\AVR Tools\AvrAssembler2\Appnotes\m8535def.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.hex</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.map</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>38</LINE></RESET>
+  <TIM0_OVF><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>69</LINE></TIM0_OVF>
+  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>57</LINE></loop>
+  <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>63</LINE></Delay>
+  <TO0_0><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>78</LINE></TO0_0>
+  <TO0_1><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>81</LINE></TO0_1>
+  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>88</LINE></DataByte>
+  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>90</LINE></DataWord>
+ </LABELS>
+</ASSEMBLER_INFO>
