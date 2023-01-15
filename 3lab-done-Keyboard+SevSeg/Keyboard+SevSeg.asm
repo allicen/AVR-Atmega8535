@@ -10,8 +10,8 @@
 .def Acc0 = R16
 .def Acc1 = R17
 .def Acc2 = R18
-.def numkey = R19
-.def MASK = R20
+.def numkey = R19 // номер клавиши
+.def MASK = R20 // маска для поиска нажатой кнопки
 
 
 //PROGRAMM
@@ -46,7 +46,7 @@ RESET:
 	ldi Acc0, HIGH(RAMEND)	
 	out SPH, Acc0
 //init SFR (special function reg)
-	ldi Acc0, 0b11110000|(1<<LED)
+	ldi Acc0, 0b11110000|(1<<LED) // настроить на выход для всех устройств (включая светодиод)
 	out DDRB, Acc0 // ddr направление порта
 	
 	sbi DDRC, CLK // установить бит в 0 регистр, настроено на выход
@@ -57,23 +57,23 @@ RESET:
 
 rjmp loop
 L1:
-	ldi r18,20 
-	ldi ZL, low(DataByte*2-1)
-	ldi ZH, high(DataByte*2)
-	add ZL, numkey
-	lpm Acc0, Z	
+	ldi Acc2,20 
+	ldi ZL, LOW(DataByte*2-1) // LOW - взять младший байт слова, 2 - 2 байта в памяти, кажд адрес содержит 2 байта (0x100 * 2 = 0x200)
+	ldi ZH, HIGH(DataByte*2) // HIGH - взять старший байт слова
+	add ZL, numkey // сложение
+	lpm Acc0, Z	// загрузить в память программы
 	rcall SevSeg
-E1:	dec r18
-	rcall Delay
-	cpi r18,0
-	brne E1
 
+E1:	dec Acc2
+	rcall Delay // задержка
+	cpi Acc2,0 // если Acc2=0, зауиклить E1
+	brne E1
 
 loop:
 	rcall Key 	
-	cpi numkey, 0	
-	breq loop 	
-	rjmp L1
+	cpi numkey, 0 // если кнопка не нажата	
+	breq loop // если не нажата, уйти в loop
+	rjmp L1 // если нажата, установить значение
 	
 //SubProgamm
 //Keyboard
@@ -81,41 +81,46 @@ loop:
 Key:
 //reg mask
 	ldi MASK, 0b11101111 // маска для бегущего нуля
-	clr numkey
-	ldi Acc2, 0x3
+	clr numkey // проинициализировать numkey 0
+	ldi Acc2, 0x3 // инициализирует Acc2 3
+
 //set portB
 //считать, модифицировать и записать
-K1:
-	ORI MASK, 0x1
-	in Acc0, PORTB
-	ORI Acc0, 0b11110000 // ori - логичнское И с константой
-	AND Acc0, MASK
-	out PORTB, Acc0
+
+K1: // Блок для считывания/записи с/в порт
+	ori MASK, 0x1 // младший бит в 1
+	in Acc0, PORTB // считать данные из PORTB
+	ori Acc0, 0b11110000 // ori - логичнское побитовое И с константой, ставим 4 старших бита в 1 и накладываем маску
+	and Acc0, MASK  // наложение маски
+	out PORTB, Acc0 // записать результат в порт
+
 	//read column portD
+	nop // выставляем задержку, чтобы успеть считать установленные данные
 	nop
-	nop
-	in Acc0, PIND
+	in Acc0, PIND // считать PIND
 	//analys in data
-	ldi Acc1, 0x3
-ankey:
+	ldi Acc1, 0x3 // 3 раза будем сдвигать влево
+
+ankey: // Блок анализирует нажатие кнопки
 //if key push to ret
 //else <<mask and rjmp K1	
-	LSL Acc0
-	BRCC pushkey
-	dec Acc1
-	BRNE ankey
+	lsl Acc0 // сдвиг влево
+	brcc pushkey // если 0, то уйти в pushkey, если 1 - идти дальше
+	dec Acc1 // декремент
+	brne ankey // если не 0, то уйти в ankey, иначе идти дальше
 	//numkey+3
 	add numkey, Acc2
 
-	LSL MASK
-	BRCS K1
-	clr numkey
+	lsl MASK
+	brcs K1 // если флаг С=1, уйти в K1
+	clr numkey // ни одна клавиша не была нажата = обнулить numkey
 	rjmp endkey
+
 pushkey:
-	ADD numkey, Acc1
+	add numkey, Acc1
+
 endkey:
 	ret
-
 
 
 //Seven Segment
@@ -123,38 +128,37 @@ endkey:
 SevSeg:
 ldi Acc1, 8 // нужно вывести 8 битов для каждлого числа
 SS0:
-// set data
-lsl Acc0 // сдвиг слево, в бит С
-brcc SS1 // если флаг 0, то перейти на метку SS1
-sbi PORTC, DATA // на линию данных установить 1
-rjmp SS2
+	// set data
+	lsl Acc0 // сдвиг слево, в бит С
+	brcc SS1 // если флаг 0, то перейти на метку SS1
+	sbi PORTC, DATA // на линию данных установить 1
+	rjmp SS2
 SS1:
-cbi PORTC, DATA
+	cbi PORTC, DATA
 SS2:
-// taсt
-nop
-nop
-sbi PORTC, CLK // установить бит
-nop
-nop
-cbi PORTC, CLK // сбросить бит
-// dec CNT
-dec Acc1 // декремент
-// test CNT
-brne SS0 // переходить в SS0, пока флаг 0 не будет установлен
+	// taсt
+	nop
+	nop
+	sbi PORTC, CLK // установить бит
+	nop
+	nop
+	cbi PORTC, CLK // сбросить бит
+	// dec CNT
+	dec Acc1 // декремент
+	// test CNT
+	brne SS0 // переходить в SS0, пока флаг 0 не будет установлен
 
-ret
-
+	ret
 
 //Delay
 Delay:
-         ldi r21, 255
- delay1: ldi r20, 255
- delay2: dec r20
-         brne delay2
-         dec r21
-         brne delay1
- ret
+	ldi R21, 255
+delay1: ldi R20, 255
+delay2: dec R20
+	brne delay2
+	dec R21
+	brne delay1
+ret
 
 
 //Interrupt Routines
