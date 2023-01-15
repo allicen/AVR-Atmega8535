@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm Sun Jan 15 23:23:08 2023
+AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm Sun Jan 15 23:42:57 2023
 
 
 EQU  SIGNATURE_000 0000001e
@@ -593,13 +593,20 @@ EQU  SPMRaddr     00000014
 EQU  INT_VECTORS_SIZE 00000015
 EQU  max_sec      0000003c
 EQU  LED          00000003
+EQU  DATA         00000001
+EQU  CLK          00000000
 DEF  Acc0         r16
 DEF  Acc1         r17
+DEF  Acc2         r18
 CSEG RESET        00000015
-CSEG TIM0_OVF     00000025
-CSEG loop         00000021
-CSEG Delay        00000022
-CSEG TO0_0        0000002b
-CSEG TO0_1        0000002c
-CSEG DataByte     0000002f
-CSEG DataWord     00000030
+CSEG TIM0_OVF     0000002d
+CSEG loop         00000024
+CSEG Delay        00000025
+CSEG SevSeg       00000028
+CSEG SS0          00000029
+CSEG SS1          0000002c
+CSEG SS2          0000002d
+CSEG TO0_0        00000033
+CSEG TO0_1        00000034
+CSEG DataByte     00000037
+CSEG DataWord     00000038

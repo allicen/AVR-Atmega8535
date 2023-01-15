@@ -4,10 +4,13 @@
 //init constant
 .equ max_sec = 60
 .equ LED = 3
+.equ DATA = 1
+.equ CLK = 0
 
 //init registers 
 .def Acc0 = R16
 .def Acc1 = R17
+.def Acc2 = R18
 
 //PROGRAMM
 //interrupt vectors
@@ -50,6 +53,9 @@ RESET:
 
 	ldi Acc0, (1<<TOIE0)
 	out TIMSK, Acc0
+	ldi R20, 0
+	sbi PORTB, LED
+	ldi R22, 0
 
 //Interrupt Enable 
 	sei
@@ -65,6 +71,22 @@ Delay:
 	nop
 
 	ret
+
+// Семисегментный индикатор
+SevSeg:
+	ldi Acc1, 0
+
+SS0:
+	lsl Acc0
+	brcc SS1
+	sbi PORTC, DATA
+
+SS1:
+	cbi PORTC, DATA
+
+SS2:
+
+
 //Interrupt Routines
 TIM0_OVF:
 	push Acc0

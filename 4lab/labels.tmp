@@ -19,13 +19,17 @@
   <FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.map</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>38</LINE></RESET>
-  <TIM0_OVF><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>69</LINE></TIM0_OVF>
-  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>57</LINE></loop>
-  <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>63</LINE></Delay>
-  <TO0_0><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>78</LINE></TO0_0>
-  <TO0_1><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>81</LINE></TO0_1>
-  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>88</LINE></DataByte>
-  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>90</LINE></DataWord>
+  <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>41</LINE></RESET>
+  <TIM0_OVF><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>91</LINE></TIM0_OVF>
+  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>63</LINE></loop>
+  <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>69</LINE></Delay>
+  <SevSeg><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>76</LINE></SevSeg>
+  <SS0><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>79</LINE></SS0>
+  <SS1><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>84</LINE></SS1>
+  <SS2><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>87</LINE></SS2>
+  <TO0_0><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>100</LINE></TO0_0>
+  <TO0_1><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>103</LINE></TO0_1>
+  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>109</LINE></DataByte>
+  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm</FILE><LINE>111</LINE></DataWord>
  </LABELS>
 </ASSEMBLER_INFO>
