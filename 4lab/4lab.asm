@@ -87,6 +87,27 @@ SS1:
 SS2:
 
 
+CountSevSeg:
+	ldi Acc0, 0xff
+	rcall SevSeg
+	ldi Acc0, 0xff
+	rcall SevSeg
+	ldi Acc0, 0xff
+	rcall SevSeg
+	cpi R22, 10
+	brne C0
+	ldi R22, 0
+C0:
+	ldi ZL, LOW(DataByte*2)
+	ldi ZH, HIGH(DataByte*2)
+	add ZL, R22
+	lpm Acc0, Z
+	rcall SevSeg
+	inc R22
+ret
+
+
+
 //Interrupt Routines
 TIM0_OVF:
 	push Acc0
