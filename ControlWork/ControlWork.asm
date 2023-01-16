@@ -6,12 +6,15 @@
 .equ LED = 3
 .equ CLK = 0
 .equ DATA = 1
+.equ Num = 0 // Ќажатое число
+
 //init registers 
 .def Acc0 = R16
 .def Acc1 = R17
 .def Acc2 = R18
 .def numkey = R19 // номер клавиши
 .def MASK = R20 // маска дл€ поиска нажатой кнопки
+.def AccNum = R22 // –егистр дл€ числа
 
 
 //PROGRAMM
@@ -54,10 +57,18 @@ RESET:
 //Interrupt Enable
 //	sei
 //Main programm
+rcall Init
 
 rjmp loop
 L1:
-	ldi Acc2,20 
+    ldi Acc0, 0xff // залить пол€ слева от числа
+	rcall SevSeg
+	ldi Acc0, 0xff
+	rcall SevSeg
+	ldi Acc0, 0xff
+	rcall SevSeg
+	ldi Acc0, 0xff
+	ldi Acc2,20
 	ldi ZL, LOW(DataByte*2-1) // LOW - вз€ть младший байт слова, 2 - 2 байта в пам€ти, кажд адрес содержит 2 байта (0x100 * 2 = 0x200)
 	ldi ZH, HIGH(DataByte*2) // HIGH - вз€ть старший байт слова
 	add ZL, numkey // сложение
@@ -76,8 +87,19 @@ loop:
 	rjmp L1 // если нажата, установить значение
 	
 //SubProgamm
+Init:
+	ldi Acc0, 0xff
+	rcall SevSeg
+	ldi Acc0, 0xff
+	rcall SevSeg
+	ldi Acc0, 0xff
+	rcall SevSeg
+	ldi Acc0, 0xC0 // инициализировать только 0 справа
+	rcall SevSeg
+	ret
+
 //Keyboard
-//OUT: numkey - number of push key, if keyboard free -> numkey = 0 
+//OUT: numkey - number of push key, if keyboard free -> numkey = 0
 Key:
 //reg mask
 	ldi MASK, 0b11101111 // маска дл€ бегущего нул€
@@ -122,11 +144,16 @@ pushkey:
 endkey:
 	ret
 
+// 
+SetNum:
+	
+
+
 
 //Seven Segment
 //IN: Acc0 <- Data for Segment
 SevSeg:
-ldi Acc1, 8 // нужно вывести 8 битов дл€ каждлого числа
+	ldi Acc1, 8 // нужно вывести 8 битов дл€ каждлого числа
 SS0:
 	// set data
 	lsl Acc0 // сдвиг слево, в бит —
@@ -176,7 +203,7 @@ EXT_INT0:
 
 	reti
 
-//Data «аписал коды дл€ цифр семисегментного индикатора
+//Data  оды дл€ цифр семисегментного индикатора
 DataByte:
 .DB 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90
 DataWord:
