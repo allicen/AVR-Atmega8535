@@ -12,6 +12,7 @@
 .def Acc1 = R17
 .def Acc2 = R18
 .def TactCount = R20
+.def DBCount = R22
 
 //PROGRAMM
 //interrupt vectors
@@ -58,22 +59,15 @@ RESET:
 	out TIMSK, Acc0
 	ldi TactCount, 0
 	sbi PORTB, LED
-	ldi R22, 0
+	ldi DBCount, 0
 
 //Interrupt Enable 
 	sei
 //Main programm
 loop:
-	//LED ON
-
 	rjmp loop
 	
 //SubProgamm
-Delay:
-	nop
-	nop
-
-	ret
 
 // —емисегментный индикатор
 SevSeg:
@@ -101,7 +95,7 @@ SS2:
 	// test CNT
 	brne SS0 // переходить в SS0, пока флаг 0 не будет установлен
 
-	ret
+ret
 
 // запись значений на индикаторы
 CountSevSeg:
@@ -111,16 +105,16 @@ CountSevSeg:
 	rcall SevSeg
 	ldi Acc0, 0xff
 	rcall SevSeg
-	cpi R22, 10
+	cpi DBCount, 2
 	brne C0
-	ldi R22, 0
+	ldi DBCount, 0
 C0:
 	ldi ZL, LOW(DataByte*2)
 	ldi ZH, HIGH(DataByte*2)
-	add ZL, R22
+	add ZL, DBCount
 	lpm Acc0, Z
 	rcall SevSeg
-	inc R22
+	inc DBCount
 ret
 
 
