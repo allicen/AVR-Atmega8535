@@ -19,26 +19,28 @@
   <FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.map</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>45</LINE></RESET>
-  <Init><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>90</LINE></Init>
-  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>83</LINE></loop>
-  <L1><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>63</LINE></L1>
-  <SevSeg><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>155</LINE></SevSeg>
-  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>207</LINE></DataByte>
-  <E1><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>78</LINE></E1>
-  <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>181</LINE></Delay>
-  <Key><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>103</LINE></Key>
-  <K1><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>112</LINE></K1>
-  <ankey><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>126</LINE></ankey>
-  <pushkey><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>141</LINE></pushkey>
-  <endkey><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>144</LINE></endkey>
-  <SetNum><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>148</LINE></SetNum>
-  <SS0><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>157</LINE></SS0>
-  <SS1><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>163</LINE></SS1>
-  <SS2><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>165</LINE></SS2>
-  <delay1><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>183</LINE></delay1>
-  <delay2><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>184</LINE></delay2>
-  <EXT_INT0><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>192</LINE></EXT_INT0>
-  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>209</LINE></DataWord>
+  <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>46</LINE></RESET>
+  <TIM0_OVF><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>197</LINE></TIM0_OVF>
+  <Init><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>95</LINE></Init>
+  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>87</LINE></loop>
+  <L1><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>67</LINE></L1>
+  <SevSeg><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>160</LINE></SevSeg>
+  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>223</LINE></DataByte>
+  <E1><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>82</LINE></E1>
+  <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>186</LINE></Delay>
+  <Key><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>108</LINE></Key>
+  <K1><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>117</LINE></K1>
+  <ankey><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>131</LINE></ankey>
+  <pushkey><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>146</LINE></pushkey>
+  <endkey><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>149</LINE></endkey>
+  <Counter><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>153</LINE></Counter>
+  <SS0><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>162</LINE></SS0>
+  <SS1><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>168</LINE></SS1>
+  <SS2><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>170</LINE></SS2>
+  <delay1><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>188</LINE></delay1>
+  <delay2><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>189</LINE></delay2>
+  <TO0_0><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>209</LINE></TO0_0>
+  <TO0_1><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>215</LINE></TO0_1>
+  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm</FILE><LINE>225</LINE></DataWord>
  </LABELS>
 </ASSEMBLER_INFO>

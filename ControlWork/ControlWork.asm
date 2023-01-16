@@ -15,6 +15,7 @@
 .def numkey = R19 // номер клавиши
 .def MASK = R20 // маска для поиска нажатой кнопки
 .def AccNum = R22 // Регистр для числа
+.def TactCount = R23
 
 
 //PROGRAMM
@@ -29,7 +30,7 @@
 //	rjmp TIM1_COMPA ; Timer1 Compare A Handler
 //	rjmp TIM1_COMPB ; Timer1 Compare B Handler
 //	rjmp TIM1_OVF ; Timer1 Overflow Handler
-//	rjmp TIM0_OVF ; Timer0 Overflow Handler
+	rjmp TIM0_OVF ; Timer0 Overflow Handler
 //	rjmp SPI_STC ; SPI Transfer Complete Handler
 //	rjmp USART_RXC ; USART RX Complete Handler
 //	rjmp USART_UDRE ; UDR Empty Handler
@@ -54,8 +55,11 @@ RESET:
 	
 	sbi DDRC, CLK // установить бит в 0 регистр, настроено на выход
 	sbi DDRC, DATA // установить бит в 1 регистр, настроено на выход
+
+	ldi TactCount, 0
+
 //Interrupt Enable
-//	sei
+	sei
 //Main programm
 rcall Init
 
@@ -84,6 +88,7 @@ loop:
 	rcall Key 	
 	cpi numkey, 0 // если кнопка не нажата	
 	breq loop // если не нажата, уйти в loop
+	sbi PORTB, LED // выключить светодиод
 	rjmp L1 // если нажата, установить значение
 	
 //SubProgamm
@@ -145,7 +150,7 @@ endkey:
 	ret
 
 // 
-SetNum:
+Counter:
 	
 
 
@@ -189,18 +194,29 @@ ret
 
 
 //Interrupt Routines
-EXT_INT0:
+TIM0_OVF:
 	push Acc0
 	push Acc1
 	in Acc0, SREG
 	push Acc0
+	rcall Counter
+	inc TactCount
+	sbic PORTB, LED
+	rjmp TO0_0
+	sbi PORTB, LED
+	rjmp TO0_1
+	
+TO0_0:
+	cpi TactCount, 4
+	brne TO0_1
+	cbi PORTB, LED
+	ldi TactCount, 0
 
-
+TO0_1:
 	pop Acc0
 	out SREG, Acc0
 	pop Acc1
 	pop Acc0
-
 	reti
 
 //Data Коды для цифр семисегментного индикатора
