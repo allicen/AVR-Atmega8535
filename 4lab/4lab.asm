@@ -11,6 +11,7 @@
 .def Acc0 = R16
 .def Acc1 = R17
 .def Acc2 = R18
+.def TactCount = R20
 
 //PROGRAMM
 //interrupt vectors
@@ -45,6 +46,8 @@ RESET:
 	ldi Acc0, HIGH(RAMEND)	
 	out SPH, Acc0
 //init SFR (special function reg)
+	sbi DDRC, CLK
+	sbi DDRC, DATA
 	sbi DDRB, LED
 	ldi Acc0, (1<<WGM01)|(0<<WGM00)|(0b101<<CS00)
 	out TCCR0, Acc0
@@ -53,7 +56,7 @@ RESET:
 
 	ldi Acc0, (1<<TOIE0)
 	out TIMSK, Acc0
-	ldi R20, 0
+	ldi TactCount, 0
 	sbi PORTB, LED
 	ldi R22, 0
 
@@ -74,19 +77,33 @@ Delay:
 
 // Семисегментный индикатор
 SevSeg:
-	ldi Acc1, 0
+	ldi Acc1, 8
 
 SS0:
 	lsl Acc0
 	brcc SS1
 	sbi PORTC, DATA
+	rjmp SS2
 
 SS1:
 	cbi PORTC, DATA
 
 SS2:
+	// taсt
+	nop
+	nop
+	sbi PORTC, CLK // установить бит
+	nop
+	nop
+	cbi PORTC, CLK // сбросить бит
+	// dec CNT
+	dec Acc1 // декремент
+	// test CNT
+	brne SS0 // переходить в SS0, пока флаг 0 не будет установлен
 
+	ret
 
+// запись значений на индикаторы
 CountSevSeg:
 	ldi Acc0, 0xff
 	rcall SevSeg
@@ -112,22 +129,30 @@ ret
 TIM0_OVF:
 	push Acc0
 	push Acc1
-	
-	sbis PORTB, LED
+	in Acc0, SREG
+	push Acc0
+	rcall CountSevSeg
+	inc TactCount
+	sbic PORTB, LED // если светодиод горит -> выключить
 	rjmp TO0_0
-	cbi PORTB, LED
+	sbi PORTB, LED
 	rjmp TO0_1
 	
 TO0_0:
-	sbi PORTB, LED 
+	cpi TactCount, 3
+	brne TO0_1
+	cbi PORTB, LED
+	ldi TactCount, 0
 
 TO0_1:
+	pop Acc0
+	out SREG, Acc0
 	pop Acc1
 	pop Acc0
 	reti
 
 //Data
 DataByte:
-.DB 0x1f, 0x1C
+.DB 0xf9, 0xC0
 DataWord:
 .DW 0x1234, 0x5678
