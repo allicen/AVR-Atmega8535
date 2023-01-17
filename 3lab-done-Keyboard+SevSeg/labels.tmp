@@ -20,23 +20,23 @@
  </OUTPUT_FILES>
  <LABELS>
   <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>42</LINE></RESET>
-  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>72</LINE></loop>
-  <L1><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>59</LINE></L1>
-  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>180</LINE></DataByte>
-  <SevSeg><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>128</LINE></SevSeg>
-  <E1><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>67</LINE></E1>
-  <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>154</LINE></Delay>
-  <Key><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>81</LINE></Key>
-  <K1><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>90</LINE></K1>
-  <ankey><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>104</LINE></ankey>
-  <pushkey><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>119</LINE></pushkey>
-  <endkey><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>122</LINE></endkey>
-  <SS0><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>130</LINE></SS0>
-  <SS1><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>136</LINE></SS1>
-  <SS2><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>138</LINE></SS2>
-  <delay1><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>156</LINE></delay1>
-  <delay2><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>157</LINE></delay2>
-  <EXT_INT0><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>165</LINE></EXT_INT0>
-  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>182</LINE></DataWord>
+  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>61</LINE></loop>
+  <Key><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>83</LINE></Key>
+  <L1><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>66</LINE></L1>
+  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>182</LINE></DataByte>
+  <SevSeg><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>130</LINE></SevSeg>
+  <E1><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>74</LINE></E1>
+  <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>156</LINE></Delay>
+  <K1><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>92</LINE></K1>
+  <ankey><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>106</LINE></ankey>
+  <pushkey><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>121</LINE></pushkey>
+  <endkey><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>124</LINE></endkey>
+  <SS0><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>132</LINE></SS0>
+  <SS1><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>138</LINE></SS1>
+  <SS2><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>140</LINE></SS2>
+  <delay1><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>158</LINE></delay1>
+  <delay2><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>159</LINE></delay2>
+  <EXT_INT0><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>167</LINE></EXT_INT0>
+  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm</FILE><LINE>184</LINE></DataWord>
  </LABELS>
 </ASSEMBLER_INFO>

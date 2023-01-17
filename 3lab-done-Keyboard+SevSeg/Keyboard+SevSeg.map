@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm Tue Jan 17 14:27:28 2023
+AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\3lab-done-Keyboard+SevSeg\Keyboard+SevSeg.asm Tue Jan 17 23:57:40 2023
 
 
 EQU  SIGNATURE_000 0000001e
@@ -601,21 +601,21 @@ DEF  Acc2         r18
 DEF  numkey       r19
 DEF  MASK         r20
 CSEG RESET        00000015
-CSEG loop         00000028
-CSEG L1           0000001e
-CSEG DataByte     00000062
-CSEG SevSeg       00000043
-CSEG E1           00000024
-CSEG Delay        00000052
-CSEG Key          0000002c
-CSEG K1           0000002f
-CSEG ankey        00000038
-CSEG pushkey      00000041
-CSEG endkey       00000042
-CSEG SS0          00000044
-CSEG SS1          00000048
-CSEG SS2          00000049
-CSEG delay1       00000053
-CSEG delay2       00000054
-CSEG EXT_INT0     00000059
-CSEG DataWord     00000067
+CSEG loop         0000001d
+CSEG Key          0000002b
+CSEG L1           00000020
+CSEG DataByte     00000061
+CSEG SevSeg       00000042
+CSEG E1           00000026
+CSEG Delay        00000051
+CSEG K1           0000002e
+CSEG ankey        00000037
+CSEG pushkey      00000040
+CSEG endkey       00000041
+CSEG SS0          00000043
+CSEG SS1          00000047
+CSEG SS2          00000048
+CSEG delay1       00000052
+CSEG delay2       00000053
+CSEG EXT_INT0     00000058
+CSEG DataWord     00000066
