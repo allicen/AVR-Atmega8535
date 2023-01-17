@@ -26,7 +26,7 @@
 //	rjmp TIM1_COMPA ; Timer1 Compare A Handler
 //	rjmp TIM1_COMPB ; Timer1 Compare B Handler
 //	rjmp TIM1_OVF ; Timer1 Overflow Handler
-.org 0x009
+.org 0x009 // адрес для регистра TIM0_OVF из даташита
 	rjmp TIM0_OVF ; Timer0 Overflow Handler
 //	rjmp SPI_STC ; SPI Transfer Complete Handler
 //	rjmp USART_RXC ; USART RX Complete Handler
@@ -47,22 +47,25 @@ RESET:
 	ldi Acc0, HIGH(RAMEND)	
 	out SPH, Acc0
 //init SFR (special function reg)
-	sbi DDRC, CLK
-	sbi DDRC, DATA
-	sbi DDRB, LED
-	ldi Acc0, (1<<WGM01)|(0<<WGM00)|(0b101<<CS00)
-	out TCCR0, Acc0
-	ldi Acc0, 0xFF
-	out OCR0, Acc0
+	sbi DDRC, CLK // установить бит в 0 регистр, настроено на выход
+	sbi DDRC, DATA // установить бит в 1 регистр, настроено на выход
+	sbi DDRB, LED 
+	// настроить на выход для всех устройств
+	// WGM01 - настройка ctc в 1
+	// WGM00 - настройка ctc в 0
+	ldi Acc0, (1<<WGM01)|(0<<WGM00)|(0b101<<CS00) // CS00 - частота/1024 (стр 84)
+	out TCCR0, Acc0 // запись в регистр спец назначения для настройки таймера
+	ldi Acc0, 0xFF // 255 - максимальный период счета
+	out OCR0, Acc0 // OCR0 - Регистр сравнения
 
-	ldi Acc0, (1<<TOIE0)
-	out TIMSK, Acc0
-	ldi TactCount, 0
-	sbi PORTB, LED
+	ldi Acc0, (1<<TOIE0) // разрешить прерывание по переполнению
+	out TIMSK, Acc0 // записать в регистр разрешения прерываний
+	ldi TactCount, 0 
+	sbi PORTB, LED // на линию светодиода установить 1
 	ldi DBCount, 0
 
 //Interrupt Enable 
-	sei
+	sei // разрешить прерывания
 //Main programm
 loop:
 	rjmp loop
@@ -106,7 +109,7 @@ CountSevSeg:
 	ldi Acc0, 0xff
 	rcall SevSeg
 	cpi DBCount, 2
-	brne C0
+	brne C0 // переходить в C0, пока флаг 0 не будет установлен
 	ldi DBCount, 0
 C0:
 	ldi ZL, LOW(DataByte*2)
@@ -120,21 +123,21 @@ ret
 
 
 //Interrupt Routines
-TIM0_OVF:
+TIM0_OVF: // название берется из вектора прерывания
 	push Acc0
 	push Acc1
-	in Acc0, SREG
+	in Acc0, SREG // сохраняем статусный регистр
 	push Acc0
-	rcall CountSevSeg
+	rcall CountSevSeg // записать значения на индикаторы
 	inc TactCount
 	sbic PORTB, LED // если светодиод горит -> выключить
 	rjmp TO0_0
-	sbi PORTB, LED
+	sbi PORTB, LED // установить бит для светодиода
 	rjmp TO0_1
 	
 TO0_0:
-	cpi TactCount, 3
-	brne TO0_1
+	cpi TactCount, 3 // сравниваем регистр с 3
+	brne TO0_1 // дошли до 3 -> зажигаем светодиод
 	cbi PORTB, LED
 	ldi TactCount, 0
 
@@ -143,7 +146,7 @@ TO0_1:
 	out SREG, Acc0
 	pop Acc1
 	pop Acc0
-	reti
+	reti // окончание прерывания
 
 //Data
 DataByte:
