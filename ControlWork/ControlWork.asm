@@ -4,18 +4,15 @@
 //init constant
 .equ max_sec = 60
 .equ LED = 3
-.equ CLK = 0
 .equ DATA = 1
+.equ CLK = 0
 
 //init registers 
 .def Acc0 = R16
 .def Acc1 = R17
 .def Acc2 = R18
-.def numkey = R19 // номер клавиши
-.def MASK = R20 // маска для поиска нажатой кнопки
-.def AccTact = R22
-.def AccDBCount = R23
-
+.def TactCount = R20
+.def DBCount = R22
 
 //PROGRAMM
 //interrupt vectors
@@ -50,13 +47,12 @@ RESET:
 	ldi Acc0, HIGH(RAMEND)	
 	out SPH, Acc0
 //init SFR (special function reg)
-	ldi Acc0, 0b11110000|(1<<LED) // настроить на выход для всех устройств (включая светодиод)
-	out DDRB, Acc0 // ddr направление порта
-	
 	sbi DDRC, CLK // установить бит в 0 регистр, настроено на выход
 	sbi DDRC, DATA // установить бит в 1 регистр, настроено на выход
-	
-	// настройка прерываний
+	sbi DDRB, LED 
+	// настроить на выход для всех устройств
+	// WGM01 - настройка ctc в 1
+	// WGM00 - настройка ctc в 0
 	ldi Acc0, (1<<WGM01)|(0<<WGM00)|(0b101<<CS00) // CS00 - частота/1024 (стр 84)
 	out TCCR0, Acc0 // запись в регистр спец назначения для настройки таймера
 	ldi Acc0, 0xFF // 255 - максимальный период счета
@@ -64,120 +60,31 @@ RESET:
 
 	ldi Acc0, (1<<TOIE0) // разрешить прерывание по переполнению
 	out TIMSK, Acc0 // записать в регистр разрешения прерываний
+	ldi TactCount, 0 
 	sbi PORTB, LED // на линию светодиода установить 1
-	//ldi AccDBCount, 0
-	//ldi AccTact, 0
+	ldi DBCount, 0
 
-
-//Interrupt Enable
-	sei
+//Interrupt Enable 
+	sei // разрешить прерывания
 //Main programm
-rcall Init
-
-rjmp loop
-L1:
-    ldi Acc0, 0xff // залить поля слева от числа
-	rcall SevSeg
-	ldi Acc0, 0xff
-	rcall SevSeg
-	ldi Acc0, 0xff
-	rcall SevSeg
-	ldi Acc0, 0xff
-	ldi Acc2,20
-	ldi ZL, LOW(DataByte*2) // LOW - взять младший байт слова, 2 - 2 байта в памяти, кажд адрес содержит 2 байта (0x100 * 2 = 0x200)
-	ldi ZH, HIGH(DataByte*2) // HIGH - взять старший байт слова
-	add ZL, numkey // сложение
-	lpm Acc0, Z	// загрузить в память программы
-	rcall SevSeg
-
-E1:	dec Acc2
-	rcall Delay // задержка
-	cpi Acc2,0 // если Acc2=0, зауиклить E1
-	brne E1
-
 loop:
-	rcall Key 	
-	cpi numkey, 0 // если кнопка не нажата	
-	breq loop // если не нажата, уйти в loop
-	//sbi PORTB, LED // выключить светодиод
-	rjmp L1 // если нажата, установить значение
+	rjmp loop
 	
 //SubProgamm
-Init:
-	ldi Acc0, 0xff
-	rcall SevSeg
-	ldi Acc0, 0xff
-	rcall SevSeg
-	ldi Acc0, 0xff
-	rcall SevSeg
-	ldi Acc0, 0xC0 // инициализировать только 0 справа
-	rcall SevSeg
-	ret
 
-//Keyboard
-//OUT: numkey - number of push key, if keyboard free -> numkey = 0
-Key:
-//reg mask
-	ldi MASK, 0b11101111 // маска для бегущего нуля
-	clr numkey // проинициализировать numkey 0
-	ldi Acc2, 0x3 // инициализирует Acc2 3
-
-//set portB
-//считать, модифицировать и записать
-
-K1: // Блок для считывания/записи с/в порт
-	ori MASK, 0x1 // младший бит в 1
-	in Acc0, PORTB // считать данные из PORTB
-	ori Acc0, 0b11110000 // ori - логичнское побитовое И с константой, ставим 4 старших бита в 1 и накладываем маску
-	and Acc0, MASK  // наложение маски
-	out PORTB, Acc0 // записать результат в порт
-
-	//read column portD
-	nop // выставляем задержку, чтобы успеть считать установленные данные
-	nop
-	in Acc0, PIND // считать PIND
-	//analys in data
-	ldi Acc1, 0x3 // 3 раза будем сдвигать влево
-
-ankey: // Блок анализирует нажатие кнопки
-//if key push to ret
-//else <<mask and rjmp K1	
-	lsl Acc0 // сдвиг влево
-	brcc pushkey // если 0, то уйти в pushkey, если 1 - идти дальше
-	dec Acc1 // декремент
-	brne ankey // если не 0, то уйти в ankey, иначе идти дальше
-	//numkey+3
-	add numkey, Acc2
-
-	lsl MASK
-	brcs K1 // если флаг С=1, уйти в K1
-	clr numkey // ни одна клавиша не была нажата = обнулить numkey
-	rjmp endkey
-
-pushkey:
-	add numkey, Acc1
-
-endkey:
-	ret
-
-// 
-Counter:
-	
-
-
-
-//Seven Segment
-//IN: Acc0 <- Data for Segment
+// Семисегментный индикатор
 SevSeg:
-	ldi Acc1, 8 // нужно вывести 8 битов для каждлого числа
+	ldi Acc1, 8
+
 SS0:
-	// set data
-	lsl Acc0 // сдвиг слево, в бит С
-	brcc SS1 // если флаг 0, то перейти на метку SS1
-	sbi PORTC, DATA // на линию данных установить 1
+	lsl Acc0
+	brcc SS1
+	sbi PORTC, DATA
 	rjmp SS2
+
 SS1:
 	cbi PORTC, DATA
+
 SS2:
 	// taсt
 	nop
@@ -191,69 +98,58 @@ SS2:
 	// test CNT
 	brne SS0 // переходить в SS0, пока флаг 0 не будет установлен
 
-	ret
+ret
 
-//Delay
-Delay:
-	ldi R21, 255
-delay1: ldi R20, 255
-delay2: dec R20
-	brne delay2
-	dec R21
-	brne delay1
+// запись значений на индикаторы
+CountSevSeg:
+	ldi Acc0, 0xff
+	rcall SevSeg
+	ldi Acc0, 0xff
+	rcall SevSeg
+	ldi Acc0, 0xff
+	rcall SevSeg
+	cpi DBCount, 10
+	brne C0 // переходить в C0, пока флаг 0 не будет установлен
+	ldi DBCount, 0
+C0:
+	ldi ZL, LOW(DataByte*2)
+	ldi ZH, HIGH(DataByte*2)
+	add ZL, DBCount
+	lpm Acc0, Z
+	rcall SevSeg
+	inc DBCount
 ret
 
 
+
 //Interrupt Routines
-
-TIM0_OVF:
+TIM0_OVF: // название берется из вектора прерывания
 	push Acc0
 	push Acc1
-	
-	SBIS PORTB, LED
+	in Acc0, SREG // сохраняем статусный регистр
+	push Acc0
+	rcall CountSevSeg // записать значения на индикаторы
+	inc TactCount
+	sbic PORTB, LED // если светодиод горит -> выключить
 	rjmp TO0_0
-	cbi PORTB, LED
+	sbi PORTB, LED // установить бит для светодиода
 	rjmp TO0_1
 	
 TO0_0:
-	sbi PORTB, LED 
-
-TO0_1:
-
-	pop Acc1
-	pop Acc0
-	reti
-
-
-/*
-TIM0_OVF:
-	push Acc0
-	push Acc1
-	in Acc0, SREG
-	push Acc0
-	rcall Counter
-	inc AccTact
-	sbic PORTB, LED
-	rjmp TO0_0
-	sbi PORTB, LED
-	rjmp TO0_1
-	
-TO0_0:
-	cpi AccTact, 4 // сравниваем регистр с 4
-	brne TO0_1
+	cpi TactCount, 3 // сравниваем регистр с 3
+	brne TO0_1 // дошли до 3 -> зажигаем светодиод
 	cbi PORTB, LED
-	ldi AccTact, 0
+	ldi TactCount, 0
 
 TO0_1:
 	pop Acc0
 	out SREG, Acc0
 	pop Acc1
 	pop Acc0
-	reti
-*/
+	reti // окончание прерывания
 
-//Data Коды для цифр семисегментного индикатора
+//Data
 DataByte:
-.DB 0xC0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90
+.DB 0x90, 0x80, 0xf8, 0x82, 0x92, 0x99, 0xb0, 0xa4, 0xf9, 0xC0
 DataWord:
 .DW 0x1234, 0x5678
