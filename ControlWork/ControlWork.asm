@@ -12,6 +12,8 @@
 .def Acc0 = R16
 .def Acc1 = R17
 .def Acc2 = R18
+.def numkey = R19 // номер клавиши
+.def MASK = R24 // маска дл€ поиска нажатой кнопки
 .def TactCount = R20
 .def DBCount = R22
 .def Start = R23
@@ -65,15 +67,101 @@ RESET:
 	ldi TactCount, 0 
 	sbi PORTB, LED // на линию светодиода установить 1
 	ldi DBCount, 0
-	ldi Start, 1 // —чет вниз разрешен
+	ldi Start, 1 // —чет вниз запрещен
 
 //Interrupt Enable 
 	sei // разрешить прерывани€
 //Main programm
+
+rcall Init
+rcall Init
+rcall Init
+rcall Zero
+
 loop:
-	rjmp loop
-	
+/*
+	rcall Key 	
+	cpi numkey, 0 // если кнопка не нажата	
+	breq loop // если не нажата, уйти в loop
+
+L1:
+	ldi Acc2,20 
+	ldi ZL, LOW(DataByte*2-1) // LOW - вз€ть младший байт слова, 2 - 2 байта в пам€ти, кажд адрес содержит 2 байта (0x100 * 2 = 0x200)
+	ldi ZH, HIGH(DataByte*2) // HIGH - вз€ть старший байт слова
+	add ZL, numkey // сложение
+	lpm Acc0, Z	// загрузить в пам€ть программы
+	rcall SevSeg
+
+E1:	dec Acc2
+	rcall Delay // задержка
+	cpi Acc2,0 // если Acc2=0, зауиклить E1
+	brne E1
+	*/
+
+	rjmp loop	
+
+
 //SubProgamm
+//Delay
+
+Delay:
+	ldi R21, 255
+delay1: ldi R20, 255
+delay2: dec R20
+	brne delay2
+	dec R21
+	brne delay1
+ret
+
+/*
+//Keyboard
+//OUT: numkey - number of push key, if keyboard free -> numkey = 0 
+Key:
+//reg mask
+	ldi MASK, 0b11101111 // маска дл€ бегущего нул€
+	clr numkey // проинициализировать numkey 0
+	ldi Acc2, 0x3 // инициализирует Acc2 3
+
+//set portB
+//считать, модифицировать и записать
+
+K1: // Ѕлок дл€ считывани€/записи с/в порт
+	ori MASK, 0x1 // младший бит в 1
+	in Acc0, PORTB // считать данные из PORTB
+	ori Acc0, 0b11110000 // ori - логичнское побитовое » с константой, ставим 4 старших бита в 1 и накладываем маску
+	and Acc0, MASK  // наложение маски
+	out PORTB, Acc0 // записать результат в порт
+
+	//read column portD
+	nop // выставл€ем задержку, чтобы успеть считать установленные данные
+	nop
+	in Acc0, PIND // считать PIND
+	//analys in data
+	ldi Acc1, 0x3 // 3 раза будем сдвигать влево
+
+ankey: // Ѕлок анализирует нажатие кнопки
+//if key push to ret
+//else <<mask and rjmp K1	
+	lsl Acc0 // сдвиг влево
+	brcc pushkey // если 0, то уйти в pushkey, если 1 - идти дальше
+	dec Acc1 // декремент
+	brne ankey // если не 0, то уйти в ankey, иначе идти дальше
+	//numkey+3
+	add numkey, Acc2
+
+	lsl MASK
+	brcs K1 // если флаг —=1, уйти в K1
+	clr numkey // ни одна клавиша не была нажата = обнулить numkey
+	rjmp endkey
+
+pushkey:
+	add numkey, Acc1
+
+endkey:
+	ret
+
+*/
+
 
 // —емисегментный индикатор
 SevSeg:
@@ -104,6 +192,15 @@ SS2:
 ret
 
 // запись значений на индикаторы
+
+CountSevSegInit:
+	cpi Start, 0
+	brne CountSevSeg
+	rcall Init
+	rcall Init
+	rcall Init
+	rcall Zero
+	ret
 
 CountSevSeg:
 	rcall Init
@@ -141,9 +238,16 @@ Init:
 	rcall SevSeg
 ret
 
+Zero:
+	ldi Acc0, 0xC0
+	rcall SevSeg
+ret
+	
+
 
 //Interrupt Routines
 TIM0_OVF: // название беретс€ из вектора прерывани€
+	//rcall Delay
 	push Acc0
 	push Acc1
 	in Acc0, SREG // сохран€ем статусный регистр
@@ -156,7 +260,7 @@ TO0_0:
 	cpi TactCount, 4 // сравниваем регистр с 4 (т.к. 1 такт = 1/сек.)
 	brne TO0_1
 	ldi TactCount, 0
-	rcall CountSevSeg // записать значени€ на индикаторы
+	rcall CountSevSegInit // записать значени€ на индикаторы
 
 TO0_1:
 	pop Acc0
