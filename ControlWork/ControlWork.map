@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm Tue Jan 17 18:47:55 2023
+AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm Tue Jan 17 21:35:17 2023
 
 
 EQU  SIGNATURE_000 0000001e
@@ -601,15 +601,18 @@ DEF  Acc2         r18
 DEF  TactCount    r20
 DEF  DBCount      r22
 CSEG RESET        00000015
-CSEG TIM0_OVF     00000046
+CSEG TIM0_OVF     00000055
 CSEG loop         00000026
-CSEG SevSeg       00000027
-CSEG SS0          00000028
-CSEG SS1          0000002c
-CSEG SS2          0000002d
-CSEG CountSevSeg  00000036
-CSEG C0           0000003f
-CSEG DataByte     00000059
-CSEG TO0_0        00000050
-CSEG TO0_1        00000054
-CSEG DataWord     0000005e
+CSEG TEST         00000028
+CSEG T0           0000002d
+CSEG T1           00000031
+CSEG SevSeg       00000036
+CSEG SS0          00000037
+CSEG SS1          0000003b
+CSEG SS2          0000003c
+CSEG CountSevSeg  00000045
+CSEG C0           0000004e
+CSEG DataByte     00000064
+CSEG TO0_0        0000005a
+CSEG TO0_1        0000005f
+CSEG DataWord     00000069

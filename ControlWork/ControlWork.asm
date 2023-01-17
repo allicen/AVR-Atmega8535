@@ -121,25 +121,21 @@ C0:
 ret
 
 
-
 //Interrupt Routines
 TIM0_OVF: // название берется из вектора прерывания
 	push Acc0
 	push Acc1
 	in Acc0, SREG // сохраняем статусный регистр
 	push Acc0
-	rcall CountSevSeg // записать значения на индикаторы
-	inc TactCount
-	sbic PORTB, LED // если светодиод горит -> выключить
+
 	rjmp TO0_0
-	sbi PORTB, LED // установить бит для светодиода
-	rjmp TO0_1
 	
 TO0_0:
-	cpi TactCount, 3 // сравниваем регистр с 3
-	brne TO0_1 // дошли до 3 -> зажигаем светодиод
-	cbi PORTB, LED
+	inc TactCount
+	cpi TactCount, 4 // сравниваем регистр с 4 (т.к. 1 такт = 1/сек.)
+	brne TO0_1
 	ldi TactCount, 0
+	rcall CountSevSeg // записать значения на индикаторы
 
 TO0_1:
 	pop Acc0
