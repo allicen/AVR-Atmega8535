@@ -6,7 +6,6 @@
 .equ LED = 3
 .equ CLK = 0
 .equ DATA = 1
-.equ Num = 0 // Ќажатое число
 
 //init registers 
 .def Acc0 = R16
@@ -14,8 +13,8 @@
 .def Acc2 = R18
 .def numkey = R19 // номер клавиши
 .def MASK = R20 // маска дл€ поиска нажатой кнопки
-.def AccNum = R22 // –егистр дл€ числа
-.def TactCount = R23
+.def AccTact = R22
+.def AccDBCount = R23
 
 
 //PROGRAMM
@@ -30,6 +29,7 @@
 //	rjmp TIM1_COMPA ; Timer1 Compare A Handler
 //	rjmp TIM1_COMPB ; Timer1 Compare B Handler
 //	rjmp TIM1_OVF ; Timer1 Overflow Handler
+.org 0x009 // адрес дл€ регистра TIM0_OVF из даташита
 	rjmp TIM0_OVF ; Timer0 Overflow Handler
 //	rjmp SPI_STC ; SPI Transfer Complete Handler
 //	rjmp USART_RXC ; USART RX Complete Handler
@@ -55,8 +55,19 @@ RESET:
 	
 	sbi DDRC, CLK // установить бит в 0 регистр, настроено на выход
 	sbi DDRC, DATA // установить бит в 1 регистр, настроено на выход
+	
+	// настройка прерываний
+	ldi Acc0, (1<<WGM01)|(0<<WGM00)|(0b101<<CS00) // CS00 - частота/1024 (стр 84)
+	out TCCR0, Acc0 // запись в регистр спец назначени€ дл€ настройки таймера
+	ldi Acc0, 0xFF // 255 - максимальный период счета
+	out OCR0, Acc0 // OCR0 - –егистр сравнени€
 
-	ldi TactCount, 0
+	ldi Acc0, (1<<TOIE0) // разрешить прерывание по переполнению
+	out TIMSK, Acc0 // записать в регистр разрешени€ прерываний
+	sbi PORTB, LED // на линию светодиода установить 1
+	//ldi AccDBCount, 0
+	//ldi AccTact, 0
+
 
 //Interrupt Enable
 	sei
@@ -88,7 +99,7 @@ loop:
 	rcall Key 	
 	cpi numkey, 0 // если кнопка не нажата	
 	breq loop // если не нажата, уйти в loop
-	sbi PORTB, LED // выключить светодиод
+	//sbi PORTB, LED // выключить светодиод
 	rjmp L1 // если нажата, установить значение
 	
 //SubProgamm
@@ -194,23 +205,44 @@ ret
 
 
 //Interrupt Routines
+
+TIM0_OVF:
+	push Acc0
+	push Acc1
+	
+	SBIS PORTB, LED
+	rjmp TO0_0
+	cbi PORTB, LED
+	rjmp TO0_1
+	
+TO0_0:
+	sbi PORTB, LED 
+
+TO0_1:
+
+	pop Acc1
+	pop Acc0
+	reti
+
+
+/*
 TIM0_OVF:
 	push Acc0
 	push Acc1
 	in Acc0, SREG
 	push Acc0
 	rcall Counter
-	inc TactCount
+	inc AccTact
 	sbic PORTB, LED
 	rjmp TO0_0
 	sbi PORTB, LED
 	rjmp TO0_1
 	
 TO0_0:
-	cpi TactCount, 4
+	cpi AccTact, 4 // сравниваем регистр с 4
 	brne TO0_1
 	cbi PORTB, LED
-	ldi TactCount, 0
+	ldi AccTact, 0
 
 TO0_1:
 	pop Acc0
@@ -218,9 +250,10 @@ TO0_1:
 	pop Acc1
 	pop Acc0
 	reti
+*/
 
 //Data  оды дл€ цифр семисегментного индикатора
 DataByte:
-.DB 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90
+.DB 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90, 0xC0
 DataWord:
 .DW 0x1234, 0x5678

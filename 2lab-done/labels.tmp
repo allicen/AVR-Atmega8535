@@ -20,14 +20,13 @@
  </OUTPUT_FILES>
  <LABELS>
   <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>39</LINE></RESET>
-  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>157</LINE></DataByte>
-  <Write_SRAM><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>63</LINE></Write_SRAM>
-  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>82</LINE></loop>
-  <Write_EEpr><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>88</LINE></Write_EEpr>
-  <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>140</LINE></Delay>
-  <EEPROM_write><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>111</LINE></EEPROM_write>
-  <EEPROM_read><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>127</LINE></EEPROM_read>
-  <EXT_INT0><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>146</LINE></EXT_INT0>
-  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>159</LINE></DataWord>
+  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>149</LINE></DataByte>
+  <Write_SRAM><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>62</LINE></Write_SRAM>
+  <Write_EEpr><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>82</LINE></Write_EEpr>
+  <EEPROM_write><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>103</LINE></EEPROM_write>
+  <EEPROM_read><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>119</LINE></EEPROM_read>
+  <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>132</LINE></Delay>
+  <EXT_INT0><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>138</LINE></EXT_INT0>
+  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\2lab-done\progmempry.asm</FILE><LINE>151</LINE></DataWord>
  </LABELS>
 </ASSEMBLER_INFO>
