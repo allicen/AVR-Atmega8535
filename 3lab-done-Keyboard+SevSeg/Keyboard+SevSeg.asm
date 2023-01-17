@@ -55,7 +55,14 @@ RESET:
 //	sei
 //Main programm
 
-rjmp loop
+
+
+
+loop:
+	rcall Key 	
+	cpi numkey, 0 // åñëè êíîïêà íå íàæàòà	
+	breq loop // åñëè íå íàæàòà, óéòè â loop
+
 L1:
 	ldi Acc2,20 
 	ldi ZL, LOW(DataByte*2-1) // LOW - âçÿòü ìëàäøèé áàéò ñëîâà, 2 - 2 áàéòà â ïàìÿòè, êàæä àäğåñ ñîäåğæèò 2 áàéòà (0x100 * 2 = 0x200)
@@ -69,12 +76,7 @@ E1:	dec Acc2
 	cpi Acc2,0 // åñëè Acc2=0, çàóèêëèòü E1
 	brne E1
 
-loop:
-	rcall Key 	
-	cpi numkey, 0 // åñëè êíîïêà íå íàæàòà	
-	breq loop // åñëè íå íàæàòà, óéòè â loop
-	rjmp L1 // åñëè íàæàòà, óñòàíîâèòü çíà÷åíèå
-	
+	rjmp loop	
 //SubProgamm
 //Keyboard
 //OUT: numkey - number of push key, if keyboard free -> numkey = 0 
