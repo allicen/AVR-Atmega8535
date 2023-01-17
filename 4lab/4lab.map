@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm Tue Jan 17 10:35:38 2023
+AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\4lab\4lab.asm Tue Jan 17 14:40:41 2023
 
 
 EQU  SIGNATURE_000 0000001e
@@ -610,6 +610,6 @@ CSEG SS2          0000002d
 CSEG CountSevSeg  00000036
 CSEG C0           0000003f
 CSEG DataByte     00000059
-CSEG TO0_0        00000050
+CSEG TO0_0        0000004f
 CSEG TO0_1        00000054
 CSEG DataWord     0000005a
