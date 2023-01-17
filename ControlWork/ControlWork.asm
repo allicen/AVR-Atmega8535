@@ -6,6 +6,7 @@
 .equ LED = 3
 .equ DATA = 1
 .equ CLK = 0
+.equ StopMarker = 0xC0
 
 //init registers 
 .def Acc0 = R16
@@ -13,6 +14,7 @@
 .def Acc2 = R18
 .def TactCount = R20
 .def DBCount = R22
+.def Start = R23
 
 //PROGRAMM
 //interrupt vectors
@@ -63,6 +65,7 @@ RESET:
 	ldi TactCount, 0 
 	sbi PORTB, LED // на линию светодиода установить 1
 	ldi DBCount, 0
+	ldi Start, 1 // Счет вниз разрешен
 
 //Interrupt Enable 
 	sei // разрешить прерывания
@@ -101,23 +104,41 @@ SS2:
 ret
 
 // запись значений на индикаторы
+
 CountSevSeg:
-	ldi Acc0, 0xff
-	rcall SevSeg
-	ldi Acc0, 0xff
-	rcall SevSeg
-	ldi Acc0, 0xff
-	rcall SevSeg
+	rcall Init
+	rcall Init
+	rcall Init
 	cpi DBCount, 10
 	brne C0 // переходить в C0, пока флаг 0 не будет установлен
 	ldi DBCount, 0
+
 C0:
 	ldi ZL, LOW(DataByte*2)
 	ldi ZH, HIGH(DataByte*2)
 	add ZL, DBCount
 	lpm Acc0, Z
+	mov Acc2, Acc0
 	rcall SevSeg
+	cpi Acc2, StopMarker
+	brne C1_cont
+
+	cbi PORTB, LED
+	ldi Acc2, 0
+	ldi Start, 0
+
+C1_cont:
+	cpi Start, 1
+	brne C2_stop
 	inc DBCount
+
+C2_stop:
+		
+ret
+
+Init:
+	ldi Acc0, 0xff
+	rcall SevSeg
 ret
 
 
