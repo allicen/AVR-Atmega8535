@@ -71,12 +71,6 @@ RESET:
 	out TIMSK, Acc0 // записать в регистр разрешения прерываний
 	clr numkey
 
-	//clr numkeyTmp
-	// ломается, если раскомментировать
-	//ldi TactCount, 0 
-	//ldi DBCount, 0
-	//ldi Start, 0 // Счет вниз 1 - разрешен, 0 - запрещен
-
 //Interrupt Enable 
 	sei // разрешить прерывания
 //Main programm
@@ -114,7 +108,6 @@ E1:
 	rcall Delay // задержка
 	cpi Acc2,0 // если Acc2=0, зауиклить E1
 	brne E1
-
 
 
 //SubProgamm
@@ -180,8 +173,6 @@ endkey:
 	ret
 
 
-
-
 // Семисегментный индикатор
 SevSeg:
 	ldi Acc1, 8
@@ -230,8 +221,6 @@ CountSevSeg:
 	ldi DBCount, 0
 
 C0:
-	//add Acc1, DataByte*2
-
 	ldi ZL, LOW(DataByte*2)
 	ldi ZH, HIGH(DataByte*2)
 	add ZL, DBCount
@@ -266,7 +255,7 @@ SetZero:
 	ldi Acc0, Zero
 	rcall SevSeg
 	rjmp SZ_end
-SZ_tmp:
+SZ_tmp: // если устанолено значение, записываем его
 	ldi ZL, LOW(DataByte*2)
 	ldi ZH, HIGH(DataByte*2)
 	add ZL, numkeyTmp
@@ -275,7 +264,6 @@ SZ_tmp:
 SZ_end:
 	
 ret
-	
 
 
 //Interrupt Routines
