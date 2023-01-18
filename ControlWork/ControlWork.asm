@@ -6,13 +6,14 @@
 .equ LED = 3
 .equ DATA = 1
 .equ CLK = 0
-.equ StopMarker = 0xC0
+.equ Zero = 0xC0
 
 //init registers 
 .def Acc0 = R16
 .def Acc1 = R17
 .def Acc2 = R18
 .def numkey = R19 // номер клавиши
+.def numkeyTmp = R25 // сохранить номер клавиши для обратного отсчета
 .def MASK = R24 // маска для поиска нажатой кнопки
 .def TactCount = R20
 .def DBCount = R22
@@ -51,32 +52,40 @@ RESET:
 	ldi Acc0, HIGH(RAMEND)	
 	out SPH, Acc0
 //init SFR (special function reg)
+	ldi Acc0, 0b11110000|(1<<LED) // настроить на выход для всех устройств (включая светодиод)
+	out DDRB, Acc0 // ddr направление порта
+
 	sbi DDRC, CLK // установить бит в 0 регистр, настроено на выход
 	sbi DDRC, DATA // установить бит в 1 регистр, настроено на выход
-	sbi DDRB, LED 
 	// настроить на выход для всех устройств
 	// WGM01 - настройка ctc в 1
 	// WGM00 - настройка ctc в 0
 	ldi Acc0, (1<<WGM01)|(0<<WGM00)|(0b101<<CS00) // CS00 - частота/1024 (стр 84)
 	out TCCR0, Acc0 // запись в регистр спец назначения для настройки таймера
+
+
 	ldi Acc0, 0xFF // 255 - максимальный период счета
 	out OCR0, Acc0 // OCR0 - Регистр сравнения
 
 	ldi Acc0, (1<<TOIE0) // разрешить прерывание по переполнению
 	out TIMSK, Acc0 // записать в регистр разрешения прерываний
-	ldi TactCount, 0 
-	sbi PORTB, LED // на линию светодиода установить 1
-	ldi DBCount, 0
-	ldi Start, 0 // Счет вниз 1 - разрешен, 0 - запрещен
+	clr numkey
+
+	//clr numkeyTmp
+	// ломается, если раскомментировать
+	//ldi TactCount, 0 
+	//ldi DBCount, 0
+	//ldi Start, 0 // Счет вниз 1 - разрешен, 0 - запрещен
 
 //Interrupt Enable 
-//	sei // разрешить прерывания
+	sei // разрешить прерывания
 //Main programm
 
 rcall Init
 rcall Init
 rcall Init
-rcall Zero
+rcall SetZero
+
 
 loop:
 
@@ -89,13 +98,19 @@ L1:
 	rcall Init
 	rcall Init
 	ldi Acc2,20 
-	ldi ZL, LOW(DataByte*2) // LOW - взять младший байт слова, 2 - 2 байта в памяти, кажд адрес содержит 2 байта (0x100 * 2 = 0x200)
+	ldi ZL, LOW(DataByte*2-1) // LOW - взять младший байт слова, 2 - 2 байта в памяти, кажд адрес содержит 2 байта (0x100 * 2 = 0x200)
 	ldi ZH, HIGH(DataByte*2) // HIGH - взять старший байт слова
-	add ZL, numkey // сложение
+	
+	// Перебор массива с конца
+	ldi Acc1, 10
+	sub Acc1, numkey
+	mov numkeyTmp, Acc1
+	add ZL, Acc1 // сложение
 	lpm Acc0, Z	// загрузить в память программы
 	rcall SevSeg
 
-E1:	dec Acc2
+E1:	
+	dec Acc2
 	rcall Delay // задержка
 	cpi Acc2,0 // если Acc2=0, зауиклить E1
 	brne E1
@@ -157,8 +172,9 @@ ankey: // Блок анализирует нажатие кнопки
 
 pushkey:
 	ldi Start, 1 // Разрешить счет вниз
-	cbi PORTB, LED // ДЛЯ ТЕСТА!!!!
 	add numkey, Acc1 // кладем номер нажатой кнопки
+	sbi PORTB, LED // выключить светодиод
+	ldi DBCount, 10
 
 endkey:
 	ret
@@ -197,12 +213,12 @@ ret
 // запись значений на индикаторы
 
 CountSevSegInit:
+	rcall Init
+	rcall Init
+	rcall Init
 	cpi Start, 0
 	brne CountSevSeg
-	rcall Init
-	rcall Init
-	rcall Init
-	rcall Zero
+	rcall SetZero
 	ret
 
 CountSevSeg:
@@ -214,13 +230,16 @@ CountSevSeg:
 	ldi DBCount, 0
 
 C0:
+	//add Acc1, DataByte*2
+
 	ldi ZL, LOW(DataByte*2)
 	ldi ZH, HIGH(DataByte*2)
 	add ZL, DBCount
+	add ZL, numkeyTmp
 	lpm Acc0, Z
 	mov Acc2, Acc0
 	rcall SevSeg
-	cpi Acc2, StopMarker
+	cpi Acc2, Zero
 	brne C1_cont
 
 	cbi PORTB, LED
@@ -241,9 +260,18 @@ Init:
 	rcall SevSeg
 ret
 
-Zero:
-	ldi Acc0, 0xC0
+SetZero:
+	cpi Start, 0
+	brne SZ_end 
+	ldi Acc0, Zero
 	rcall SevSeg
+SZ_end:
+	//ldi ZL, LOW(DataByte*2)
+	//ldi ZH, HIGH(DataByte*2)
+	//add ZL, DBCount
+	//add ZL, numkeyTmp
+	//lpm Acc0, Z
+	//rcall SevSeg
 ret
 	
 
