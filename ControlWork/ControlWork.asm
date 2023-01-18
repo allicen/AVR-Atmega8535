@@ -262,16 +262,18 @@ ret
 
 SetZero:
 	cpi Start, 0
-	brne SZ_end 
+	brne SZ_tmp 
 	ldi Acc0, Zero
 	rcall SevSeg
+	rjmp SZ_end
+SZ_tmp:
+	ldi ZL, LOW(DataByte*2)
+	ldi ZH, HIGH(DataByte*2)
+	add ZL, numkeyTmp
+	lpm Acc0, Z
+	rcall SevSeg
 SZ_end:
-	//ldi ZL, LOW(DataByte*2)
-	//ldi ZH, HIGH(DataByte*2)
-	//add ZL, DBCount
-	//add ZL, numkeyTmp
-	//lpm Acc0, Z
-	//rcall SevSeg
+	
 ret
 	
 
