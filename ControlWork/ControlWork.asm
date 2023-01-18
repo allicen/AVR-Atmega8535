@@ -67,10 +67,10 @@ RESET:
 	ldi TactCount, 0 
 	sbi PORTB, LED // на линию светодиода установить 1
 	ldi DBCount, 0
-	ldi Start, 1 // Счет вниз запрещен
+	ldi Start, 0 // Счет вниз 1 - разрешен, 0 - запрещен
 
 //Interrupt Enable 
-	sei // разрешить прерывания
+//	sei // разрешить прерывания
 //Main programm
 
 rcall Init
@@ -79,14 +79,17 @@ rcall Init
 rcall Zero
 
 loop:
-/*
+
 	rcall Key 	
 	cpi numkey, 0 // если кнопка не нажата	
 	breq loop // если не нажата, уйти в loop
 
 L1:
+	rcall Init
+	rcall Init
+	rcall Init
 	ldi Acc2,20 
-	ldi ZL, LOW(DataByte*2-1) // LOW - взять младший байт слова, 2 - 2 байта в памяти, кажд адрес содержит 2 байта (0x100 * 2 = 0x200)
+	ldi ZL, LOW(DataByte*2) // LOW - взять младший байт слова, 2 - 2 байта в памяти, кажд адрес содержит 2 байта (0x100 * 2 = 0x200)
 	ldi ZH, HIGH(DataByte*2) // HIGH - взять старший байт слова
 	add ZL, numkey // сложение
 	lpm Acc0, Z	// загрузить в память программы
@@ -96,9 +99,7 @@ E1:	dec Acc2
 	rcall Delay // задержка
 	cpi Acc2,0 // если Acc2=0, зауиклить E1
 	brne E1
-	*/
 
-	rjmp loop	
 
 
 //SubProgamm
@@ -113,7 +114,7 @@ delay2: dec R20
 	brne delay1
 ret
 
-/*
+
 //Keyboard
 //OUT: numkey - number of push key, if keyboard free -> numkey = 0 
 Key:
@@ -155,12 +156,14 @@ ankey: // Блок анализирует нажатие кнопки
 	rjmp endkey
 
 pushkey:
-	add numkey, Acc1
+	ldi Start, 1 // Разрешить счет вниз
+	cbi PORTB, LED // ДЛЯ ТЕСТА!!!!
+	add numkey, Acc1 // кладем номер нажатой кнопки
 
 endkey:
 	ret
 
-*/
+
 
 
 // Семисегментный индикатор

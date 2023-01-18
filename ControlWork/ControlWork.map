@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm Wed Jan 18 00:26:10 2023
+AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\ControlWork\ControlWork.asm Wed Jan 18 22:15:55 2023
 
 
 EQU  SIGNATURE_000 0000001e
@@ -605,23 +605,30 @@ DEF  TactCount    r20
 DEF  DBCount      r22
 DEF  Start        r23
 CSEG RESET        00000015
-CSEG TIM0_OVF     00000064
-CSEG Init         0000005e
-CSEG Zero         00000061
-CSEG loop         0000002b
-CSEG Delay        0000002c
-CSEG delay1       0000002d
-CSEG delay2       0000002e
-CSEG SevSeg       00000033
-CSEG SS0          00000034
-CSEG SS1          00000038
-CSEG SS2          00000039
-CSEG CountSevSegInit 00000042
-CSEG CountSevSeg  00000049
-CSEG C0           0000004f
-CSEG DataByte     00000073
-CSEG C1_cont      0000005a
-CSEG C2_stop      0000005d
-CSEG TO0_0        00000069
-CSEG TO0_1        0000006e
-CSEG DataWord     00000078
+CSEG TIM0_OVF     00000087
+CSEG loop         00000026
+CSEG Key          0000003d
+CSEG L1           00000029
+CSEG Init         00000081
+CSEG DataByte     00000096
+CSEG SevSeg       00000056
+CSEG E1           00000032
+CSEG Delay        00000036
+CSEG delay1       00000037
+CSEG delay2       00000038
+CSEG K1           00000040
+CSEG ankey        00000049
+CSEG pushkey      00000052
+CSEG endkey       00000055
+CSEG SS0          00000057
+CSEG SS1          0000005b
+CSEG SS2          0000005c
+CSEG CountSevSegInit 00000065
+CSEG CountSevSeg  0000006c
+CSEG Zero         00000084
+CSEG C0           00000072
+CSEG C1_cont      0000007d
+CSEG C2_stop      00000080
+CSEG TO0_0        0000008c
+CSEG TO0_1        00000091
+CSEG DataWord     0000009b
