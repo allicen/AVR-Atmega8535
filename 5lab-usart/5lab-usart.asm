@@ -13,7 +13,6 @@
 .def Acc0 = R16 
 .def Acc1 = R17
 .def count = R18
-
  
 //PROGRAMM 
 //interrupt vectors 
@@ -41,7 +40,8 @@ rjmp RESET ; Reset Handler
 //rjmp EXT_INT2 ; IRQ2 Handler 
 //rjmp TIM0_COMP ; Timer0 Compare Handler 
 //rjmp SPM_RDY
-.org 0x15 
+.org 0x15
+
 RESET: 
 //init stack pointer 
 ldi Acc0, LOW(RAMEND) 
@@ -49,69 +49,34 @@ out SPL, Acc0
 ldi Acc0, HIGH(RAMEND) 
 out SPH, Acc0
 
-//init SFR (special function reg) 
-ldi Acc0, (1<<U2X) 
-out UCSRA, Acc0 
-ldi Acc0, (1<<TXEN) | (1<<RXEN) 
-out UCSRB, Acc0 
-ldi Acc0, (1<<URSEL)| (1<<UCSZ0) |(1<<UCSZ1) // UCSZ0 и UCSZ1 т.к. 8 бит
-out UCSRC,Acc0
-
+//init SFR (special function reg)
 ldi Acc0, HIGH(BAUD)
 out UBRRH,Acc0 
 ldi Acc0, LOW(BAUD) 
 out UBRRL,Acc0 
- 
- 
- 
-sbi DDRD, TX 
-sbi DDRB, LED 
- 
-//Interrupt Enable 
-// sei 
-//Main programm 
- 
-loop:
-/*
-in Acc0, UCSRA 
-sbrs Acc0, RXC 
-rjmp loop 
-//LDI Acc0, 0x31 
-in Acc0, UDR 
-out UDR, Acc0 
- 
-//LED ON 
-sbi PORTB, LED 
-//DELAY 
-rcall Delay 
-//LED OFF 
-cbi PORTB, LED 
-//DELAY 
-rcall Delay 
-*/
-rjmp loop 
-//SubProgramm 
-/*
-Delay: 
-nop 
-nop 
- 
-ret
-*/
-//Inerrupt Routines 
-/*
-EXT_INT0: 
-push Acc0 
-push Acc1 
- 
-pop Acc1 
-pop Acc0 
- 
-reti 
-*/
 
+ldi Acc0, (1<<U2X) 
+out UCSRA, Acc0 
+ldi Acc0, (1<<TXEN) | (1<<RXEN) | (1<<RXCIE) | (1<<TXCIE) // эти биты разрешают прерывания
+out UCSRB, Acc0 
+ldi Acc0, (1<<URSEL)| (1<<UCSZ0) |(1<<UCSZ1) // UCSZ0 и UCSZ1 т.к.8 бит
+out UCSRC,Acc0
+
+
+//Interrupt Enable 
+	sei
+
+
+//Main programm 
+loop:
+	rjmp loop
+
+
+//SubProgramm
+
+
+//Inerrupt Routines 
 USART_RXC: // прерывание при получении данных
-	cli // запрет прерываний из прерывания
 	sbis UCSRA, RXC // RXC - бит входа в прерывание по USART
 	rjmp USART_RXC
 	in Acc1, UDR // получить данные из терминала
@@ -119,11 +84,9 @@ USART_RXC: // прерывание при получении данных
 	out UDR, Acc1 // отослать обратно данные в терминал
 	ldi count, 0
 UR_stop:
-sei
 reti
 
 USART_TXC: // передача выполнена
-	cli
 	sbis UCSRA, UDRE // UDRE - бит входа в прерывание
 	rjmp USART_TXC
 	inc count
@@ -132,14 +95,14 @@ USART_TXC: // передача выполнена
 	inc Acc1
 	out UDR, Acc1
 UT_stop:
-	sei
 reti
 
 Clear:
 	ldi count, 0
 	rjmp UT_stop
 
-//Data 
+
+//Data
 DataByte: 
 .DB 0x1f, 0x1C 
 DataWord: 

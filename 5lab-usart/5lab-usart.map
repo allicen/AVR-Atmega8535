@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm Thu Jan 19 22:56:13 2023
+AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm Thu Jan 19 23:27:41 2023
 
 
 EQU  SIGNATURE_000 0000001e
@@ -600,11 +600,11 @@ DEF  Acc0         r16
 DEF  Acc1         r17
 DEF  count        r18
 CSEG RESET        00000015
-CSEG USART_RXC    00000026
-CSEG USART_TXC    0000002f
-CSEG loop         00000025
-CSEG UR_stop      0000002d
-CSEG Clear        00000039
-CSEG UT_stop      00000037
-CSEG DataByte     0000003b
-CSEG DataWord     0000003c
+CSEG USART_RXC    00000025
+CSEG USART_TXC    0000002c
+CSEG loop         00000024
+CSEG UR_stop      0000002b
+CSEG Clear        00000034
+CSEG UT_stop      00000033
+CSEG DataByte     00000036
+CSEG DataWord     00000037
