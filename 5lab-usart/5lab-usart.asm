@@ -2,17 +2,17 @@
 .include "m8535def.inc" 
  
 //init constant 
-.equ max_sec = 60 
-.equ LED = 3 
-.equ TX = 1
 .equ Bitrate = 9600
-// –ежим Asynchronous Normal Mode
-.equ BAUD = 16000000 / (16 * Bitrate) - 1 // формула в даташите, 16000000 - тактова€ частота 16 ћ√ц
+//–ежим Asynchronous Normal Mode
+.equ BAUD = 8000000 / (16 * Bitrate) - 1 // формула в даташите, 16000000 - тактова€ частота 16 ћ√ц
+.equ numCode = 0x30 // код единицы
  
 //init registers 
 .def Acc0 = R16 
 .def Acc1 = R17
 .def count = R18
+.def print = R19
+.def test = R20
  
 //PROGRAMM 
 //interrupt vectors 
@@ -50,6 +50,8 @@ ldi Acc0, HIGH(RAMEND)
 out SPH, Acc0
 
 //init SFR (special function reg)
+
+//надо настроить, но с этим не работает
 ldi Acc0, HIGH(BAUD)
 out UBRRH,Acc0 
 ldi Acc0, LOW(BAUD) 
@@ -62,6 +64,7 @@ out UCSRB, Acc0
 ldi Acc0, (1<<URSEL)| (1<<UCSZ0) |(1<<UCSZ1) // UCSZ0 и UCSZ1 т.к.8 бит
 out UCSRC,Acc0
 
+ldi print, 0
 
 //Interrupt Enable 
 	sei
@@ -73,32 +76,57 @@ loop:
 
 
 //SubProgramm
+PrintSymbol:
+	cpi print, 0
+	breq PS_set
+	ldi Acc1, 0x1
+	out UDR, Acc1
+	nop
+	nop
+	rjmp PrintSymbol
+PS_set:
+	ldi print, 1
+	rjmp PrintSymbol
 
 
 //Inerrupt Routines 
 USART_RXC: // прерывание при получении данных
 	sbis UCSRA, RXC // RXC - бит входа в прерывание по USART
 	rjmp USART_RXC
+
 	in Acc1, UDR // получить данные из терминала
-	inc Acc1
-	out UDR, Acc1 // отослать обратно данные в терминал
-	ldi count, 0
+	//ldi test, 0x31
+//	out UDR, test
+	
+	cpi Acc1, numCode // если пришла 1, то повтор€ть 1
+	breq PrintSymbol
+
+	cpi print, 1
+	breq UR_set
+	rjmp UR_stop
+	
+UR_set:
+	ldi print, 0
+	
 UR_stop:
+	out UDR, Acc1 // отослать обратно данные в терминал
+
+
 reti
 
 USART_TXC: // передача выполнена
 	sbis UCSRA, UDRE // UDRE - бит входа в прерывание
 	rjmp USART_TXC
-	inc count
-	cpi count, 5
-	breq Clear
-	inc Acc1
-	out UDR, Acc1
+
+	//inc count
+	//cpi count, 5
+	//breq Clear
+	//inc Acc1
+	//out UDR, Acc1
 UT_stop:
 reti
 
 Clear:
-	ldi count, 0
 	rjmp UT_stop
 
 
