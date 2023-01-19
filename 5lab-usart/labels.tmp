@@ -1,0 +1,29 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.1.42</VERSION>
+ <DEVICE>ATmega8535</DEVICE>
+ <WORKING_DIR>C:\helen\Assembler\AVR-Atmega8535\5lab-usart</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR>C:\Program Files (x86)\Atmel\AVR Tools\AvrAssembler2\Appnotes</DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>C:\Program Files (x86)\Atmel\AVR Tools\AvrAssembler2\Appnotes\m8535def.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.hex</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.map</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>40</LINE></RESET>
+  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>67</LINE></loop>
+  <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>86</LINE></Delay>
+  <EXT_INT0><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>92</LINE></EXT_INT0>
+  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>101</LINE></DataByte>
+  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>103</LINE></DataWord>
+ </LABELS>
+</ASSEMBLER_INFO>

@@ -1,0 +1,2 @@
+@ECHO OFF
+"C:\Program Files (x86)\Atmel\AVR Tools\AvrAssembler2\avrasm2.exe" -S "C:\helen\Assembler\AVR-Atmega8535\5lab-usart\labels.tmp" -fI -W+ie -C V2E -o "C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.hex" -d "C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.obj" -e "C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.eep" -m "C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.map" "C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm"
