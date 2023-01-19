@@ -52,7 +52,7 @@ RESET:
 // инициализация регистров специального назначения
 	sbi DDRB, LED
 
-	// Настройка uart
+	// Настройка usart
 	//init SFR (special function reg) 
 	LdI Acc0, (1<<U2X) 
 	out UCSRA, Acc0 
@@ -76,7 +76,6 @@ RESET:
 	andi Acc0, ~(0x7<<ADTS0)
 	ori Acc0, (0x0<<ADTS0)
 	out SFIOR, Acc0
-
 
 	ldi Acc0, (1<<ADEN) | (1<<ADSC) | (1<<ADATE) | (1<<ADIE) | (0x7<<ADPS0)
 	out ADCSRA, Acc0
