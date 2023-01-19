@@ -4,7 +4,7 @@
 //init constant 
 .equ Bitrate = 9600
 //–ежим Asynchronous Normal Mode
-.equ BAUD = 8000000 / (16 * Bitrate) - 1 // формула в даташите, 16000000 - тактова€ частота 16 ћ√ц
+.equ BAUD = 8000000 / (16 * Bitrate) - 1 // 51! формула в даташите, 16000000 - тактова€ частота 16 ћ√ц
 .equ numCode = 0x30 // код единицы
  
 //init registers 
@@ -95,8 +95,8 @@ USART_RXC: // прерывание при получении данных
 	rjmp USART_RXC
 
 	in Acc1, UDR // получить данные из терминала
-	//ldi test, 0x31
-//	out UDR, test
+	//ldi test, 3
+	//out UDR, test
 	
 	cpi Acc1, numCode // если пришла 1, то повтор€ть 1
 	breq PrintSymbol
@@ -109,6 +109,7 @@ UR_set:
 	ldi print, 0
 	
 UR_stop:
+	inc Acc1
 	out UDR, Acc1 // отослать обратно данные в терминал
 
 
@@ -118,11 +119,11 @@ USART_TXC: // передача выполнена
 	sbis UCSRA, UDRE // UDRE - бит входа в прерывание
 	rjmp USART_TXC
 
-	//inc count
-	//cpi count, 5
-	//breq Clear
-	//inc Acc1
-	//out UDR, Acc1
+	inc count
+	cpi count, 5
+	breq Clear
+	inc Acc1
+	out UDR, Acc1
 UT_stop:
 reti
 
