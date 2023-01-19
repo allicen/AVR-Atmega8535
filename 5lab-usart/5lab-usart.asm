@@ -4,15 +4,15 @@
 //init constant 
 .equ Bitrate = 9600
 //Режим Asynchronous Normal Mode
-.equ BAUD = 8000000 / (16 * Bitrate) - 1 // 51! формула в даташите, 16000000 - тактовая частота 16 МГц
-.equ numCode = 0x30 // код единицы
+.equ BAUD = 8000000 / (16 * Bitrate) - 1 // 51! формула в даташите, 8000000 - тактовая частота 8МГц
+.equ numCode = 0x31 // код единицы
  
 //init registers 
 .def Acc0 = R16 
 .def Acc1 = R17
+.def Acc2 = R20
 .def count = R18
 .def print = R19
-.def test = R20
  
 //PROGRAMM 
 //interrupt vectors 
@@ -50,15 +50,11 @@ ldi Acc0, HIGH(RAMEND)
 out SPH, Acc0
 
 //init SFR (special function reg)
-
-//надо настроить, но с этим не работает
 ldi Acc0, HIGH(BAUD)
 out UBRRH,Acc0 
 ldi Acc0, LOW(BAUD) 
-out UBRRL,Acc0 
+out UBRRL,Acc0
 
-ldi Acc0, (1<<U2X) 
-out UCSRA, Acc0 
 ldi Acc0, (1<<TXEN) | (1<<RXEN) | (1<<RXCIE) | (1<<TXCIE) // эти биты разрешают прерывания
 out UCSRB, Acc0 
 ldi Acc0, (1<<URSEL)| (1<<UCSZ0) |(1<<UCSZ1) // UCSZ0 и UCSZ1 т.к.8 бит
@@ -76,54 +72,47 @@ loop:
 
 
 //SubProgramm
-PrintSymbol:
-	cpi print, 0
-	breq PS_set
-	ldi Acc1, 0x1
-	out UDR, Acc1
-	nop
-	nop
-	rjmp PrintSymbol
-PS_set:
-	ldi print, 1
-	rjmp PrintSymbol
 
+Delay:
+	nop
+	nop
+	nop
+	nop
+ret
 
 //Inerrupt Routines 
 USART_RXC: // прерывание при получении данных
 	sbis UCSRA, RXC // RXC - бит входа в прерывание по USART
 	rjmp USART_RXC
-
 	in Acc1, UDR // получить данные из терминала
-	//ldi test, 3
-	//out UDR, test
-	
-	cpi Acc1, numCode // если пришла 1, то повторять 1
-	breq PrintSymbol
-
 	cpi print, 1
-	breq UR_set
-	rjmp UR_stop
-	
-UR_set:
+	breq UR_print_stop
+	cpi Acc1, numCode
+	brne UR_stop
+	rjmp UR_print_start
+UR_print_stop:
 	ldi print, 0
-	
 UR_stop:
-	inc Acc1
 	out UDR, Acc1 // отослать обратно данные в терминал
-
-
+	rjmp stop
+UR_print_start:
+	ldi Acc2, 0x1
+	out UDR, Acc2
+stop:
 reti
+
 
 USART_TXC: // передача выполнена
 	sbis UCSRA, UDRE // UDRE - бит входа в прерывание
 	rjmp USART_TXC
-
-	inc count
-	cpi count, 5
-	breq Clear
-	inc Acc1
-	out UDR, Acc1
+	cpi Acc1, numCode // если пришла 1, то повторять 1
+	breq UT_print
+	rjmp UT_stop
+UT_print:
+	ldi print, 1
+	ldi Acc2, 0x1
+	out UDR, Acc2
+	rcall Delay
 UT_stop:
 reti
 
