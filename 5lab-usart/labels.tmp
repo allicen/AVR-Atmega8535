@@ -19,11 +19,14 @@
   <FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.map</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>40</LINE></RESET>
-  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>67</LINE></loop>
-  <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>86</LINE></Delay>
-  <EXT_INT0><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>92</LINE></EXT_INT0>
-  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>101</LINE></DataByte>
-  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>103</LINE></DataWord>
+  <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>45</LINE></RESET>
+  <USART_RXC><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>113</LINE></USART_RXC>
+  <USART_TXC><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>125</LINE></USART_TXC>
+  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>74</LINE></loop>
+  <UR_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>121</LINE></UR_stop>
+  <Clear><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>138</LINE></Clear>
+  <UT_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>134</LINE></UT_stop>
+  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>143</LINE></DataByte>
+  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\5lab-usart\5lab-usart.asm</FILE><LINE>145</LINE></DataWord>
  </LABELS>
 </ASSEMBLER_INFO>

@@ -4,42 +4,47 @@
 //init constant 
 .equ max_sec = 60 
 .equ LED = 3 
-.equ TX = 1 
+.equ TX = 1
+.equ Bitrate = 9600
+// Режим Asynchronous Normal Mode
+.equ BAUD = 16000000 / (16 * Bitrate) - 1 // формула в даташите, 16000000 - тактовая частота 16 МГц
  
 //init registers 
 .def Acc0 = R16 
-.def Acc1 = R17 
-.def Second = R18 
-.def min = R19 
+.def Acc1 = R17
+.def count = R18
+
  
 //PROGRAMM 
 //interrupt vectors 
 .org 0x0 
 rjmp RESET ; Reset Handler 
-/* rjmp EXT_INT0 ; IRQ0 Handler 
-rjmp EXT_INT1 ; IRQ1 Handler 
-rjmp TIM2_COMP ; Timer2 Compare Handler 
-rjmp TIM2_OVF ; Timer2 Overflow Handler 
-rjmp TIM1_CAPT ; Timer1 Capture Handler 
-rjmp TIM1_COMPA ; Timer1 Compare A Handler 
-rjmp TIM1_COMPB ; Timer1 Compare B Handler 
-rjmp TIM1_OVF ; Timer1 Overflow Handler 
-rjmp TIM0_OVF ; Timer0 Overflow Handler 
-rjmp SPI_STC ; SPI Transfer Complete Handler 
-rjmp USART_RXC ; USART RX Complete Handler 
-rjmp USART_UDRE ; UDR Empty Handler 
-rjmp USART_TXC ; USART TX Complete Handler 
-rjmp ADC ; ADC Conversion Complete Handler 
-rjmp EE_RDY ; EEPROM Ready Handler 
-rjmp ANA_COMP ; Analog Comparator Handler 
-rjmp TWSI ; Two-wire Serial Interface Handler 
-rjmp EXT_INT2 ; IRQ2 Handler 
-rjmp TIM0_COMP ; Timer0 Compare Handler 
-rjmp SPM_RDY*/ 
+//rjmp EXT_INT0 ; IRQ0 Handler 
+//rjmp EXT_INT1 ; IRQ1 Handler 
+//rjmp TIM2_COMP ; Timer2 Compare Handler 
+//rjmp TIM2_OVF ; Timer2 Overflow Handler 
+//rjmp TIM1_CAPT ; Timer1 Capture Handler 
+//rjmp TIM1_COMPA ; Timer1 Compare A Handler 
+//rjmp TIM1_COMPB ; Timer1 Compare B Handler 
+//rjmp TIM1_OVF ; Timer1 Overflow Handler 
+//rjmp TIM0_OVF ; Timer0 Overflow Handler 
+//rjmp SPI_STC ; SPI Transfer Complete Handler 
+.org 0x00B
+  rjmp USART_RXC ; USART RX Complete Handler 
+//rjmp USART_UDRE ; UDR Empty Handler 
+.org 0x00D
+  rjmp USART_TXC ; USART TX Complete Handler 
+//rjmp ADC ; ADC Conversion Complete Handler 
+//rjmp EE_RDY ; EEPROM Ready Handler 
+//rjmp ANA_COMP ; Analog Comparator Handler 
+//rjmp TWSI ; Two-wire Serial Interface Handler 
+//rjmp EXT_INT2 ; IRQ2 Handler 
+//rjmp TIM0_COMP ; Timer0 Compare Handler 
+//rjmp SPM_RDY
 .org 0x15 
 RESET: 
 //init stack pointer 
-ldi Acc0, 0x5f 
+ldi Acc0, LOW(RAMEND) 
 out SPL, Acc0 
 ldi Acc0, HIGH(RAMEND) 
 out SPH, Acc0
@@ -49,11 +54,12 @@ ldi Acc0, (1<<U2X)
 out UCSRA, Acc0 
 ldi Acc0, (1<<TXEN) | (1<<RXEN) 
 out UCSRB, Acc0 
-ldi Acc0, (1<<URSEL)| (1<<UCSZ0) |(1<<UCSZ1) 
-out UCSRC,Acc0 
-ldi Acc0, 0 
+ldi Acc0, (1<<URSEL)| (1<<UCSZ0) |(1<<UCSZ1) // UCSZ0 и UCSZ1 т.к. 8 бит
+out UCSRC,Acc0
+
+ldi Acc0, HIGH(BAUD)
 out UBRRH,Acc0 
-ldi Acc0, 12 
+ldi Acc0, LOW(BAUD) 
 out UBRRL,Acc0 
  
  
@@ -65,7 +71,8 @@ sbi DDRB, LED
 // sei 
 //Main programm 
  
-loop: 
+loop:
+/*
 in Acc0, UCSRA 
 sbrs Acc0, RXC 
 rjmp loop 
@@ -81,15 +88,18 @@ rcall Delay
 cbi PORTB, LED 
 //DELAY 
 rcall Delay 
+*/
 rjmp loop 
 //SubProgramm 
- 
+/*
 Delay: 
 nop 
 nop 
  
-ret 
+ret
+*/
 //Inerrupt Routines 
+/*
 EXT_INT0: 
 push Acc0 
 push Acc1 
@@ -98,6 +108,37 @@ pop Acc1
 pop Acc0 
  
 reti 
+*/
+
+USART_RXC: // прерывание при получении данных
+	cli // запрет прерываний из прерывания
+	sbis UCSRA, RXC // RXC - бит входа в прерывание по USART
+	rjmp USART_RXC
+	in Acc1, UDR // получить данные из терминала
+	inc Acc1
+	out UDR, Acc1 // отослать обратно данные в терминал
+	ldi count, 0
+UR_stop:
+sei
+reti
+
+USART_TXC: // передача выполнена
+	cli
+	sbis UCSRA, UDRE // UDRE - бит входа в прерывание
+	rjmp USART_TXC
+	inc count
+	cpi count, 5
+	breq Clear
+	inc Acc1
+	out UDR, Acc1
+UT_stop:
+	sei
+reti
+
+Clear:
+	ldi count, 0
+	rjmp UT_stop
+
 //Data 
 DataByte: 
 .DB 0x1f, 0x1C 
