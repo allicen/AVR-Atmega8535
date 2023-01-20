@@ -52,8 +52,8 @@ RESET:
 // инициализация регистров специального назначения
 	sbi DDRB, LED
 
+	//init SFR (special function reg)
 	// Настройка usart
-	//init SFR (special function reg) 
 	LdI Acc0, (1<<U2X) 
 	out UCSRA, Acc0 
 	LDI Acc0, (1<<TXEN) | (1<<RXEN) //| (1<<UDRIE) -- прерывание
@@ -67,14 +67,24 @@ RESET:
 	sbi DDRD, TX
 
 	// настройка АЦП adc
-	ldi Acc0, (0x0<<REFS0) | (1<<ADLAR) | (0x0<<MUX0)
+	// ADLAR - выравнивание по левому краю (важны старшие биты), 
+	// MUX0 - комбинация аналоговых входов 00000, можно задать определенный канал
+	// REFS0 - установить опорное напряжение
+	ldi Acc0, (0x0<<REFS0) | (1<<ADLAR) | (0x0<<MUX0) 
 	out ADMUX, Acc0
-	ldi Acc0, (1<<ADEN) | (0<<ADSC) | (1<<ADATE) | (1<<ADIE) | (0x7<<ADPS0)
+
+	// ADEN - включить АЦП
+	// ADSC - начать преобразование
+	// ADATE - автоматический запуск преобразования
+	// ADIE - разрешить прерывания
+	// ADPS0 - точность оцифровки, ставим 128
+	ldi Acc0, (1<<ADEN) | (0<<ADSC) | (1<<ADATE) | (1<<ADIE) | (0x7<<ADPS0) // 0x7 - 111 в младших разрядах
 	out ADCSRA, Acc0
 	
+	// Чтение / модификация / запись
 	in Acc0, SFIOR
-	andi Acc0, ~(0x7<<ADTS0)
-	ori Acc0, (0x0<<ADTS0)
+	andi Acc0, ~(0x7<<ADTS0) // andi - побитовое И с константой 111, занулить только старшие 3 бита
+	ori Acc0, (0x0<<ADTS0) // ori - логическое ИЛИ
 	out SFIOR, Acc0
 
 	ldi Acc0, (1<<ADEN) | (1<<ADSC) | (1<<ADATE) | (1<<ADIE) | (0x7<<ADPS0)
@@ -109,10 +119,10 @@ ADC_CON:
 	in Acc0, SREG
 	push Acc0
 	in Acc0, UCSRA
-	sbrs Acc0, UDRE
+	sbrs Acc0, UDRE // анализируем 5 бит регистра UCSRA
 	rjmp END_ADC
 	in Acc0, ADCH
-	out UDR, Acc0	
+	out UDR, Acc0 // UDR - регистр отвечает за данные uart
 
 END_ADC:
 	pop Acc0
