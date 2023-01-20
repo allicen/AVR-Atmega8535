@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm Sat Jan 21 00:43:28 2023
+AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm Sat Jan 21 01:03:02 2023
 
 
 EQU  SIGNATURE_000 0000001e
@@ -598,13 +598,12 @@ DEF  Acc0         r16
 DEF  Acc1         r17
 DEF  TactCount    r18
 CSEG RESET        00000015
-CSEG TIM0_OVF     00000046
-CSEG ADC_CON      00000037
-CSEG loop         0000002f
-CSEG Delay        00000034
-CSEG END_ADC      00000041
-CSEG TO0_0        0000004b
-CSEG TO0_1        0000004f
-CSEG TO0_clear    0000004e
-CSEG DataByte     00000054
-CSEG DataWord     00000055
+CSEG TIM0_OVF     0000004c
+CSEG ADC_CON      0000003d
+CSEG loop         00000035
+CSEG Delay        0000003a
+CSEG END_ADC      00000047
+CSEG TO0_0        00000051
+CSEG TO0_1        00000055
+CSEG DataByte     0000005a
+CSEG DataWord     0000005b
