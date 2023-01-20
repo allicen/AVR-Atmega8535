@@ -2,7 +2,7 @@
 .include "m8535def.inc" 
  
 //init constant 
-.equ Bitrate = 9600
+.equ Bitrate = 9600 // 9600 бод равно 0.00768 мегабит/сек
 //–ежим Asynchronous Normal Mode
 .equ BAUD = 8000000 / (16 * Bitrate) - 1 // 51! формула в даташите, 8000000 - тактова€ частота 8ћ√ц
 .equ numCode = 0x31 // код единицы
