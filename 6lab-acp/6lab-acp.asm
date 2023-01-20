@@ -9,9 +9,7 @@
 // инициализация регистров 
 .def Acc0 = R16
 .def Acc1 = R17
-.def Second = R18
-.def min = R19
-.def hour = R20
+.def TactCount = R18
 
 
 // PROGRAMM
@@ -27,7 +25,8 @@
 //	rjmp TIM1_COMPA ; Timer1 Compare A Handler
 //	rjmp TIM1_COMPB ; Timer1 Compare B Handler
 //	rjmp TIM1_OVF ; Timer1 Overflow Handler
-//	rjmp TIM0_OVF ; Timer0 Overflow Handler
+.org 0x009 // адрес для регистра TIM0_OVF из даташита
+	rjmp TIM0_OVF ; Timer0 Overflow Handler
 //	rjmp SPI_STC ; SPI Transfer Complete Handler
 //	rjmp USART_RXC ; USART RX Complete Handler
 //	rjmp USART_UDRE ; UDR Empty Handler
@@ -43,20 +42,19 @@
 .org 0x15 /// Начало главной программы
 
 RESET:
-// инициализация стека
+	// инициализация стека
 	ldi Acc0, LOW(RAMEND) /// RAMEND - макс адрес ОЗУ
 	out SPL, Acc0
 	ldi Acc0, HIGH(RAMEND)
 	out SPH, Acc0
 
-// инициализация регистров специального назначения
+	//init SFR (special function reg)
 	sbi DDRB, LED
 
-	//init SFR (special function reg)
 	// Настройка usart
-	LdI Acc0, (1<<U2X) 
+	ldi Acc0, (1<<U2X) 
 	out UCSRA, Acc0 
-	LDI Acc0, (1<<TXEN) | (1<<RXEN) //| (1<<UDRIE) -- прерывание
+	ldi Acc0, (1<<TXEN) | (1<<RXEN) //| (1<<UDRIE) -- прерывание
 	out UCSRB, Acc0 
 	ldi Acc0, (1<<URSEL)| (1<<UCSZ0) |(1<<UCSZ1)
 	out UCSRC,Acc0 
@@ -77,22 +75,27 @@ RESET:
 	// ADSC - начать преобразование
 	// ADATE - автоматический запуск преобразования
 	// ADIE - разрешить прерывания
-	// ADPS0 - точность оцифровки, ставим 128
+	// ADPS0 - точность оцифровки, ставим 128 (выбирать в диапазоне: такт. частота проц./мин и макс частота)
 	ldi Acc0, (1<<ADEN) | (0<<ADSC) | (1<<ADATE) | (1<<ADIE) | (0x7<<ADPS0) // 0x7 - 111 в младших разрядах
 	out ADCSRA, Acc0
 	
 	// Чтение / модификация / запись
-	in Acc0, SFIOR
-	andi Acc0, ~(0x7<<ADTS0) // andi - побитовое И с константой 111, занулить только старшие 3 бита
-	ori Acc0, (0x0<<ADTS0) // ori - логическое ИЛИ
+	//in Acc0, SFIOR
+	//andi Acc0, ~(0x3<<ADTS0) // andi - побитовое И с константой, обработать только старшие 3 бита (переполнение по таймеру счетчика 100)
+	//ori Acc0, (0x0<<ADTS0) // ori - логическое ИЛИ
+	ldi Acc0, (0x4<<ADTS0)
 	out SFIOR, Acc0
 
 	ldi Acc0, (1<<ADEN) | (1<<ADSC) | (1<<ADATE) | (1<<ADIE) | (0x7<<ADPS0)
 	out ADCSRA, Acc0
 
+	ldi TactCount, 0
+
 
 // Interrupt Enable
 sei
+
+
 // Main programm
 loop:
 	// LED ON
@@ -104,6 +107,7 @@ loop:
 	// Delay
 	rcall Delay
 	rjmp loop
+
 
 // Subprogramm
 Delay:
@@ -121,6 +125,8 @@ ADC_CON:
 	in Acc0, UCSRA
 	sbrs Acc0, UDRE // анализируем 5 бит регистра UCSRA
 	rjmp END_ADC
+
+	in Acc1, ADCL // всегда считываем первым, чтоб не глючило
 	in Acc0, ADCH
 	out UDR, Acc0 // UDR - регистр отвечает за данные uart
 
@@ -130,9 +136,30 @@ END_ADC:
 	pop Acc1 // Восстановить из регистра
 	pop Acc0
 
-		
-
 	reti // Возврат из прерывания
+
+
+TIM0_OVF:
+	push Acc0
+	push Acc1
+	in Acc0, SREG // сохраняем статусный регистр
+	push Acc0
+	rjmp TO0_0
+	
+TO0_0:
+	inc TactCount
+	cpi TactCount, 4 // сравниваем регистр с 4 (т.к. 1 такт = 1/сек.)
+	brne TO0_1
+
+TO0_clear:
+	ldi TactCount, 0
+
+TO0_1:
+	pop Acc0
+	out SREG, Acc0
+	pop Acc1
+	pop Acc0
+	reti // окончание прерывания
 
 
 // Data
