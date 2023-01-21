@@ -10,6 +10,9 @@
 .def Acc0 = R16
 .def Acc1 = R17
 .def TactCount = R18
+.equ Bitrate = 9600 // 9600 бод равно 0.00768 мегабит/сек
+//Режим Asynchronous Normal Mode
+.equ BAUD = 8000000 / (16 * Bitrate) - 1 // 51! формула в даташите, 8000000 - тактовая частота 8МГц
 
 
 // PROGRAMM
@@ -60,17 +63,13 @@ RESET:
 	out TIMSK, Acc0 // записать в регистр разрешения прерываний
 
 	// Настройка usart
-	ldi Acc0, (1<<U2X) 
-	out UCSRA, Acc0 
+	ldi Acc0, HIGH(BAUD)
+	out UBRRH,Acc0 
+	ldi Acc0, LOW(BAUD) 
+	out UBRRL,Acc0
 	ldi Acc0, (1<<TXEN) | (1<<RXEN) //| (1<<UDRIE) -- прерывание
 	out UCSRB, Acc0 
 	ldi Acc0, (1<<URSEL)| (1<<UCSZ0) |(1<<UCSZ1)
-	out UCSRC,Acc0 
-	ldi Acc0, 0 
-	out UBRRH,Acc0 
-	ldi Acc0, 12 
-	out UBRRL,Acc0 
-	sbi DDRD, TX
 
 	// настройка АЦП adc
 	// ADLAR - выравнивание по левому краю (важны старшие биты), 

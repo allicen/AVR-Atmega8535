@@ -19,15 +19,15 @@
   <FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.map</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>44</LINE></RESET>
-  <TIM0_OVF><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>152</LINE></TIM0_OVF>
-  <ADC_CON><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>130</LINE></ADC_CON>
-  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>109</LINE></loop>
-  <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>122</LINE></Delay>
-  <END_ADC><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>143</LINE></END_ADC>
-  <TO0_0><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>159</LINE></TO0_0>
-  <TO0_1><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>165</LINE></TO0_1>
-  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>174</LINE></DataByte>
-  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>176</LINE></DataWord>
+  <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>47</LINE></RESET>
+  <TIM0_OVF><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>153</LINE></TIM0_OVF>
+  <ADC_CON><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>131</LINE></ADC_CON>
+  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>110</LINE></loop>
+  <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>123</LINE></Delay>
+  <END_ADC><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>144</LINE></END_ADC>
+  <TO0_0><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>160</LINE></TO0_0>
+  <TO0_1><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>166</LINE></TO0_1>
+  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>175</LINE></DataByte>
+  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>177</LINE></DataWord>
  </LABELS>
 </ASSEMBLER_INFO>
