@@ -4,15 +4,17 @@
 // инициализация констант
 .equ max_sec = 60
 .equ LED = 3
-.equ TX = 1 
+.equ TX = 1
+.equ Bitrate = 9600 // 9600 бод равно 0.00768 мегабит/сек
+//Режим Asynchronous Normal Mode
+.equ BAUD = 8000000 / (16 * Bitrate) - 1 // 51! формула в даташите, 8000000 - тактовая частота 8МГц
 
 // инициализация регистров 
 .def Acc0 = R16
 .def Acc1 = R17
 .def TactCount = R18
-.equ Bitrate = 9600 // 9600 бод равно 0.00768 мегабит/сек
-//Режим Asynchronous Normal Mode
-.equ BAUD = 8000000 / (16 * Bitrate) - 1 // 51! формула в даташите, 8000000 - тактовая частота 8МГц
+.def LineCount = R19
+.def SymbolCount = R20
 
 
 // PROGRAMM
@@ -33,7 +35,8 @@
 //	rjmp SPI_STC ; SPI Transfer Complete Handler
 //	rjmp USART_RXC ; USART RX Complete Handler
 //	rjmp USART_UDRE ; UDR Empty Handler
-//	rjmp USART_TXC ; USART TX Complete Handler
+.org 0x00D
+	rjmp USART_TXC ; USART TX Complete Handler
 .org 0x00E
 	rjmp ADC_CON ; ADC Conversion Complete Handler
 //	rjmp EE_RDY ; EEPROM Ready Handler
@@ -67,7 +70,7 @@ RESET:
 	out UBRRH,Acc0 
 	ldi Acc0, LOW(BAUD) 
 	out UBRRL,Acc0
-	ldi Acc0, (1<<TXEN) | (1<<RXEN) //| (1<<UDRIE) -- прерывание
+	ldi Acc0, (1<<TXEN) | (1<<RXEN) | (1<<RXCIE) | (1<<TXCIE) // эти биты разрешают прерывания
 	out UCSRB, Acc0 
 	ldi Acc0, (1<<URSEL)| (1<<UCSZ0) |(1<<UCSZ1)
 
@@ -98,6 +101,7 @@ RESET:
 	out ADCSRA, Acc0
 
 	ldi TactCount, 0
+	ldi LineCount, 0
 
 
 // Interrupt Enable
@@ -124,6 +128,16 @@ Delay:
 	
 	ret // выход из подпрограммы
 
+PrintEndLine:
+	ldi ZL, LOW(DataByte*2) // LOW - взять младший байт слова, 2 - 2 байта в памяти, кажд адрес содержит 2 байта (0x100 * 2 = 0x200)
+	ldi ZH, HIGH(DataByte*2) // HIGH - взять старший байт слова
+	add ZL, SymbolCount
+	lpm Acc0, Z
+	out UDR, Acc0
+	inc SymbolCount
+
+	ret
+
 
 // Обработка прерываний
 ADC_CON:
@@ -145,7 +159,7 @@ END_ADC:
 	pop Acc1 // Восстановить из регистра
 	pop Acc0
 
-	reti // Возврат из прерывания
+reti // Возврат из прерывания
 
 
 TIM0_OVF:
@@ -166,11 +180,27 @@ TO0_1:
 	out SREG, Acc0
 	pop Acc1
 	pop Acc0
-	reti // окончание прерывания
+
+reti // окончание прерывания
+
+
+USART_TXC: // передача выполнена
+	sbis UCSRA, UDRE // UDRE - бит входа в прерывание
+	rjmp USART_TXC
+	inc LineCount
+	cpi LineCount, 3
+	breq UT_clear
+	rcall PrintEndLine
+	rjmp UT_stop
+UT_clear:
+	ldi LineCount, 0
+	ldi SymbolCount, 0
+UT_stop:
+reti
 
 
 // Data
 DataByte:
-.DB 0x1f, 0x1C // Сохранение данных (адресов)
+.DB 0x0A, 0x0D // перенос строки и возврат каретки
 DataWord:
 .DW 0x1234, 0x5678 // Сохранение слов
