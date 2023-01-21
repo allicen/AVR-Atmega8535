@@ -8,6 +8,7 @@
 .equ Bitrate = 9600 // 9600 бод равно 0.00768 мегабит/сек
 //Режим Asynchronous Normal Mode
 .equ BAUD = 8000000 / (16 * Bitrate) - 1 // 51! формула в даташите, 8000000 - тактовая частота 8МГц
+.equ AsciiCode = 48
 
 // инициализация регистров 
 .def Acc0 = R16
@@ -15,6 +16,11 @@
 .def TactCount = R18
 .def LineCount = R19
 .def SymbolCount = R20
+.def Razr1 = R21 // сотни
+.def Razr2 = R22 // десятки
+.def Razr3 = R23 // единицы
+.def AsciiShift = R24
+
 
 
 // PROGRAMM
@@ -102,6 +108,13 @@ RESET:
 
 	ldi TactCount, 0
 	ldi LineCount, 0
+	ldi Razr1, 0
+	ldi Razr2, 0
+	ldi Razr3, 0
+	ldi AsciiShift, AsciiCode
+	add Razr1, AsciiShift
+	add Razr2, AsciiShift
+	add Razr3, AsciiShift
 
 
 // Interrupt Enable
@@ -150,8 +163,8 @@ ADC_CON:
 	rjmp END_ADC
 
 	in Acc1, ADCL // всегда считываем первым, чтоб не глючило
-	in Acc0, ADCH
-	out UDR, Acc0 // UDR - регистр отвечает за данные uart
+	//in Acc0, ADCH
+	out UDR, Razr1 // Печать 1 разряда
 
 END_ADC:
 	pop Acc0
@@ -188,10 +201,24 @@ USART_TXC: // передача выполнена
 	sbis UCSRA, UDRE // UDRE - бит входа в прерывание
 	rjmp USART_TXC
 	inc LineCount
-	cpi LineCount, 3
+	cpi LineCount, 1
+	breq UT_print2
+	cpi LineCount, 2
+	breq UT_print3
+
+	cpi LineCount, 5
 	breq UT_clear
 	rcall PrintEndLine
 	rjmp UT_stop
+
+UT_print2:
+	out UDR, Razr2 // Печать 2 разряда
+	rjmp UT_stop
+
+UT_print3:
+	out UDR, Razr3 // Печать 3 разряда
+	rjmp UT_stop
+
 UT_clear:
 	ldi LineCount, 0
 	ldi SymbolCount, 0
