@@ -6,6 +6,10 @@
 .equ LED = 3
 .equ TX = 1
 
+.equ Bitrate = 9600 // 9600 бод равно 0.00768 мегабит/сек
+//Режим Asynchronous Normal Mode
+.equ BAUD = 8000000 / (16 * Bitrate) - 1 // 51! формула в даташите, 8000000 - тактовая частота 8МГц
+
 //init registers
 .def Acc0 = R16
 .def Acc1 = R17
@@ -45,31 +49,30 @@ ldi Acc0, HIGH(RAMEND)
 out SPH, Acc0
 //init SFR (special function reg)
 in Acc0, SFIOR
-SBR Acc0, ACME
-//ORI Acc0, (1«ACME)
+sbr Acc0, ACME // sbr - установить бит в регистр, включить аналоговый компаратор
+
 out SFIOR, Acc0
-Ldi Acc0, (0<<ACBG) | (1<<ACIC) | (0b10<<ACIS0)| (1<<ACD)
+ldi Acc0, (0<<ACBG) | (1<<ACIC) | (0b10<<ACIS0)| (1<<ACD) // ACIC - включить захват, ACIS0 - включить прерывания
+out ACSR, Acc0 // ACSR - регистр аналогового компаратора
+ldi Acc0, (0<<ACBG) | (1<<ACIC) | (0b10<<ACIS0)| (0<<ACD) // ACBG - сигнал берем со входа
 out ACSR, Acc0
-Ldi Acc0, (0<<ACBG) | (1<<ACIC) | (0b10<<ACIS0)| (0<<ACD)
-out ACSR, Acc0
-LDI Acc0, (0b00000<<MUX0)
+ldi Acc0, (0b00000<<MUX0) // нулевой канал
 out ADMUX, Acc0
-LDi Acc0, (0b001<<CS10)| (1<<ICES1)
-out TCCR1B, Acc0
+ldi Acc0, (0b001<<CS10)| (1<<ICES1) // ICES1 - нарастающий/спадающий фронт, CS10 - делитель частоты
+out TCCR1B, Acc0 // таймер
 in Acc0, TIMSK
-ORI Acc0, (1<<TICIE1)//| (1«OCIE1A)| (1«OCIE1B)| (1«TOIE1)
+ori Acc0, (1<<TICIE1)//| (1«OCIE1A)| (1«OCIE1B)| (1«TOIE1) // TICIE1 - прерывание по захвату
 out TIMSK, Acc0
 
-LdI Acc0, (1<<U2X)
-out UCSRA, Acc0
-LDI Acc0, (1<<TXEN) | (1<<RXEN)
+// Настройка usart
+ldi Acc0, HIGH(BAUD)
+out UBRRH,Acc0 
+ldi Acc0, LOW(BAUD) 
+out UBRRL,Acc0
+ldi Acc0, (1<<TXEN) | (1<<RXEN)
 out UCSRB, Acc0
-LDI Acc0, (1<<URSEL)| (1<<UCSZ0) |(1<<UCSZ1)
-out UCSRC,Acc0
-LDI Acc0, 0
-out UBRRH,Acc0
-LDI Acc0, 12
-out UBRRL,Acc0 
+ldi Acc0, (1<<URSEL)| (1<<UCSZ0) |(1<<UCSZ1)
+
 sbi DDRD, TX
 sbi DDRB, LED
 
@@ -96,15 +99,9 @@ nop
 nop
 
 ret
+
+
 //Inerrupt Routines
-EXT_INT0:
-push Acc0
-push Acc1
-
-pop Acc1
-pop Acc0
-
-reti
 
 TIM1_CAPT:
 push Acc0
@@ -114,9 +111,7 @@ push Acc0
 
 TC1:
 in Acc0,UCSRA
-//ANDI Acc0, (1<<UDRE)
-//breq TC1 
-SBRS Acc0, UDRE
+sbrs Acc0, UDRE // пропустить следующую строку, если UDRE=1
 rjmp TC1
 in Acc0, ICR1L
 //LDI Acc0, 0x31
