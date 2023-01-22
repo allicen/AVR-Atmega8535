@@ -19,7 +19,8 @@
 .def Razr1 = R21 // сотни
 .def Razr2 = R22 // дес€тки
 .def Razr3 = R23 // единицы
-.def AsciiShift = R24
+.def Number = R25 // число символа
+.def NumDecCount = R24
 
 
 
@@ -111,10 +112,12 @@ RESET:
 	ldi Razr1, 0
 	ldi Razr2, 0
 	ldi Razr3, 0
-	ldi AsciiShift, AsciiCode
-	add Razr1, AsciiShift
-	add Razr2, AsciiShift
-	add Razr3, AsciiShift
+	ldi Acc0, AsciiCode
+	add Razr1, Acc0
+	add Razr2, Acc0
+	add Razr3, Acc0
+	ldi Number, 0
+	ldi NumDecCount, 0
 
 
 // Interrupt Enable
@@ -151,6 +154,27 @@ PrintEndLine:
 
 	ret
 
+GetRazr: // считаем дес€тки
+	add Acc1, Acc0
+	cp Acc1, Number
+	BRLO GR_continue // перейти, если меньше
+	rjmp GR_stop
+
+GR_continue:
+	inc NumDecCount
+	rjmp GetRazr
+GR_stop:
+	sub Acc1, Number
+	ldi Acc0, 10
+	sub Acc0, Acc1
+	
+	add Razr3, Acc0
+	ldi Acc0, AsciiCode
+	add Razr3, Acc0
+
+
+	ret
+
 
 // ќбработка прерываний
 ADC_CON:
@@ -163,7 +187,14 @@ ADC_CON:
 	rjmp END_ADC
 
 	in Acc1, ADCL // всегда считываем первым, чтоб не глючило
-	//in Acc0, ADCH
+	in Number, ADCH
+	
+	ldi Acc0, 10 // дл€ подсчета количества дес€тков
+	ldi Acc1, 0 // 1 дл€ умножени€
+
+	ldi Razr3, 0
+
+	rcall GetRazr
 	out UDR, Razr1 // ѕечать 1 разр€да
 
 END_ADC:
