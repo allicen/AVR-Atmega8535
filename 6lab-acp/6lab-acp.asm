@@ -253,7 +253,7 @@ TIM0_OVF:
 	
 TO0_0:
 	inc TactCount
-	cpi TactCount, 2 // сравниваем регистр с 4 (т.к. 1 такт = 1/сек.)
+	cpi TactCount, 2 // срабатывание 2 раза в 1 сек. (т.к. 1 такт = 1/сек.)
 	brne TO0_1
 	ldi TactCount, 0
 
