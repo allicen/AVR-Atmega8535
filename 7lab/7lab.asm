@@ -10,12 +10,21 @@
 //Режим Asynchronous Normal Mode
 .equ BAUD = 8000000 / (16 * Bitrate) - 1 // 51! формула в даташите, 8000000 - тактовая частота 8МГц
 .equ AsciiCode = 48
+.equ numCode = 0x31 // код единицы
 
 //init registers
 .def Acc0 = R16
 .def Acc1 = R17
+.def Acc2 = R20
 .def Start = R18
-.def SymbolCount = R19
+
+// Статус печати в USART
+// 0 - не печатать ничего
+// 1 - запуск таймера
+// 2 - остановка таймера и печать результата
+// 3 - очистить данные
+// 4 - неверная команда (ошибка)
+.def PrintState = R19
 
 //PROGRAMM
 //interrupt vectors
@@ -82,11 +91,11 @@ sbi DDRD, TX
 sbi DDRB, LED
 
 ldi Start, 1 // Начало программы
-ldi SymbolCount, 0
+ldi PrintState, 0 // Статус печати в USART
 
 // Печать инструкции
-ldi r30, LOW(StartNote*2)
-ldi r31, HIGH(StartNote*2)
+ldi ZL, LOW(StartNote*2)
+ldi ZH, HIGH(StartNote*2)
 rcall PrintLine
 
 //Interrupt Enable
@@ -124,14 +133,32 @@ ret
 
 PrintLine:
 	lpm Acc1, Z+
-	cpi Acc1, $00 // проверка на 0
+	cpi Acc1, 0 // проверка на 0
 	breq LC_end
 	rcall PrintUSART
 	rjmp PrintLine
-
 LC_end:
-	rjmp LC_end
+ret
 
+
+PrintEndLine:
+	ldi ZL, LOW(LineEnd*2)
+	ldi ZH, HIGH(LineEnd*2)
+	add ZL, Acc0
+	lpm Acc1, Z
+	cpi Acc1, 0
+	breq PEL_end
+	out UDR, Acc1
+	inc Acc0
+PEL_end:
+
+ret
+
+PrintTimerStartNote:
+	lpm Acc1, Z+
+	cpi Acc1, 0 // проверка на 0
+	breq LC_end
+	rcall PrintUSART
 ret
 
 
@@ -164,6 +191,40 @@ reti
 USART_RXC: // прерывание при получении данных
 	sbis UCSRA, RXC // RXC - бит входа в прерывание по USART
 	rjmp USART_RXC
+	
+	ldi Acc0, numCode
+	in Acc1, UDR
+	cp Acc1, Acc0 // 1 - запуск таймера
+	breq UR_timer_start
+	inc Acc0
+	cp Acc1, Acc1 // 2 - остановить таймер и вывести результат
+	breq UR_timer_res
+	inc Acc0
+	cp Acc1, Acc0 // 3 - очистить таймер
+	breq UR_timer_clear
+
+	rjmp UR_error
+
+
+UR_timer_start:
+	ldi PrintState, 1
+	rjmp UR_stop
+
+UR_timer_res:
+	ldi PrintState, 2
+	rjmp UR_stop
+
+UR_timer_clear:
+	ldi PrintState, 3
+	rjmp UR_stop
+
+UR_error:
+	ldi PrintState, 4
+	rjmp UR_stop
+	
+UR_stop:
+	out UDR, Acc1
+	ldi Acc0, 0
 reti
 
 
@@ -171,6 +232,37 @@ USART_TXC: // передача выполнена
 	sbis UCSRA, UDRE
 	rjmp USART_TXC
 
+	cpi PrintState, 0
+	breq US_stop
+	
+	cpi Acc1, 0
+	brne US_print_end
+
+	cpi PrintState, 1
+	breq US_print_start
+
+	//cpi PrintState, 2
+
+	//cpi PrintState, 3
+
+	//cpi PrintState, 4
+
+
+	rjmp US_stop
+
+US_print_end:
+	rcall PrintEndLine
+	//ldi Acc0, 0
+	rjmp US_stop
+
+
+US_print_start:
+	//ldi ZL, LOW(TimerStartNote*2)
+	//ldi ZH, HIGH(TimerStartNote*2)
+	//rcall PrintTimerStartNote
+	rjmp US_stop
+
+US_stop:
 reti
 
 
@@ -178,3 +270,13 @@ reti
 //Data
 StartNote:
 .DB "Key Values: 1 - start timer, 2 - stop timer and print data, 3 - clear data. Please, enter key: ", 0
+KeyInfoNote:
+.DB "You have entered key: ", 0
+KeyErrorNote:
+.DB "Invalid key code. Valid keys: 1, 2, 3.", 0
+TimerResultNote:
+.DB "Timer stopped. Result: ", 0
+TimerStartNote:
+.DB "Timer started.", 0
+LineEnd:
+.DB 0x0A, 0x0D, 0 // перенос строки и возврат каретки

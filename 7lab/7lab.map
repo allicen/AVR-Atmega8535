@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm Sun Jan 22 22:36:11 2023
+AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm Mon Jan 23 00:46:07 2023
 
 
 EQU  SIGNATURE_000 0000001e
@@ -597,18 +597,36 @@ EQU  TX           00000001
 EQU  Bitrate      00002580
 EQU  BAUD         00000033
 EQU  AsciiCode    00000030
+EQU  numCode      00000031
 DEF  Acc0         r16
 DEF  Acc1         r17
+DEF  Acc2         r20
 DEF  Start        r18
-DEF  SymbolCount  r19
+DEF  PrintState   r19
 CSEG RESET        00000015
-CSEG TIM1_CAPT    0000004a
-CSEG USART_RXC    00000057
-CSEG USART_TXC    0000005a
-CSEG StartNote    0000005d
+CSEG TIM1_CAPT    00000057
+CSEG USART_RXC    00000064
+CSEG USART_TXC    0000007c
+CSEG StartNote    00000089
 CSEG PrintLine    00000043
 CSEG loop         00000037
 CSEG Delay        0000003c
 CSEG PrintUSART   0000003f
 CSEG LC_end       00000048
-CSEG TC1          0000004e
+CSEG PrintEndLine 00000049
+CSEG LineEnd      000000ed
+CSEG PEL_end      00000051
+CSEG PrintTimerStartNote 00000052
+CSEG TC1          0000005b
+CSEG UR_timer_start 00000071
+CSEG UR_timer_res 00000073
+CSEG UR_timer_clear 00000075
+CSEG UR_error     00000077
+CSEG UR_stop      00000079
+CSEG US_stop      00000088
+CSEG US_print_end 00000085
+CSEG US_print_start 00000087
+CSEG KeyInfoNote  000000b9
+CSEG KeyErrorNote 000000c5
+CSEG TimerResultNote 000000d9
+CSEG TimerStartNote 000000e5
