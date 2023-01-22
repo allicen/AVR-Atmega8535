@@ -137,8 +137,8 @@ loop:
 Delay:
 	nop
 	nop
-	
 	ret // выход из подпрограммы
+
 
 PrintEndLine:
 	ldi ZL, LOW(DataByte*2) // LOW - взять младший байт слова, 2 - 2 байта в памяти, кажд адрес содержит 2 байта (0x100 * 2 = 0x200)
@@ -147,8 +147,8 @@ PrintEndLine:
 	lpm Acc0, Z
 	out UDR, Acc0
 	inc SymbolCount
-
 	ret
+
 
 GetRazr: // считаем десятки
 	add Acc1, Acc0
@@ -164,7 +164,7 @@ GR_razr2: // определить количество десятков
 	ldi Acc0, 10
 	mov Acc1, NumDecCount
 	mul  Acc1, Acc0
-	cpi Acc1, 100
+	cpi Number, 100
 	brsh GR_razr1
 	mov Razr2, NumDecCount
 	ldi Acc0, AsciiCode
@@ -172,19 +172,37 @@ GR_razr2: // определить количество десятков
 	add Razr1, Acc0
 	rjmp GR_stop
 
-
 GR_razr1: // определить количество сотен
-	
+	cpi Number, 200
+	brsh GR_R0
+	ldi Razr1, 1
+	ldi Acc0, AsciiCode
+	add Razr1, Acc0
+	ldi Acc0, 10
+	sub NumDecCount, Acc0
+	mov Razr2, NumDecCount
+	ldi Acc0, AsciiCode
+	add Razr2, Acc0
+	rjmp GR_stop
+
+GR_R0:
+	ldi Razr1, 2
+	ldi Acc0, AsciiCode
+	add Razr1, Acc0
+	ldi Acc0, 20
+	sub NumDecCount, Acc0
+	mov Razr2, NumDecCount
+	ldi Acc0, AsciiCode
+	add Razr2, Acc0
+	rjmp GR_stop
 
 GR_razr3: // определить количество единиц
 	sub Acc1, Number
 	ldi Acc0, 10
 	sub Acc0, Acc1
-	
 	add Razr3, Acc0
 	ldi Acc0, AsciiCode
 	add Razr3, Acc0
-
 	cpi NumDecCount, 1 // десятки есть
 	brsh GR_razr2 // такое же либо больше
 	rjmp GR_stop

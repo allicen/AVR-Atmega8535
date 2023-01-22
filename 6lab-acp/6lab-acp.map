@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm Sun Jan 22 03:45:43 2023
+AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm Sun Jan 22 04:20:44 2023
 
 
 EQU  SIGNATURE_000 0000001e
@@ -608,24 +608,25 @@ DEF  Razr3        r23
 DEF  Number       r25
 DEF  NumDecCount  r24
 CSEG RESET        00000015
-CSEG TIM0_OVF     00000076
-CSEG USART_TXC    00000084
-CSEG ADC_CON      00000060
+CSEG TIM0_OVF     0000008a
+CSEG USART_TXC    00000098
+CSEG ADC_CON      00000074
 CSEG loop         00000037
 CSEG Delay        0000003c
 CSEG PrintEndLine 0000003f
-CSEG DataByte     00000096
+CSEG DataByte     000000aa
 CSEG GetRazr      00000046
 CSEG GR_continue  0000004a
-CSEG GR_razr3     00000056
+CSEG GR_razr3     0000006a
 CSEG GR_razr2     0000004c
 CSEG GR_razr1     00000056
-CSEG GR_stop      0000005f
-CSEG END_ADC      00000071
-CSEG TO0_0        0000007b
-CSEG TO0_1        0000007f
-CSEG UT_print2    0000008f
-CSEG UT_print3    00000091
-CSEG UT_clear     00000093
-CSEG UT_stop      00000095
-CSEG DataWord     00000097
+CSEG GR_stop      00000073
+CSEG GR_R0        00000061
+CSEG END_ADC      00000085
+CSEG TO0_0        0000008f
+CSEG TO0_1        00000093
+CSEG UT_print2    000000a3
+CSEG UT_print3    000000a5
+CSEG UT_clear     000000a7
+CSEG UT_stop      000000a9
+CSEG DataWord     000000ab

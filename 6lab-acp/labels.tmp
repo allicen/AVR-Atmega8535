@@ -20,26 +20,27 @@
  </OUTPUT_FILES>
  <LABELS>
   <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>57</LINE></RESET>
-  <TIM0_OVF><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>229</LINE></TIM0_OVF>
-  <USART_TXC><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>251</LINE></USART_TXC>
-  <ADC_CON><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>197</LINE></ADC_CON>
+  <TIM0_OVF><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>247</LINE></TIM0_OVF>
+  <USART_TXC><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>269</LINE></USART_TXC>
+  <ADC_CON><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>215</LINE></ADC_CON>
   <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>124</LINE></loop>
   <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>137</LINE></Delay>
   <PrintEndLine><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>143</LINE></PrintEndLine>
-  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>281</LINE></DataByte>
+  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>299</LINE></DataByte>
   <GetRazr><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>153</LINE></GetRazr>
   <GR_continue><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>159</LINE></GR_continue>
-  <GR_razr3><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>179</LINE></GR_razr3>
+  <GR_razr3><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>199</LINE></GR_razr3>
   <GR_razr2><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>163</LINE></GR_razr2>
-  <GR_razr1><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>176</LINE></GR_razr1>
-  <GR_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>192</LINE></GR_stop>
-  <END_ADC><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>220</LINE></END_ADC>
-  <TO0_0><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>236</LINE></TO0_0>
-  <TO0_1><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>242</LINE></TO0_1>
-  <UT_print2><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>265</LINE></UT_print2>
-  <UT_print3><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>269</LINE></UT_print3>
-  <UT_clear><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>273</LINE></UT_clear>
-  <UT_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>276</LINE></UT_stop>
-  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>283</LINE></DataWord>
+  <GR_razr1><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>175</LINE></GR_razr1>
+  <GR_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>210</LINE></GR_stop>
+  <GR_R0><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>188</LINE></GR_R0>
+  <END_ADC><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>238</LINE></END_ADC>
+  <TO0_0><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>254</LINE></TO0_0>
+  <TO0_1><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>260</LINE></TO0_1>
+  <UT_print2><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>283</LINE></UT_print2>
+  <UT_print3><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>287</LINE></UT_print3>
+  <UT_clear><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>291</LINE></UT_clear>
+  <UT_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>294</LINE></UT_stop>
+  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\6lab-acp\6lab-acp.asm</FILE><LINE>301</LINE></DataWord>
  </LABELS>
 </ASSEMBLER_INFO>
