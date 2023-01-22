@@ -19,15 +19,16 @@
   <FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.map</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>44</LINE></RESET>
-  <TIM1_CAPT><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>108</LINE></TIM1_CAPT>
-  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>87</LINE></loop>
-  <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>99</LINE></Delay>
-  <TC1><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>114</LINE></TC1>
-  <ANA_COMP><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>129</LINE></ANA_COMP>
-  <AC_do><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>140</LINE></AC_do>
-  <AC_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>144</LINE></AC_stop>
-  <DataByte><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>154</LINE></DataByte>
-  <DataWord><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>156</LINE></DataWord>
+  <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>45</LINE></RESET>
+  <TIM1_CAPT><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>142</LINE></TIM1_CAPT>
+  <USART_RXC><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>164</LINE></USART_RXC>
+  <USART_TXC><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>170</LINE></USART_TXC>
+  <StartNote><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>179</LINE></StartNote>
+  <PrintLine><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>125</LINE></PrintLine>
+  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>96</LINE></loop>
+  <Delay><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>111</LINE></Delay>
+  <PrintUSART><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>118</LINE></PrintUSART>
+  <LC_end><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>132</LINE></LC_end>
+  <TC1><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>148</LINE></TC1>
  </LABELS>
 </ASSEMBLER_INFO>

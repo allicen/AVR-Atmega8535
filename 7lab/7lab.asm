@@ -9,12 +9,13 @@
 .equ Bitrate = 9600 // 9600 бод равно 0.00768 мегабит/сек
 //Режим Asynchronous Normal Mode
 .equ BAUD = 8000000 / (16 * Bitrate) - 1 // 51! формула в даташите, 8000000 - тактовая частота 8МГц
+.equ AsciiCode = 48
 
 //init registers
 .def Acc0 = R16
 .def Acc1 = R17
-.def Second = R18
-.def min = R19
+.def Start = R18
+.def SymbolCount = R19
 
 //PROGRAMM
 //interrupt vectors
@@ -30,9 +31,9 @@ reti ; rjmp TIM1_COMPB ; Timer1 Compare B Handler
 reti ; rjmp TIM1_OVF ; Timer1 Overflow Handler
 reti ; rjmp TIM0_OVF ; Timer0 Overflow Handler
 reti ; rjmp SPI_STC ; SPI Transfer Complete Handler
-reti ; rjmp USART_RXC ; USART RX Complete Handler
+	rjmp USART_RXC ; USART RX Complete Handler
 reti ; rjmp USART_UDRE ; UDR Empty Handler
-reti ; rjmp USART_TXC ; USART TX Complete Handler
+	rjmp USART_TXC ; USART TX Complete Handler
 reti ; rjmp ADC ; ADC Conversion Complete Handler
 reti ; rjmp EE_RDY ; EEPROM Ready Handler
 reti ; rjmp ANA_COMP ; Analog Comparator Handler
@@ -71,16 +72,24 @@ ldi Acc0, HIGH(BAUD)
 out UBRRH,Acc0 
 ldi Acc0, LOW(BAUD) 
 out UBRRL,Acc0
-ldi Acc0, (1<<TXEN) | (1<<RXEN)
-out UCSRB, Acc0
-ldi Acc0, (1<<URSEL)| (1<<UCSZ0) |(1<<UCSZ1)
+
+ldi Acc0, (1<<TXEN) | (1<<RXEN) | (1<<RXCIE) | (1<<TXCIE) // эти биты разрешают прерывания
+out UCSRB, Acc0 
+ldi Acc0, (1<<URSEL)| (1<<UCSZ0) |(1<<UCSZ1) // UCSZ0 и UCSZ1 т.к.8 бит
+out UCSRC,Acc0
 
 sbi DDRD, TX
 sbi DDRB, LED
 
-sbi DDRB, LED
-//Interrupt Enable
+ldi Start, 1 // Начало программы
+ldi SymbolCount, 0
 
+// Печать инструкции
+ldi r30, LOW(StartNote*2)
+ldi r31, HIGH(StartNote*2)
+rcall PrintLine
+
+//Interrupt Enable
  sei
 
 //Main programm
@@ -95,12 +104,37 @@ cbi PORTB, LED
 //DELAY
 rcall Delay
 rjmp loop
+
+
+
 //SubProgramm
 Delay:
 nop
 nop
 
 ret
+
+
+PrintUSART:
+	sbis UCSRA, UDRE
+	rjmp PrintUSART
+	out UDR, Acc1
+ret
+
+
+PrintLine:
+	lpm Acc1, Z+
+	cpi Acc1, $00 // проверка на 0
+	breq LC_end
+	rcall PrintUSART
+	rjmp PrintLine
+
+LC_end:
+	rjmp LC_end
+
+ret
+
+
 
 
 //Inerrupt Routines
@@ -116,7 +150,7 @@ TIM1_CAPT:
 	sbrs Acc0, UDRE // пропустить следующую строку, если UDRE=1
 	rjmp TC1
 	in Acc0, ICR1L
-	out UDR, Acc0
+	//out UDR, Acc0
 
 	pop Acc0
 	out SREG,Acc0
@@ -127,8 +161,20 @@ reti
 
 
 
+USART_RXC: // прерывание при получении данных
+	sbis UCSRA, RXC // RXC - бит входа в прерывание по USART
+	rjmp USART_RXC
+reti
+
+
+USART_TXC: // передача выполнена
+	sbis UCSRA, UDRE
+	rjmp USART_TXC
+
+reti
+
+
+
 //Data
-DataByte:
-.DB 0x1f, 0x1C
-DataWord:
-.DW 0x1234, 0x5678
+StartNote:
+.DB "Key Values: 1 - start timer, 2 - stop timer and print data, 3 - clear data. Please, enter key: ", 0
