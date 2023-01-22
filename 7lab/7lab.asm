@@ -24,7 +24,7 @@ reti ; rjmp EXT_INT0 ; IRQ0 Handler
 reti ; rjmp EXT_INT1 ; IRQ1 Handler
 reti ; rjmp TIM2_COMP ; Timer2 Compare Handler
 reti ; rjmp TIM2_OVF ;Timer2 Overflow Handler
- rjmp TIM1_CAPT ; Timer1 Capture Handler
+	rjmp TIM1_CAPT ; Timer1 Capture Handler
 reti ; rjmp TIM1_COMPA ; Timer1 Compare A Handler
 reti ; rjmp TIM1_COMPB ; Timer1 Compare B Handler
 reti ; rjmp TIM1_OVF ; Timer1 Overflow Handler
@@ -42,11 +42,13 @@ reti ; rjmp TIM0_COMP ; Timer0 Compare Handler
 reti ; rjmp SPM_RDY
 .org 0x15
 RESET:
+
 //init stack pointer
 ldi Acc0, 0x5f
 out SPL, Acc0
 ldi Acc0, HIGH(RAMEND)
 out SPH, Acc0
+
 //init SFR (special function reg)
 in Acc0, SFIOR
 sbr Acc0, ACME // sbr - установить бит в регистр, включить аналоговый компаратор
@@ -104,26 +106,26 @@ ret
 //Inerrupt Routines
 
 TIM1_CAPT:
-push Acc0
-push Acc1
-in Acc0,SREG
-push Acc0
+	push Acc0
+	push Acc1
+	in Acc0,SREG
+	push Acc0
 
-TC1:
-in Acc0,UCSRA
-sbrs Acc0, UDRE // пропустить следующую строку, если UDRE=1
-rjmp TC1
-in Acc0, ICR1L
-//LDI Acc0, 0x31
-//in Acc0, TCNT1L
-out UDR, Acc0
+	TC1:
+	in Acc0,UCSRA
+	sbrs Acc0, UDRE // пропустить следующую строку, если UDRE=1
+	rjmp TC1
+	in Acc0, ICR1L
+	out UDR, Acc0
 
-pop Acc0
-out SREG,Acc0
-pop Acc1
-pop Acc0
+	pop Acc0
+	out SREG,Acc0
+	pop Acc1
+	pop Acc0
 
 reti
+
+
 
 //Data
 DataByte:
