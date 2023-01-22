@@ -15,7 +15,7 @@
 //init registers
 .def Acc0 = R16
 .def Acc1 = R17
-.def Acc2 = R20
+.def LinePrint = R20 // печать данных
 .def Start = R18
 
 // Статус печати в USART
@@ -25,6 +25,8 @@
 // 3 - очистить данные
 // 4 - неверная команда (ошибка)
 .def PrintState = R19
+.def CharIndex = R21 // индекс символа строки
+.def Char = R22 // печатный символ
 
 //PROGRAMM
 //interrupt vectors
@@ -92,6 +94,8 @@ sbi DDRB, LED
 
 ldi Start, 1 // Начало программы
 ldi PrintState, 0 // Статус печати в USART
+ldi CharIndex, 0 // Индекс символа строки
+ldi Char, 0
 
 // Печать инструкции
 ldi ZL, LOW(StartNote*2)
@@ -104,6 +108,7 @@ rcall PrintLine
 //Main programm
 loop:
 
+/*
 //LED ON
 sbi PORTB, LED
 //DELAY
@@ -112,6 +117,8 @@ rcall Delay
 cbi PORTB, LED
 //DELAY
 rcall Delay
+*/
+
 rjmp loop
 
 
@@ -125,40 +132,47 @@ ret
 
 
 PrintUSART:
-	sbis UCSRA, UDRE
-	rjmp PrintUSART
-	out UDR, Acc1
+	//sbis UCSRA, UDRE
+	//rjmp PrintUSART
+	//out UDR, Acc1
 ret
 
 
 PrintLine:
 	lpm Acc1, Z+
-	cpi Acc1, 0 // проверка на 0
+	cpi Acc1, '$' // проверка на 0
 	breq LC_end
 	rcall PrintUSART
 	rjmp PrintLine
 LC_end:
+	ldi Acc0, 0
+	ldi Acc1, 0
 ret
 
 
 PrintEndLine:
 	ldi ZL, LOW(LineEnd*2)
 	ldi ZH, HIGH(LineEnd*2)
-	add ZL, Acc0
-	lpm Acc1, Z
-	cpi Acc1, 0
+	add ZL, CharIndex
+	lpm Char, Z
+	cpi Char, '$'
 	breq PEL_end
-	out UDR, Acc1
-	inc Acc0
+	out UDR, Char
+	inc CharIndex
 PEL_end:
-
+	
 ret
 
 PrintTimerStartNote:
-	lpm Acc1, Z+
-	cpi Acc1, 0 // проверка на 0
-	breq LC_end
-	rcall PrintUSART
+	ldi ZL, LOW(TimerStartNote*2)
+	ldi ZH, HIGH(TimerStartNote*2)
+	add ZL, CharIndex
+	lpm Char, Z
+	cpi Char, '$'
+	breq PTSN_end
+	out UDR, Char
+	inc CharIndex
+PTSN_end:
 ret
 
 
@@ -193,14 +207,14 @@ USART_RXC: // прерывание при получении данных
 	rjmp USART_RXC
 	
 	ldi Acc0, numCode
-	in Acc1, UDR
-	cp Acc1, Acc0 // 1 - запуск таймера
+	in Char, UDR
+	cp Char, Acc0 // 1 - запуск таймера
 	breq UR_timer_start
 	inc Acc0
-	cp Acc1, Acc1 // 2 - остановить таймер и вывести результат
+	cp Char, Acc0 // 2 - остановить таймер и вывести результат
 	breq UR_timer_res
 	inc Acc0
-	cp Acc1, Acc0 // 3 - очистить таймер
+	cp Char, Acc0 // 3 - очистить таймер
 	breq UR_timer_clear
 
 	rjmp UR_error
@@ -223,9 +237,11 @@ UR_error:
 	rjmp UR_stop
 	
 UR_stop:
-	out UDR, Acc1
-	ldi Acc0, 0
+	out UDR, Char
+	ldi CharIndex, 0
+	sei
 reti
+
 
 
 USART_TXC: // передача выполнена
@@ -235,31 +251,30 @@ USART_TXC: // передача выполнена
 	cpi PrintState, 0
 	breq US_stop
 	
-	cpi Acc1, 0
+	cpi Char, 0
 	brne US_print_end
 
+US_print:
 	cpi PrintState, 1
 	breq US_print_start
-
-	//cpi PrintState, 2
-
-	//cpi PrintState, 3
-
-	//cpi PrintState, 4
-
 
 	rjmp US_stop
 
 US_print_end:
+	cpi Char, '$'
+	breq US_clear
 	rcall PrintEndLine
-	//ldi Acc0, 0
 	rjmp US_stop
 
-
 US_print_start:
-	//ldi ZL, LOW(TimerStartNote*2)
-	//ldi ZH, HIGH(TimerStartNote*2)
-	//rcall PrintTimerStartNote
+	cpi Char, '$'
+	breq US_clear
+	rcall PrintTimerStartNote
+	rjmp US_stop
+
+US_clear:
+	ldi CharIndex, 0
+	ldi Char, 0
 	rjmp US_stop
 
 US_stop:
@@ -269,14 +284,13 @@ reti
 
 //Data
 StartNote:
-.DB "Key Values: 1 - start timer, 2 - stop timer and print data, 3 - clear data. Please, enter key: ", 0
-KeyInfoNote:
-.DB "You have entered key: ", 0
+.DB "=: $"
+//.DB "Key Values: 1 - start timer, 2 - stop timer and print data, 3 - clear data. Please, enter key: $"
 KeyErrorNote:
-.DB "Invalid key code. Valid keys: 1, 2, 3.", 0
+.DB "Invalid key code. Valid keys: 1, 2, 3.$"
 TimerResultNote:
-.DB "Timer stopped. Result: ", 0
+.DB "Timer stopped. Result: $"
 TimerStartNote:
-.DB "Timer started.", 0
+.DB "Timer started.$"
 LineEnd:
 .DB 0x0A, 0x0D, 0 // перенос строки и возврат каретки

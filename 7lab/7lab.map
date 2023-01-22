@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm Mon Jan 23 00:46:07 2023
+AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm Mon Jan 23 02:37:02 2023
 
 
 EQU  SIGNATURE_000 0000001e
@@ -600,33 +600,37 @@ EQU  AsciiCode    00000030
 EQU  numCode      00000031
 DEF  Acc0         r16
 DEF  Acc1         r17
-DEF  Acc2         r20
+DEF  LinePrint    r20
 DEF  Start        r18
 DEF  PrintState   r19
+DEF  CharIndex    r21
+DEF  Char         r22
 CSEG RESET        00000015
-CSEG TIM1_CAPT    00000057
-CSEG USART_RXC    00000064
-CSEG USART_TXC    0000007c
-CSEG StartNote    00000089
-CSEG PrintLine    00000043
-CSEG loop         00000037
-CSEG Delay        0000003c
-CSEG PrintUSART   0000003f
-CSEG LC_end       00000048
-CSEG PrintEndLine 00000049
-CSEG LineEnd      000000ed
-CSEG PEL_end      00000051
-CSEG PrintTimerStartNote 00000052
-CSEG TC1          0000005b
-CSEG UR_timer_start 00000071
-CSEG UR_timer_res 00000073
-CSEG UR_timer_clear 00000075
-CSEG UR_error     00000077
-CSEG UR_stop      00000079
-CSEG US_stop      00000088
-CSEG US_print_end 00000085
-CSEG US_print_start 00000087
-CSEG KeyInfoNote  000000b9
-CSEG KeyErrorNote 000000c5
-CSEG TimerResultNote 000000d9
-CSEG TimerStartNote 000000e5
+CSEG TIM1_CAPT    00000058
+CSEG USART_RXC    00000065
+CSEG USART_TXC    0000007e
+CSEG StartNote    00000093
+CSEG PrintLine    0000003e
+CSEG loop         00000039
+CSEG Delay        0000003a
+CSEG PrintUSART   0000003d
+CSEG LC_end       00000043
+CSEG PrintEndLine 00000046
+CSEG LineEnd      000000bd
+CSEG PEL_end      0000004e
+CSEG PrintTimerStartNote 0000004f
+CSEG TimerStartNote 000000b5
+CSEG PTSN_end     00000057
+CSEG TC1          0000005c
+CSEG UR_timer_start 00000072
+CSEG UR_timer_res 00000074
+CSEG UR_timer_clear 00000076
+CSEG UR_error     00000078
+CSEG UR_stop      0000007a
+CSEG US_stop      00000092
+CSEG US_print_end 00000087
+CSEG US_print     00000084
+CSEG US_print_start 0000008b
+CSEG US_clear     0000008f
+CSEG KeyErrorNote 00000095
+CSEG TimerResultNote 000000a9
