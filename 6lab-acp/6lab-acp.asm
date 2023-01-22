@@ -20,7 +20,7 @@
 .def Razr2 = R22 // десятки
 .def Razr3 = R23 // единицы
 .def Number = R25 // число символа
-.def NumDecCount = R24
+.def NumDecCount = R24 // количество десятков
 
 
 
@@ -112,10 +112,6 @@ RESET:
 	ldi Razr1, 0
 	ldi Razr2, 0
 	ldi Razr3, 0
-	ldi Acc0, AsciiCode
-	add Razr1, Acc0
-	add Razr2, Acc0
-	add Razr3, Acc0
 	ldi Number, 0
 	ldi NumDecCount, 0
 
@@ -157,13 +153,30 @@ PrintEndLine:
 GetRazr: // считаем десятки
 	add Acc1, Acc0
 	cp Acc1, Number
-	BRLO GR_continue // перейти, если меньше
-	rjmp GR_stop
+	brlo GR_continue // перейти, если меньше
+	rjmp GR_razr3
 
 GR_continue:
 	inc NumDecCount
 	rjmp GetRazr
-GR_stop:
+
+GR_razr2: // определить количество десятков
+	ldi Acc0, 10
+	mov Acc1, NumDecCount
+	mul  Acc1, Acc0
+	cpi Acc1, 100
+	brsh GR_razr1
+	mov Razr2, NumDecCount
+	ldi Acc0, AsciiCode
+	add Razr2, Acc0
+	add Razr1, Acc0
+	rjmp GR_stop
+
+
+GR_razr1: // определить количество сотен
+	
+
+GR_razr3: // определить количество единиц
 	sub Acc1, Number
 	ldi Acc0, 10
 	sub Acc0, Acc1
@@ -172,7 +185,11 @@ GR_stop:
 	ldi Acc0, AsciiCode
 	add Razr3, Acc0
 
+	cpi NumDecCount, 1 // десятки есть
+	brsh GR_razr2 // такое же либо больше
+	rjmp GR_stop
 
+GR_stop:
 	ret
 
 
@@ -192,6 +209,9 @@ ADC_CON:
 	ldi Acc0, 10 // для подсчета количества десятков
 	ldi Acc1, 0 // 1 для умножения
 
+	ldi NumDecCount, 0
+	ldi Razr1, 0
+	ldi Razr2, 0
 	ldi Razr3, 0
 
 	rcall GetRazr
