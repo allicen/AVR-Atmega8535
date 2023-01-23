@@ -37,7 +37,7 @@
 // Регистры для работы с памятью
 .def AccMem1 = R22
 .def AccMem2 = R23
-.def PrintMemData = R24 // 1 - печатать, 0 - не печатать
+.def PrintMemData = R24 // 1 - печатать, 0 - не печатать, 2 - начать чистить, 3 - запоминать данные
 .def PrevMemChar = R25
 
 
@@ -204,6 +204,7 @@ PrintTimerStartNote:
 	rjmp PTSN_stop
 PTSN_clear:
 	rcall ClearAndEndLine
+	ldi PrintMemData, 3
 PTSN_stop:
 ret
 
@@ -238,6 +239,7 @@ PrintTimerClearNote:
 	rjmp PTCN_stop
 PTCN_clear:
 	rcall ClearAndEndLine
+	ldi PrintMemData, 2
 PTCN_stop:
 ret
 
@@ -296,18 +298,22 @@ TIM1_CAPT:
 	in Acc0,SREG
 	push Acc0
 
-	TC1:
+	cpi PrintMemData, 3 // Сохранять данные только в режиме 1
+	breq TC_save
+	rjmp TC_stop
+
+TC_save:
 	in Acc0,UCSRA
 	sbrs Acc0, UDRE // пропустить следующую строку, если UDRE=1
-	rjmp TC1
+	rjmp TC_save
 	in Acc0, ICR1L
-	//out UDR, Acc0
 	
 	mov Char, Acc0
-
 	rcall EEPROM_write
 	inc AccMem1
+	rjmp TC_stop
 
+TC_stop:
 	pop Acc0
 	out SREG,Acc0
 	pop Acc1
@@ -337,6 +343,7 @@ USART_RXC: // прерывание при получении данных
 
 UR_timer_start:
 	ldi PrintState, 1
+	ldi PrintMemData, 3
 	rjmp UR_stop
 
 UR_timer_res:
@@ -350,11 +357,15 @@ UR_timer_clear:
 UR_error:
 	ldi PrintState, 4
 	rjmp UR_stop
+
+UR_clear_mem:
+	ldi PrintMemData, 0
 	
 UR_stop:
+	cpi PrintMemData, 1
+	breq UR_clear_mem
 	ldi CharIndex, 0 // Индекс символа в 0
 	ldi LinePrintState, 2 // символ введен - строка закончена
-	ldi PrintMemData, 0
 	out UDR, Char
 	sei
 reti
@@ -434,11 +445,14 @@ USPD_stop:
 	rjmp US_stop
 
 USPD_clear:
-	ldi PrintMemData, 0
 	ldi CharIndex, 0
 	rcall ClearAndEndLine
+	cpi PrintMemData, 1
+	breq US_clear_mem
 	rjmp US_stop
-
+US_clear_mem:
+	ldi PrintMemData, 0 // очищаем только при PrintMemData=1
+	rjmp US_stop
 US_print_clear:
 	rcall PrintTimerClearNote
 	rjmp US_stop
@@ -467,4 +481,4 @@ TimerStartNote:
 .DB "Timer started.$"
 
 TimerClearNote:
-.DB "Timer cleared.$"
+.DB "Data cleared.$"
