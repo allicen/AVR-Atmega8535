@@ -15,7 +15,6 @@
 //init registers
 .def Acc0 = R16
 .def Acc1 = R17
-.def LinePrint = R20 // печать данных
 .def Start = R18
 
 // Статус печати в USART
@@ -25,6 +24,13 @@
 // 3 - очистить данные
 // 4 - неверная команда (ошибка)
 .def PrintState = R19
+
+// Статус печати строки
+// 0 - ожидание ввода символа от пользователя
+// 1 - печать идет
+// 2 - строка закончена, печать переноса строки
+.def LinePrintState = R20
+
 .def CharIndex = R21 // индекс символа строки
 .def Char = R22 // печатный символ
 
@@ -96,11 +102,13 @@ ldi Start, 1 // Начало программы
 ldi PrintState, 0 // Статус печати в USART
 ldi CharIndex, 0 // Индекс символа строки
 ldi Char, 0
+ldi LinePrintState, 1 // При запуске программы печатаем строку
+
 
 // Печать инструкции
 ldi ZL, LOW(StartNote*2)
 ldi ZH, HIGH(StartNote*2)
-rcall PrintLine
+rcall PrintStartLine
 
 //Interrupt Enable
  sei
@@ -132,36 +140,46 @@ ret
 
 
 PrintUSART:
-	//sbis UCSRA, UDRE
-	//rjmp PrintUSART
-	//out UDR, Acc1
+	sbis UCSRA, UDRE
+	rjmp PrintUSART
+	out UDR, Char
 ret
 
 
-PrintLine:
-	lpm Acc1, Z+
-	cpi Acc1, '$' // проверка на 0
+PrintStartLine:
+	lpm Char, Z+
+	cpi Char, '$' // проверка на конец строки
 	breq LC_end
 	rcall PrintUSART
-	rjmp PrintLine
+	rjmp PrintStartLine
 LC_end:
-	ldi Acc0, 0
-	ldi Acc1, 0
+	ldi CharIndex, 0
+	ldi Char, 0
+	ldi LinePrintState, 0
 ret
 
 
 PrintEndLine:
-	ldi ZL, LOW(LineEnd*2)
-	ldi ZH, HIGH(LineEnd*2)
-	add ZL, CharIndex
-	lpm Char, Z
-	cpi Char, '$'
-	breq PEL_end
+	cpi LinePrintState, 2
+	brne PEL_stop
+	ldi Char, 0x0D
 	out UDR, Char
-	inc CharIndex
-PEL_end:
-	
+	ldi CharIndex, 0
+	ldi Char, 0
+	ldi LinePrintState, 0
+PEL_stop:
 ret
+
+
+ClearAndEndLine:
+	ldi LinePrintState, 2
+	rcall PrintEndLine
+	ldi CharIndex, 0
+	ldi Char, 0
+	ldi LinePrintState, 0
+	ldi PrintState, 0
+ret
+
 
 PrintTimerStartNote:
 	ldi ZL, LOW(TimerStartNote*2)
@@ -169,12 +187,61 @@ PrintTimerStartNote:
 	add ZL, CharIndex
 	lpm Char, Z
 	cpi Char, '$'
-	breq PTSN_end
+	breq PTSN_clear
 	out UDR, Char
 	inc CharIndex
-PTSN_end:
+	rjmp PTSN_stop
+PTSN_clear:
+	rcall ClearAndEndLine
+PTSN_stop:
 ret
 
+
+PrintTimerResultNote:
+	ldi ZL, LOW(TimerResultNote*2)
+	ldi ZH, HIGH(TimerResultNote*2)
+	add ZL, CharIndex
+	lpm Char, Z
+	cpi Char, '$'
+	breq PTRN_clear
+	out UDR, Char
+	inc CharIndex
+	rjmp PTRN_stop
+PTRN_clear:
+	rcall ClearAndEndLine
+PTRN_stop:
+ret
+
+
+PrintTimerClearNote:
+	ldi ZL, LOW(TimerClearNote*2)
+	ldi ZH, HIGH(TimerClearNote*2)
+	add ZL, CharIndex
+	lpm Char, Z
+	cpi Char, '$'
+	breq PTCN_clear
+	out UDR, Char
+	inc CharIndex
+	rjmp PTCN_stop
+PTCN_clear:
+	rcall ClearAndEndLine
+PTCN_stop:
+ret
+
+PrintKeyErrorNote:
+	ldi ZL, LOW(KeyErrorNote*2)
+	ldi ZH, HIGH(KeyErrorNote*2)
+	add ZL, CharIndex
+	lpm Char, Z
+	cpi Char, '$'
+	breq PKEN_clear
+	out UDR, Char
+	inc CharIndex
+	rjmp PKEN_stop
+PKEN_clear:
+	rcall ClearAndEndLine
+PKEN_stop:
+ret
 
 
 
@@ -237,8 +304,9 @@ UR_error:
 	rjmp UR_stop
 	
 UR_stop:
+	ldi CharIndex, 0 // Индекс символа в 0
+	ldi LinePrintState, 2 // символ введен - строка закончена
 	out UDR, Char
-	ldi CharIndex, 0
 	sei
 reti
 
@@ -248,49 +316,62 @@ USART_TXC: // передача выполнена
 	sbis UCSRA, UDRE
 	rjmp USART_TXC
 
-	cpi PrintState, 0
-	breq US_stop
-	
-	cpi Char, 0
-	brne US_print_end
+	cpi LinePrintState, 2
+	breq US_print_end
 
-US_print:
 	cpi PrintState, 1
 	breq US_print_start
+
+	cpi PrintState, 2
+	breq US_print_stop
+
+	cpi PrintState, 3
+	breq US_print_clear
+
+	cpi PrintState, 4
+	breq US_print_error
 
 	rjmp US_stop
 
 US_print_end:
-	cpi Char, '$'
-	breq US_clear
+	//cbi PORTB, LED
 	rcall PrintEndLine
 	rjmp US_stop
 
 US_print_start:
-	cpi Char, '$'
-	breq US_clear
 	rcall PrintTimerStartNote
 	rjmp US_stop
 
-US_clear:
-	ldi CharIndex, 0
-	ldi Char, 0
+US_print_stop:
+	rcall PrintTimerResultNote
+	rjmp US_stop
+
+US_print_clear:
+	rcall PrintTimerClearNote
+	rjmp US_stop
+
+US_print_error:
+	rcall PrintKeyErrorNote
 	rjmp US_stop
 
 US_stop:
+
 reti
 
 
 
 //Data
 StartNote:
-.DB "=: $"
-//.DB "Key Values: 1 - start timer, 2 - stop timer and print data, 3 - clear data. Please, enter key: $"
+.DB "Values: 1 - start timer, 2 - stop timer and print data, 3 - clear data. Enter key: $"
+
 KeyErrorNote:
-.DB "Invalid key code. Valid keys: 1, 2, 3.$"
+.DB "Invalid key code.$"
+
 TimerResultNote:
-.DB "Timer stopped. Result: $"
+.DB "Timer stopped.$"
+
 TimerStartNote:
 .DB "Timer started.$"
-LineEnd:
-.DB 0x0A, 0x0D, 0 // перенос строки и возврат каретки
+
+TimerClearNote:
+.DB "Timer cleared.$"
