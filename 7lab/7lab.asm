@@ -37,7 +37,7 @@
 // Регистры для работы с памятью
 .def AccMem1 = R22
 .def AccMem2 = R23
-.def AccMemChar = R24
+.def PrintMemData = R24 // 1 - печатать, 0 - не печатать
 
 
 //PROGRAMM
@@ -108,6 +108,7 @@ ldi PrintState, 0 // Статус печати в USART
 ldi CharIndex, 0 // Индекс символа строки
 ldi Char, 0
 ldi LinePrintState, 1 // При запуске программы печатаем строку
+ldi PrintMemData, 0
 
 ldi AccMem1, LOW(memAddr) //Адрес записи данных
 ldi AccMem2, HIGH(memAddr)
@@ -217,6 +218,8 @@ PrintTimerResultNote:
 	rjmp PTRN_stop
 PTRN_clear:
 	rcall ClearAndEndLine
+	ldi PrintMemData, 1
+	ldi CharIndex, 0
 PTRN_stop:
 ret
 
@@ -260,7 +263,7 @@ EEPROM_write:
 	out EEARH, AccMem2
 	out EEARL, AccMem1
 	; Write data (r16) to Data Register
-	out EEDR, AccMemChar
+	out EEDR, Char
 	; Write logical one to EEMWE
 	sbi EECR,EEMWE // установить в регистр ввода-вывода 1
 	; Start eeprom write by setting EEWE
@@ -278,7 +281,7 @@ EEPROM_read:
 	; Start eeprom read by writing EERE
 	sbi EECR,EERE
 	; Read data from Data Register
-	in AccMemChar,EEDR
+	in Char,EEDR
 ret
 
 
@@ -297,7 +300,7 @@ TIM1_CAPT:
 	in Acc0, ICR1L
 	//out UDR, Acc0
 	
-	mov AccMemChar, Acc0
+	mov Char, Acc0
 
 	rcall EEPROM_write
 	inc AccMem1
@@ -306,8 +309,6 @@ TIM1_CAPT:
 	out SREG,Acc0
 	pop Acc1
 	pop Acc0
-
-	rjmp TIM1_CAPT
 
 reti
 
@@ -350,6 +351,7 @@ UR_error:
 UR_stop:
 	ldi CharIndex, 0 // Индекс символа в 0
 	ldi LinePrintState, 2 // символ введен - строка закончена
+	ldi PrintMemData, 0
 	out UDR, Char
 	sei
 reti
@@ -375,6 +377,9 @@ USART_TXC: // передача выполнена
 	cpi PrintState, 4
 	breq US_print_error
 
+	cpi PrintMemData, 1
+	breq US_ps_data
+
 	rjmp US_stop
 
 US_print_end:
@@ -387,14 +392,40 @@ US_print_start:
 	rjmp US_stop
 
 US_print_stop:
-	//rcall PrintTimerResultNote
-US_ps_con:
+	rcall PrintTimerResultNote
+	rjmp US_stop
+
+US_ps_data:
+	cpi AccMem1, LOW(memAddr)
+	brlo USPD_stop
+
+	cpi CharIndex, 0
+	breq USPD_print
+	rcall PrintEndLine
+
+	SBRC CharIndex, 0 // пропустить, если бит 0 не установлен
+	ldi CharIndex, 0
+	
+	rjmp US_stop
+
+USPD_print:
 	rcall EEPROM_read
 	dec AccMem1
-	
-	cpi AccMem1, LOW(memAddr)
-	brsh US_ps_con
+	ldi Char, 0x45
+	out UDR, Char
+	ldi CharIndex, 1
+	ldi LinePrintState, 2 // конец строки
+	rjmp US_stop
 
+USPD_stop:
+	cpi PrintMemData, 1
+	breq USPD_clear
+	rjmp US_stop
+
+USPD_clear:
+	ldi PrintMemData, 0
+	ldi CharIndex, 0
+	rcall ClearAndEndLine
 	rjmp US_stop
 
 US_print_clear:
@@ -419,7 +450,7 @@ KeyErrorNote:
 .DB "Invalid key code.$"
 
 TimerResultNote:
-.DB "Timer stopped.$"
+.DB "Timer stopped. Saved data: $"
 
 TimerStartNote:
 .DB "Timer started.$"
