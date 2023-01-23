@@ -315,11 +315,11 @@ ret
 GetDigit:
 	cpi Char, 0xFF // пусто
 	breq GD_stop
-	cpi Char, 16
+	cpi Char, 0x10
 	brlo GD_stop
 
 
-	subi Char, 16
+	subi Char, 0x10
 	inc Acc1 // Acc1 десятки
 
 	rjmp GetDigit
@@ -478,6 +478,13 @@ USPD_get_digit:
 	cpi Char, 0xFF // последний пустой символ не выводить
 	breq US_stop
 	rcall GetDigit
+
+	cpi Acc1, 0x3A
+	brlo USPD_1
+	ldi Char, 0x7 // разница между буквами
+	add Acc1, Char
+
+USPD_1:
 	ldi Char, AsciiCode
 	add Acc1, Char
 	ldi Char, 0
@@ -487,11 +494,19 @@ USPD_get_digit:
 USPD_end_line:
 	ldi Char, AsciiCode
 	add Acc0, Char
+	cpi Acc0, 0x3A // если буквы
+	brlo USPD_0
+	ldi Char, 7 // разница между буквами
+	add Acc0, Char
+
+USPD_0:
 	out UDR, Acc0
 	ldi CharIndex, 1
 	ldi LinePrintState, 2 // конец строки
 	inc AccMem1
 	ldi Char, 1
+	ldi Acc0, 0
+	ldi Acc1, 0
 	rjmp US_stop
 
 USPD_stop:

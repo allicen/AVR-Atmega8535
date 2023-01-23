@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm Mon Jan 23 22:10:35 2023
+AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm Mon Jan 23 23:13:12 2023
 
 
 EQU  SIGNATURE_000 0000001e
@@ -613,7 +613,7 @@ CSEG RESET        00000015
 CSEG TIM1_CAPT    000000b5
 CSEG USART_RXC    000000c9
 CSEG USART_TXC    000000e9
-CSEG StartNote    0000012c
+CSEG StartNote    00000136
 CSEG PrintStartLine 00000047
 CSEG loop         0000003f
 CSEG Delay        00000040
@@ -623,19 +623,19 @@ CSEG PrintEndLine 00000050
 CSEG PEL_stop     00000057
 CSEG ClearAndEndLine 00000058
 CSEG PrintTimerStartNote 0000005e
-CSEG TimerStartNote 0000016d
+CSEG TimerStartNote 00000177
 CSEG PTSN_clear   00000067
 CSEG PTSN_stop    00000069
 CSEG PrintTimerResultNote 0000006a
-CSEG TimerResultNote 0000015f
+CSEG TimerResultNote 00000169
 CSEG PTRN_clear   00000073
 CSEG PTRN_stop    00000078
 CSEG PrintTimerClearNote 00000079
-CSEG TimerClearNote 00000175
+CSEG TimerClearNote 0000017f
 CSEG PTCN_clear   00000082
 CSEG PTCN_stop    00000083
 CSEG PrintKeyErrorNote 00000084
-CSEG KeyErrorNote 00000156
+CSEG KeyErrorNote 00000160
 CSEG PKEN_clear   0000008d
 CSEG PKEN_stop    0000008e
 CSEG EEPROM_write 0000008f
@@ -657,13 +657,15 @@ CSEG UR_clear_mem 000000e0
 CSEG US_print_end 000000f8
 CSEG US_print_start 000000fa
 CSEG US_print_stop 000000fc
-CSEG US_print_clear 00000127
-CSEG US_print_error 00000129
+CSEG US_print_clear 00000131
+CSEG US_print_error 00000133
 CSEG US_ps_data   000000ff
-CSEG US_stop      0000012b
+CSEG US_stop      00000135
 CSEG USPD_print   00000109
 CSEG USPD_get_digit 0000010c
-CSEG USPD_end_line 00000115
-CSEG USPD_stop    0000011d
-CSEG USPD_clear   00000120
-CSEG US_clear_mem 00000125
+CSEG USPD_end_line 00000119
+CSEG USPD_1       00000114
+CSEG USPD_0       0000011f
+CSEG USPD_stop    00000127
+CSEG USPD_clear   0000012a
+CSEG US_clear_mem 0000012f
