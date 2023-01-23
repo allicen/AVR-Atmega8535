@@ -11,11 +11,11 @@
 .equ BAUD = 8000000 / (16 * Bitrate) - 1 // 51! формула в даташите, 8000000 - тактовая частота 8МГц
 .equ AsciiCode = 48
 .equ numCode = 0x31 // код единицы
+.equ memAddr = 0x50
 
 //init registers
 .def Acc0 = R16
 .def Acc1 = R17
-.def Start = R18
 
 // Статус печати в USART
 // 0 - не печатать ничего
@@ -23,16 +23,22 @@
 // 2 - остановка таймера и печать результата
 // 3 - очистить данные
 // 4 - неверная команда (ошибка)
-.def PrintState = R19
+.def PrintState = R18
 
 // Статус печати строки
 // 0 - ожидание ввода символа от пользователя
 // 1 - печать идет
 // 2 - строка закончена, печать переноса строки
-.def LinePrintState = R20
+.def LinePrintState = R19
 
-.def CharIndex = R21 // индекс символа строки
-.def Char = R22 // печатный символ
+.def CharIndex = R20 // индекс символа строки
+.def Char = R21 // печатный символ
+
+// Регистры для работы с памятью
+.def AccMem1 = R22
+.def AccMem2 = R23
+.def AccMemChar = R24
+
 
 //PROGRAMM
 //interrupt vectors
@@ -98,11 +104,13 @@ out UCSRC,Acc0
 sbi DDRD, TX
 sbi DDRB, LED
 
-ldi Start, 1 // Начало программы
 ldi PrintState, 0 // Статус печати в USART
 ldi CharIndex, 0 // Индекс символа строки
 ldi Char, 0
 ldi LinePrintState, 1 // При запуске программы печатаем строку
+
+ldi AccMem1, LOW(memAddr) //Адрес записи данных
+ldi AccMem2, HIGH(memAddr)
 
 
 // Печать инструкции
@@ -244,6 +252,35 @@ PKEN_stop:
 ret
 
 
+EEPROM_write:
+	; Wait for completion of previous write
+	sbic EECR,EEWE // ждет окончания записи, анализ флага EEWE в регистре EECR
+	rjmp EEPROM_write
+	; Set up address (r18:r17) in address register
+	out EEARH, AccMem2
+	out EEARL, AccMem1
+	; Write data (r16) to Data Register
+	out EEDR, AccMemChar
+	; Write logical one to EEMWE
+	sbi EECR,EEMWE // установить в регистр ввода-вывода 1
+	; Start eeprom write by setting EEWE
+	sbi EECR,EEWE
+ret
+
+
+EEPROM_read:
+	; Wait for completion of previous write
+	sbic EECR,EEWE
+	rjmp EEPROM_read
+	; Set up address (r18:r17) in Address Register
+	out EEARH, AccMem2
+	out EEARL, AccMem1
+	; Start eeprom read by writing EERE
+	sbi EECR,EERE
+	; Read data from Data Register
+	in AccMemChar,EEDR
+ret
+
 
 //Inerrupt Routines
 
@@ -259,11 +296,18 @@ TIM1_CAPT:
 	rjmp TC1
 	in Acc0, ICR1L
 	//out UDR, Acc0
+	
+	mov AccMemChar, Acc0
+
+	rcall EEPROM_write
+	inc AccMem1
 
 	pop Acc0
 	out SREG,Acc0
 	pop Acc1
 	pop Acc0
+
+	rjmp TIM1_CAPT
 
 reti
 
@@ -343,7 +387,14 @@ US_print_start:
 	rjmp US_stop
 
 US_print_stop:
-	rcall PrintTimerResultNote
+	//rcall PrintTimerResultNote
+US_ps_con:
+	rcall EEPROM_read
+	dec AccMem1
+	
+	cpi AccMem1, LOW(memAddr)
+	brsh US_ps_con
+
 	rjmp US_stop
 
 US_print_clear:
