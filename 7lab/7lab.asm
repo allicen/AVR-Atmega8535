@@ -478,6 +478,8 @@ USPD_get_digit:
 	cpi Char, 0xFF // последний пустой символ не выводить
 	breq US_stop
 	rcall GetDigit
+	ldi Char, AsciiCode
+	add Acc1, Char
 
 	cpi Acc1, 0x3A
 	brlo USPD_1
@@ -485,8 +487,6 @@ USPD_get_digit:
 	add Acc1, Char
 
 USPD_1:
-	ldi Char, AsciiCode
-	add Acc1, Char
 	ldi Char, 0
 	out UDR, Acc1
 	rjmp US_stop
@@ -539,7 +539,7 @@ reti
 
 //Data
 StartNote:
-.DB "Values: 1 - start timer, 2 - stop timer and print data, 3 - clear data. Enter key: $"
+.DB "1 - start timer, 2 - stop timer and print data, 3 - clear data. Key: $"
 
 KeyErrorNote:
 .DB "Invalid key code.$"
