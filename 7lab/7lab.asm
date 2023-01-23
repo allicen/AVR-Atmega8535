@@ -11,7 +11,7 @@
 .equ BAUD = 8000000 / (16 * Bitrate) - 1 // 51! формула в даташите, 8000000 - тактова€ частота 8ћ√ц
 .equ AsciiCode = 48
 .equ numCode = 0x31 // код единицы
-.equ memAddr = 0x110
+.equ memAddr = 0x100
 
 //init registers
 .def Acc0 = R16
@@ -37,7 +37,7 @@
 // –егистры дл€ работы с пам€тью
 .def AccMem1 = R22
 .def AccMem2 = R23
-.def PrintMemData = R24 // 1 - печатать, 0 - не печатать, 2 - начать чистить, 3 - запоминать данные
+.def PrintMemData = R24 // 1 - печатать, 0 - не печатать, 3 - запоминать данные
 .def PrevMemChar = R25
 
 
@@ -239,7 +239,6 @@ PrintTimerClearNote:
 	rjmp PTCN_stop
 PTCN_clear:
 	rcall ClearAndEndLine
-	ldi PrintMemData, 2
 PTCN_stop:
 ret
 
@@ -287,6 +286,26 @@ EEPROM_read:
 	; Read data from Data Register
 	in Char,EEDR
 	mov PrevMemChar, Char
+ret
+
+
+DataClear:
+	cpi AccMem1, LOW(memAddr)
+	brne DC_index
+	rjmp DC_start
+DC_index:
+	ldi AccMem1, LOW(memAddr)
+	
+
+DC_start:
+	rcall EEPROM_read
+	cpi Char, 0xFF
+	breq DC_stop
+	ldi Char, 0xFF
+	rcall EEPROM_write
+	inc AccMem1
+	rjmp DC_start
+DC_stop:
 ret
 
 
@@ -352,6 +371,7 @@ UR_timer_res:
 
 UR_timer_clear:
 	ldi PrintState, 3
+	rcall DataClear
 	rjmp UR_stop
 
 UR_error:
@@ -366,6 +386,7 @@ UR_stop:
 	breq UR_clear_mem
 	ldi CharIndex, 0 // »ндекс символа в 0
 	ldi LinePrintState, 2 // символ введен - строка закончена
+	ldi AccMem1, LOW(memAddr)
 	out UDR, Char
 	sei
 reti
