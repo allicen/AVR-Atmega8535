@@ -12,6 +12,7 @@
 .equ AsciiCode = 48
 .equ numCode = 0x31 // код единицы
 .equ memAddr = 0x100
+.equ tact = 30
 
 //init registers
 .def Acc0 = R16
@@ -39,6 +40,8 @@
 .def AccMem2 = R23
 .def PrintMemData = R24 // 1 - печатать, 0 - не печатать, 3 - запоминать данные
 .def PrevMemChar = R25
+.def TactCount = R15 // Количество тактов
+.def DataMemSave = R14 // Была ли запись в серию тактов, 0 - не было, 1 - была
 
 
 //PROGRAMM
@@ -53,7 +56,7 @@ reti ; rjmp TIM2_OVF ;Timer2 Overflow Handler
 reti ; rjmp TIM1_COMPA ; Timer1 Compare A Handler
 reti ; rjmp TIM1_COMPB ; Timer1 Compare B Handler
 reti ; rjmp TIM1_OVF ; Timer1 Overflow Handler
-reti ; rjmp TIM0_OVF ; Timer0 Overflow Handler
+	rjmp TIM0_OVF ; Timer0 Overflow Handler
 reti ; rjmp SPI_STC ; SPI Transfer Complete Handler
 	rjmp USART_RXC ; USART RX Complete Handler
 reti ; rjmp USART_UDRE ; UDR Empty Handler
@@ -86,9 +89,13 @@ out ACSR, Acc0
 ldi Acc0, (0b00000<<MUX0) // нулевой канал
 out ADMUX, Acc0
 ldi Acc0, (0b001<<CS10)| (1<<ICES1) // ICES1 - нарастающий/спадающий фронт, CS10 - делитель частоты
-out TCCR1B, Acc0 // таймер
+out TCCR1B, Acc0 // таймер по захвату
+ldi Acc0, (1<<WGM01)|(0<<WGM00)|(0b101<<CS00)
+out TCCR0, Acc0 // таймер по переполнению
+ldi Acc0, 0xFF
+out OCR0, Acc0
 in Acc0, TIMSK
-ori Acc0, (1<<TICIE1)//| (1«OCIE1A)| (1«OCIE1B)| (1«TOIE1) // TICIE1 - прерывание по захвату
+ori Acc0, (1<<TICIE1) | (1<<TOIE0) // TICIE1 - прерывание по захвату
 out TIMSK, Acc0
 
 // Настройка usart
@@ -113,6 +120,7 @@ ldi PrintMemData, 0
 ldi PrevMemChar, 0
 ldi Acc0, 0
 ldi Acc1, 0
+mov TactCount, Acc0
 
 ldi AccMem1, LOW(memAddr) //Адрес записи данных
 ldi AccMem2, HIGH(memAddr)
@@ -129,28 +137,11 @@ rcall PrintStartLine
 //Main programm
 loop:
 
-/*
-//LED ON
-sbi PORTB, LED
-//DELAY
-rcall Delay
-//LED OFF
-cbi PORTB, LED
-//DELAY
-rcall Delay
-*/
-
 rjmp loop
 
 
 
 //SubProgramm
-Delay:
-nop
-nop
-
-ret
-
 
 PrintUSART:
 	sbis UCSRA, UDRE
@@ -346,11 +337,17 @@ TC_save:
 	in Acc0,UCSRA
 	sbrs Acc0, UDRE // пропустить следующую строку, если UDRE=1
 	rjmp TC_save
+
+	ldi Acc0, 1
+	cp DataMemSave, Acc0 // записиь была в эту сек
+	breq TC_stop
+
 	in Acc0, ICR1L
-	
 	mov Char, Acc0
 	rcall EEPROM_write
 	inc AccMem1
+	ldi Acc0, 1
+	mov DataMemSave, Acc0 // факт записи
 	rjmp TC_stop
 
 TC_stop:
@@ -369,6 +366,7 @@ USART_RXC: // прерывание при получении данных
 	
 	ldi Acc0, numCode
 	in Char, UDR
+	out UDR, Char
 	cp Char, Acc0 // 1 - запуск таймера
 	breq UR_timer_start
 	inc Acc0
@@ -408,7 +406,7 @@ UR_stop:
 	ldi CharIndex, 0 // Индекс символа в 0
 	ldi LinePrintState, 2 // символ введен - строка закончена
 	ldi AccMem1, LOW(memAddr)
-	out UDR, Char
+	//out UDR, Char
 	sei
 reti
 
@@ -537,18 +535,52 @@ reti
 
 
 
+
+
+TIM0_OVF:
+	push Acc0
+	push Acc1
+	in Acc0, SREG
+	push Acc0
+
+	ldi Acc0, tact // 8 МГц = 30 тактов в 1 сек
+	cp TactCount, Acc0
+	brne TO0_1
+	ldi Acc0, 0
+	mov TactCount, Acc0
+	mov DataMemSave, Acc0
+
+	sbis PORTB, LED
+	rjmp TO0_0
+	cbi PORTB, LED
+	rjmp TO0_1
+
+TO0_0:
+	sbi PORTB, LED 
+	
+TO0_1:
+	inc TactCount
+	pop Acc0
+	out SREG, Acc0
+	pop Acc1
+	pop Acc0
+
+reti
+
+
+
 //Data
 StartNote:
-.DB "1 - start timer, 2 - stop timer and print data, 3 - clear data. Key: $"
+.DB "Start - 1, Stop - 2, Clear - 3. Key: $"
 
 KeyErrorNote:
 .DB "Invalid key code.$"
 
 TimerResultNote:
-.DB "Timer stopped. Saved data: $"
+.DB "Stop. Data: $"
 
 TimerStartNote:
-.DB "Timer started.$"
+.DB "Start.$"
 
 TimerClearNote:
-.DB "Data cleared.$"
+.DB "Clear.$"
