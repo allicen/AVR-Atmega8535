@@ -136,12 +136,16 @@ rcall PrintStartLine
 
 //Main programm
 loop:
-
 rjmp loop
 
 
-
 //SubProgramm
+
+//////////////////////////////////
+//                              // 
+//        Печать в USART        //
+//                              //
+//////////////////////////////////
 
 PrintUSART:
 	sbis UCSRA, UDRE
@@ -252,6 +256,14 @@ PKEN_stop:
 ret
 
 
+
+//////////////////////////////////
+//                              // 
+//   Чтение и запись  EEPROM    //
+//                              //
+//////////////////////////////////
+
+
 EEPROM_write:
 	; Wait for completion of previous write
 	sbic EECR,EEWE // ждет окончания записи, анализ флага EEWE в регистре EECR
@@ -283,6 +295,13 @@ EEPROM_read:
 ret
 
 
+
+//////////////////////////////////
+//                              // 
+//      Очистить данные         //
+//                              //
+//////////////////////////////////
+
 DataClear:
 	cpi AccMem1, LOW(memAddr)
 	brne DC_index
@@ -302,6 +321,13 @@ DC_start:
 DC_stop:
 ret
 
+
+
+//////////////////////////////////
+//                              // 
+//   Получение разрядов числа   //
+//                              //
+//////////////////////////////////
 
 GetDigit:
 	cpi Char, 0xFF // пусто
@@ -323,25 +349,27 @@ ret
 
 //Inerrupt Routines
 
+//////////////////////////////////
+//                              // 
+//      Таймер по захвату       //
+//                              //
+//////////////////////////////////
+
 TIM1_CAPT:
 	push Acc0
 	push Acc1
 	in Acc0,SREG
 	push Acc0
-
 	cpi PrintMemData, 3 // Сохранять данные только в режиме 1
 	breq TC_save
 	rjmp TC_stop
-
 TC_save:
 	in Acc0,UCSRA
 	sbrs Acc0, UDRE // пропустить следующую строку, если UDRE=1
 	rjmp TC_save
-
 	ldi Acc0, 1
 	cp DataMemSave, Acc0 // записиь была в эту сек
 	breq TC_stop
-
 	in Acc0, ICR1L
 	mov Char, Acc0
 	rcall EEPROM_write
@@ -349,16 +377,20 @@ TC_save:
 	ldi Acc0, 1
 	mov DataMemSave, Acc0 // факт записи
 	rjmp TC_stop
-
 TC_stop:
 	pop Acc0
 	out SREG,Acc0
 	pop Acc1
 	pop Acc0
-
 reti
 
 
+
+//////////////////////////////////
+//                              // 
+// Получение данных из в USART  //
+//                              //
+//////////////////////////////////
 
 USART_RXC: // прерывание при получении данных
 	sbis UCSRA, RXC // RXC - бит входа в прерывание по USART
@@ -375,31 +407,23 @@ USART_RXC: // прерывание при получении данных
 	inc Acc0
 	cp Char, Acc0 // 3 - очистить таймер
 	breq UR_timer_clear
-
 	rjmp UR_error
-
-
 UR_timer_start:
 	ldi PrintState, 1
 	ldi PrintMemData, 3
 	rjmp UR_stop
-
 UR_timer_res:
 	ldi PrintState, 2
 	rjmp UR_stop
-
 UR_timer_clear:
 	ldi PrintState, 3
 	rcall DataClear
 	rjmp UR_stop
-
 UR_error:
 	ldi PrintState, 4
 	rjmp UR_stop
-
 UR_clear_mem:
 	ldi PrintMemData, 0
-	
 UR_stop:
 	cpi PrintMemData, 1
 	breq UR_clear_mem
@@ -411,6 +435,12 @@ UR_stop:
 reti
 
 
+
+////////////////////////////////
+//                            // 
+//      Печать в USART        //
+//                            //
+////////////////////////////////
 
 USART_TXC: // передача выполнена
 	sbis UCSRA, UDRE
@@ -437,7 +467,6 @@ USART_TXC: // передача выполнена
 	rjmp US_stop
 
 US_print_end:
-	//cbi PORTB, LED
 	rcall PrintEndLine
 	rjmp US_stop
 
@@ -453,24 +482,18 @@ US_print_stop:
 US_ps_data:
 	cpi AccMem1, LOW(memAddr)
 	breq USPD_print
-
 	cpi PrevMemChar, 0xFF
 	breq US_stop
-
 	cpi CharIndex, 0
 	breq USPD_print
 	rcall PrintEndLine
-
 	sbrc CharIndex, 0 // пропустить, если бит 0 не установлен
 	ldi CharIndex, 0
-	
 	rjmp US_stop
-
 USPD_print:
 	cpi Char, 0
 	brne USPD_get_digit
 	rjmp USPD_end_line
-	
 USPD_get_digit:
 	rcall EEPROM_read
 	cpi Char, 0xFF // последний пустой символ не выводить
@@ -478,17 +501,14 @@ USPD_get_digit:
 	rcall GetDigit
 	ldi Char, AsciiCode
 	add Acc1, Char
-
 	cpi Acc1, 0x3A
 	brlo USPD_1
 	ldi Char, 0x7 // разница между буквами
 	add Acc1, Char
-
 USPD_1:
 	ldi Char, 0
 	out UDR, Acc1
 	rjmp US_stop
-
 USPD_end_line:
 	ldi Char, AsciiCode
 	add Acc0, Char
@@ -496,7 +516,6 @@ USPD_end_line:
 	brlo USPD_0
 	ldi Char, 7 // разница между буквами
 	add Acc0, Char
-
 USPD_0:
 	out UDR, Acc0
 	ldi CharIndex, 1
@@ -506,21 +525,21 @@ USPD_0:
 	ldi Acc0, 0
 	ldi Acc1, 0
 	rjmp US_stop
-
 USPD_stop:
 	cpi PrintMemData, 1
 	breq USPD_clear
 	rjmp US_stop
-
 USPD_clear:
 	ldi CharIndex, 0
 	rcall ClearAndEndLine
 	cpi PrintMemData, 1
 	breq US_clear_mem
 	rjmp US_stop
+
 US_clear_mem:
 	ldi PrintMemData, 0 // очищаем только при PrintMemData=1
 	rjmp US_stop
+
 US_print_clear:
 	rcall PrintTimerClearNote
 	rjmp US_stop
@@ -530,41 +549,39 @@ US_print_error:
 	rjmp US_stop
 
 US_stop:
-
 reti
 
 
 
-
+////////////////////////////////
+//                            // 
+//   Таймер по переполнению   //
+//                            //
+////////////////////////////////
 
 TIM0_OVF:
 	push Acc0
 	push Acc1
 	in Acc0, SREG
 	push Acc0
-
 	ldi Acc0, tact // 8 МГц = 30 тактов в 1 сек
 	cp TactCount, Acc0
 	brne TO0_1
 	ldi Acc0, 0
 	mov TactCount, Acc0
 	mov DataMemSave, Acc0
-
 	sbis PORTB, LED
 	rjmp TO0_0
 	cbi PORTB, LED
 	rjmp TO0_1
-
 TO0_0:
 	sbi PORTB, LED 
-	
 TO0_1:
 	inc TactCount
 	pop Acc0
 	out SREG, Acc0
 	pop Acc1
 	pop Acc0
-
 reti
 
 
