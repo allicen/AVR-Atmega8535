@@ -107,10 +107,12 @@ sbi DDRB, LED
 
 ldi PrintState, 0 // Статус печати в USART
 ldi CharIndex, 0 // Индекс символа строки
-ldi Char, 0
+ldi Char, 1
 ldi LinePrintState, 1 // При запуске программы печатаем строку
 ldi PrintMemData, 0
 ldi PrevMemChar, 0
+ldi Acc0, 0
+ldi Acc1, 0
 
 ldi AccMem1, LOW(memAddr) //Адрес записи данных
 ldi AccMem2, HIGH(memAddr)
@@ -165,7 +167,7 @@ PrintStartLine:
 	rjmp PrintStartLine
 LC_end:
 	ldi CharIndex, 0
-	ldi Char, 0
+	ldi Char, 1
 	ldi LinePrintState, 0
 ret
 
@@ -176,7 +178,7 @@ PrintEndLine:
 	ldi Char, 0x0D
 	out UDR, Char
 	ldi CharIndex, 0
-	ldi Char, 0
+	ldi Char, 1
 	ldi LinePrintState, 0
 PEL_stop:
 ret
@@ -186,7 +188,6 @@ ClearAndEndLine:
 	ldi LinePrintState, 2
 	rcall PrintEndLine
 	ldi CharIndex, 0
-	ldi Char, 0
 	ldi LinePrintState, 0
 	ldi PrintState, 0
 ret
@@ -223,6 +224,8 @@ PTRN_clear:
 	rcall ClearAndEndLine
 	ldi PrintMemData, 1
 	ldi CharIndex, 0
+	ldi Acc0, 0 // для записи разрядов
+	ldi Acc1, 0
 PTRN_stop:
 ret
 
@@ -306,6 +309,24 @@ DC_start:
 	inc AccMem1
 	rjmp DC_start
 DC_stop:
+ret
+
+
+GetDigit:
+	cpi Char, 0xFF // пусто
+	breq GD_stop
+	cpi Char, 16
+	brlo GD_stop
+
+
+	subi Char, 16
+	inc Acc1 // Acc1 десятки
+
+	rjmp GetDigit
+
+GD_stop:
+	mov Acc0, Char // Acc0 единицы
+	ldi Char, 0
 ret
 
 
@@ -448,16 +469,29 @@ US_ps_data:
 	rjmp US_stop
 
 USPD_print:
+	cpi Char, 0
+	brne USPD_get_digit
+	rjmp USPD_end_line
+	
+USPD_get_digit:
 	rcall EEPROM_read
 	cpi Char, 0xFF // последний пустой символ не выводить
 	breq US_stop
+	rcall GetDigit
+	ldi Char, AsciiCode
+	add Acc1, Char
+	ldi Char, 0
+	out UDR, Acc1
+	rjmp US_stop
 
-	ldi Acc0, 0 //AsciiCode
-	add Char, Acc0
-	out UDR, Char
+USPD_end_line:
+	ldi Char, AsciiCode
+	add Acc0, Char
+	out UDR, Acc0
 	ldi CharIndex, 1
 	ldi LinePrintState, 2 // конец строки
 	inc AccMem1
+	ldi Char, 1
 	rjmp US_stop
 
 USPD_stop:
