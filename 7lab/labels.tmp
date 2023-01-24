@@ -21,10 +21,10 @@
  <LABELS>
   <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>72</LINE></RESET>
   <TIM1_CAPT><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>352</LINE></TIM1_CAPT>
-  <TIM0_OVF><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>577</LINE></TIM0_OVF>
-  <USART_RXC><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>395</LINE></USART_RXC>
-  <USART_TXC><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>451</LINE></USART_TXC>
-  <StartNote><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>605</LINE></StartNote>
+  <TIM0_OVF><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>552</LINE></TIM0_OVF>
+  <USART_RXC><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>388</LINE></USART_RXC>
+  <USART_TXC><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>436</LINE></USART_TXC>
+  <StartNote><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>582</LINE></StartNote>
   <PrintStartLine><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>157</LINE></PrintStartLine>
   <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>138</LINE></loop>
   <PrintUSART><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>150</LINE></PrintUSART>
@@ -33,19 +33,19 @@
   <PEL_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>178</LINE></PEL_stop>
   <ClearAndEndLine><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>182</LINE></ClearAndEndLine>
   <PrintTimerStartNote><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>191</LINE></PrintTimerStartNote>
-  <TimerStartNote><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>614</LINE></TimerStartNote>
+  <TimerStartNote><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>591</LINE></TimerStartNote>
   <PTSN_clear><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>201</LINE></PTSN_clear>
   <PTSN_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>204</LINE></PTSN_stop>
   <PrintTimerResultNote><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>208</LINE></PrintTimerResultNote>
-  <TimerResultNote><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>611</LINE></TimerResultNote>
+  <TimerResultNote><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>588</LINE></TimerResultNote>
   <PTRN_clear><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>218</LINE></PTRN_clear>
   <PTRN_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>224</LINE></PTRN_stop>
   <PrintTimerClearNote><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>228</LINE></PrintTimerClearNote>
-  <TimerClearNote><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>617</LINE></TimerClearNote>
+  <TimerClearNote><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>594</LINE></TimerClearNote>
   <PTCN_clear><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>238</LINE></PTCN_clear>
   <PTCN_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>240</LINE></PTCN_stop>
   <PrintKeyErrorNote><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>243</LINE></PrintKeyErrorNote>
-  <KeyErrorNote><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>608</LINE></KeyErrorNote>
+  <KeyErrorNote><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>585</LINE></KeyErrorNote>
   <PKEN_clear><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>253</LINE></PKEN_clear>
   <PKEN_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>255</LINE></PKEN_stop>
   <EEPROM_write><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>267</LINE></EEPROM_write>
@@ -56,30 +56,29 @@
   <DC_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>319</LINE></DC_stop>
   <GetDigit><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>330</LINE></GetDigit>
   <GD_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>338</LINE></GD_stop>
-  <TC_save><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>360</LINE></TC_save>
-  <TC_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>380</LINE></TC_stop>
-  <UR_timer_start><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>415</LINE></UR_timer_start>
-  <UR_timer_res><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>419</LINE></UR_timer_res>
-  <UR_timer_clear><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>422</LINE></UR_timer_clear>
-  <UR_error><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>426</LINE></UR_error>
-  <UR_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>431</LINE></UR_stop>
-  <UR_clear_mem><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>429</LINE></UR_clear_mem>
-  <US_print_end><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>480</LINE></US_print_end>
-  <US_print_start><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>484</LINE></US_print_start>
-  <US_print_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>488</LINE></US_print_stop>
-  <US_print_clear><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>554</LINE></US_print_clear>
-  <US_print_error><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>558</LINE></US_print_error>
-  <US_ps_data><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>493</LINE></US_ps_data>
-  <US_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>562</LINE></US_stop>
-  <USPD_print><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>504</LINE></USPD_print>
-  <USPD_get_digit><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>508</LINE></USPD_get_digit>
-  <USPD_end_line><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>523</LINE></USPD_end_line>
-  <USPD_1><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>519</LINE></USPD_1>
-  <USPD_0><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>530</LINE></USPD_0>
-  <USPD_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>539</LINE></USPD_stop>
-  <USPD_clear><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>543</LINE></USPD_clear>
-  <US_clear_mem><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>550</LINE></US_clear_mem>
-  <TO0_1><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>594</LINE></TO0_1>
-  <TO0_0><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>592</LINE></TO0_0>
+  <TC_save><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>362</LINE></TC_save>
+  <TC_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>372</LINE></TC_stop>
+  <UR_timer_start><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>404</LINE></UR_timer_start>
+  <UR_timer_res><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>408</LINE></UR_timer_res>
+  <UR_timer_clear><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>411</LINE></UR_timer_clear>
+  <UR_error><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>415</LINE></UR_error>
+  <UR_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>420</LINE></UR_stop>
+  <UR_clear_mem><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>418</LINE></UR_clear_mem>
+  <US_print_end><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>460</LINE></US_print_end>
+  <US_print_start><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>464</LINE></US_print_start>
+  <US_print_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>468</LINE></US_print_stop>
+  <US_print_clear><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>534</LINE></US_print_clear>
+  <US_print_error><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>538</LINE></US_print_error>
+  <US_ps_data><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>473</LINE></US_ps_data>
+  <US_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>542</LINE></US_stop>
+  <USPD_print><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>484</LINE></USPD_print>
+  <USPD_get_digit><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>488</LINE></USPD_get_digit>
+  <USPD_end_line><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>503</LINE></USPD_end_line>
+  <USPD_1><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>499</LINE></USPD_1>
+  <USPD_0><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>510</LINE></USPD_0>
+  <USPD_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>519</LINE></USPD_stop>
+  <USPD_clear><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>523</LINE></USPD_clear>
+  <US_clear_mem><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>530</LINE></US_clear_mem>
+  <TO0_1><FILE>C:\helen\Assembler\AVR-Atmega8535\7lab\7lab.asm</FILE><LINE>572</LINE></TO0_1>
  </LABELS>
 </ASSEMBLER_INFO>

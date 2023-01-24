@@ -354,34 +354,27 @@ TIM1_CAPT:
 	push Acc1
 	in Acc0,SREG
 	push Acc0
+
 	cpi PrintMemData, 3 // Сохранять данные только в режиме 1
 	breq TC_save
 	rjmp TC_stop
+
 TC_save:
 	in Acc0,UCSRA
 	sbrs Acc0, UDRE // пропустить следующую строку, если UDRE=1
 	rjmp TC_save
-	ldi Acc1, 1
-	cp DataMemSave, Acc1 // записиь была в эту сек
-	breq TC_stop
 	in Acc0, ICR1L
-	mov Char, Acc1
-	
-	cpi Char, 0x1A // Некорректные значения
-	breq TC_stop
-	cpi Char, 0x1B
-	breq TC_stop
-
+	mov Char, Acc0
 	rcall EEPROM_write
 	inc AccMem1
-	ldi Acc1, 1
-	mov DataMemSave, Acc1 // факт записи
 	rjmp TC_stop
+
 TC_stop:
 	pop Acc0
 	out SREG,Acc0
 	pop Acc1
 	pop Acc0
+
 reti
 
 
@@ -393,10 +386,6 @@ reti
 //////////////////////////////////
 
 USART_RXC: // прерывание при получении данных
-	push Acc0
-	push Acc1
-	in Acc0, SREG
-	push Acc0
 	sbis UCSRA, RXC // RXC - бит входа в прерывание по USART
 	rjmp USART_RXC
 	
@@ -434,10 +423,6 @@ UR_stop:
 	ldi CharIndex, 0 // Индекс символа в 0
 	ldi LinePrintState, 2 // символ введен - строка закончена
 	ldi AccMem1, LOW(memAddr)
-	pop Acc0
-	out SREG,Acc0
-	pop Acc1
-	pop Acc0
 reti
 
 
@@ -449,11 +434,6 @@ reti
 ////////////////////////////////
 
 USART_TXC: // передача выполнена
-	push Acc0
-	push Acc1
-	in Acc0, SREG
-	push Acc0
-
 	sbis UCSRA, UDRE
 	rjmp USART_TXC
 
@@ -560,12 +540,7 @@ US_print_error:
 	rjmp US_stop
 
 US_stop:
-	pop Acc0
-	out SREG,Acc0
-	pop Acc1
-	pop Acc0
 reti
-
 
 
 ////////////////////////////////
@@ -579,6 +554,8 @@ TIM0_OVF:
 	push Acc1
 	in Acc0, SREG
 	push Acc0
+	/*
+	inc TactCount
 	ldi Acc0, tact // 8 МГц = 30 тактов в 1 сек
 	cp TactCount, Acc0
 	brne TO0_1
@@ -590,9 +567,9 @@ TIM0_OVF:
 	cbi PORTB, LED
 	rjmp TO0_1
 TO0_0:
-	sbi PORTB, LED 
+	sbi PORTB, LED
+	*/
 TO0_1:
-	inc TactCount
 	pop Acc0
 	out SREG, Acc0
 	pop Acc1
