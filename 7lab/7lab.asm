@@ -352,6 +352,7 @@ ret
 TIM1_CAPT:
 	push Acc0
 	push Acc1
+	push Char
 	in Acc0,SREG
 	push Acc0
 
@@ -363,6 +364,11 @@ TC_save:
 	in Acc0,UCSRA
 	sbrs Acc0, UDRE // пропустить следующую строку, если UDRE=1
 	rjmp TC_save
+
+	ldi Acc0, 1
+	cp DataMemSave, Acc0
+	breq TC_stop
+
 	in Acc0, ICR1L
 	mov Char, Acc0
 	rcall EEPROM_write
@@ -372,6 +378,7 @@ TC_save:
 TC_stop:
 	pop Acc0
 	out SREG,Acc0
+	pop Char
 	pop Acc1
 	pop Acc0
 
@@ -554,9 +561,7 @@ TIM0_OVF:
 	push Acc1
 	in Acc0, SREG
 	push Acc0
-	/*
-	inc TactCount
-	ldi Acc0, tact // 8 ћ√ц = 30 тактов в 1 сек
+	ldi Acc0, 30 // 8 ћ√ц = 30 тактов в 1 сек
 	cp TactCount, Acc0
 	brne TO0_1
 	ldi Acc0, 0
@@ -567,9 +572,9 @@ TIM0_OVF:
 	cbi PORTB, LED
 	rjmp TO0_1
 TO0_0:
-	sbi PORTB, LED
-	*/
+	sbi PORTB, LED 
 TO0_1:
+	inc TactCount
 	pop Acc0
 	out SREG, Acc0
 	pop Acc1
