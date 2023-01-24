@@ -308,8 +308,6 @@ DataClear:
 	rjmp DC_start
 DC_index:
 	ldi AccMem1, LOW(memAddr)
-	
-
 DC_start:
 	rcall EEPROM_read
 	cpi Char, 0xFF
@@ -334,13 +332,9 @@ GetDigit:
 	breq GD_stop
 	cpi Char, 0x10
 	brlo GD_stop
-
-
 	subi Char, 0x10
 	inc Acc1 // Acc1 десятки
-
 	rjmp GetDigit
-
 GD_stop:
 	mov Acc0, Char // Acc0 единицы
 	ldi Char, 0
@@ -367,15 +361,21 @@ TC_save:
 	in Acc0,UCSRA
 	sbrs Acc0, UDRE // пропустить следующую строку, если UDRE=1
 	rjmp TC_save
-	ldi Acc0, 1
-	cp DataMemSave, Acc0 // записиь была в эту сек
+	ldi Acc1, 1
+	cp DataMemSave, Acc1 // записиь была в эту сек
 	breq TC_stop
 	in Acc0, ICR1L
-	mov Char, Acc0
+	mov Char, Acc1
+	
+	cpi Char, 0x1A // Некорректные значения
+	breq TC_stop
+	cpi Char, 0x1B
+	breq TC_stop
+
 	rcall EEPROM_write
 	inc AccMem1
-	ldi Acc0, 1
-	mov DataMemSave, Acc0 // факт записи
+	ldi Acc1, 1
+	mov DataMemSave, Acc1 // факт записи
 	rjmp TC_stop
 TC_stop:
 	pop Acc0
@@ -393,6 +393,10 @@ reti
 //////////////////////////////////
 
 USART_RXC: // прерывание при получении данных
+	push Acc0
+	push Acc1
+	in Acc0, SREG
+	push Acc0
 	sbis UCSRA, RXC // RXC - бит входа в прерывание по USART
 	rjmp USART_RXC
 	
@@ -430,8 +434,10 @@ UR_stop:
 	ldi CharIndex, 0 // Индекс символа в 0
 	ldi LinePrintState, 2 // символ введен - строка закончена
 	ldi AccMem1, LOW(memAddr)
-	//out UDR, Char
-	sei
+	pop Acc0
+	out SREG,Acc0
+	pop Acc1
+	pop Acc0
 reti
 
 
@@ -443,6 +449,11 @@ reti
 ////////////////////////////////
 
 USART_TXC: // передача выполнена
+	push Acc0
+	push Acc1
+	in Acc0, SREG
+	push Acc0
+
 	sbis UCSRA, UDRE
 	rjmp USART_TXC
 
@@ -549,6 +560,10 @@ US_print_error:
 	rjmp US_stop
 
 US_stop:
+	pop Acc0
+	out SREG,Acc0
+	pop Acc1
+	pop Acc0
 reti
 
 
