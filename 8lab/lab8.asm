@@ -70,11 +70,6 @@ sbi PORTB, 6 // На MISO подключаем подтягивающий резистор
 ldi Acc0, 0b11010001 //(1<<SPIE)|(1<<SPE)|(0<<DORD)|(1<<DORD)|(1<<MSTR)|(0<<CPOL)|(0<<CPHA)|(0b00<<SPR0) // Разрешить прерывания и протокол;
 out SPCR, Acc0 // MSTR = 1 говорит что мы руководим посылкой, SPR = 01 предделитель SPI
 
-ldi Acc0, (1<<SPI2X)
-out SPSR, Acc0
-ldi Acc0, 0
-out SPDR, Acc0
-
 
 // Разрешить прерывания
 sei
