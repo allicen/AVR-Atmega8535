@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm Fri Jan 27 00:07:08 2023
+AVRASM ver. 2.1.42  C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm Fri Jan 27 02:29:21 2023
 
 
 EQU  SIGNATURE_000 0000001e
@@ -600,13 +600,22 @@ EQU  MOSI         00000005
 EQU  MISO         00000006
 EQU  SCK          00000007
 DEF  Acc0         r16
-DEF  Acc1         r17
-DEF  Second       r18
-DEF  min          r19
-DEF  SPIacc       r20
+DEF  Acc1         r20
+DEF  Acc2         r21
+DEF  delay1       r17
+DEF  delay2       r18
+DEF  delay3       r19
+DEF  count        r22
 CSEG RESET        00000015
-CSEG SPI_STC      00000023
-CSEG loop         00000022
-CSEG ledON        00000028
-CSEG ledOFF       00000026
-CSEG END          00000029
+CSEG SPI_STC      00000035
+CSEG loop         00000024
+CSEG delay        00000062
+CSEG WriteSPI     0000003c
+CSEG ReadSPI      00000050
+CSEG SS_stop      0000003b
+CSEG WriteSPIWR   00000046
+CSEG WriteSPIADR  0000004b
+CSEG STOP         0000004e
+CSEG ReadSPIADR   0000005c
+CSEG ReadSPI2     0000005f
+CSEG PDelay       00000065
