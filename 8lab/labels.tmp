@@ -21,17 +21,17 @@
  <LABELS>
   <MEMO><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>7</LINE></MEMO>
   <RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>55</LINE></RESET>
-  <SPI_STC><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>105</LINE></SPI_STC>
-  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>82</LINE></loop>
-  <delay><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>178</LINE></delay>
-  <WriteSPI><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>118</LINE></WriteSPI>
-  <ReadSPI><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>151</LINE></ReadSPI>
-  <SS_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>113</LINE></SS_stop>
-  <WriteSPIWR><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>131</LINE></WriteSPIWR>
-  <WriteSPIADR><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>139</LINE></WriteSPIADR>
-  <STOP><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>145</LINE></STOP>
-  <ReadSPIADR><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>166</LINE></ReadSPIADR>
-  <ReadSPI2><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>172</LINE></ReadSPI2>
-  <PDelay><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>183</LINE></PDelay>
+  <SPI_STC><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>103</LINE></SPI_STC>
+  <loop><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>80</LINE></loop>
+  <delay><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>180</LINE></delay>
+  <SS_WriteSPI><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>115</LINE></SS_WriteSPI>
+  <SS_ReadSPI><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>150</LINE></SS_ReadSPI>
+  <SS_stop><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>176</LINE></SS_stop>
+  <SS_WriteSPIWR><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>130</LINE></SS_WriteSPIWR>
+  <SS_WriteSPIADR><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>138</LINE></SS_WriteSPIADR>
+  <SS_RESET><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>144</LINE></SS_RESET>
+  <SS_ReadSPIADR><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>165</LINE></SS_ReadSPIADR>
+  <SS_ReadSPI2><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>171</LINE></SS_ReadSPI2>
+  <PDelay><FILE>C:\helen\Assembler\AVR-Atmega8535\8lab\lab8.asm</FILE><LINE>185</LINE></PDelay>
  </LABELS>
 </ASSEMBLER_INFO>

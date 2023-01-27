@@ -1,11 +1,11 @@
-// SPI
+// Serial Peripheral Interface – SPI
 
 //include init file
 .include "m8535def.inc"
 
-.dseg
+.dseg // абсолютный сегмент в области внутренней памяти данных
 MEMO:
-.byte 7
+.byte 8 // резерв 8 байт оперативной памяти
 
 //init constant
 .equ max_sec = 60
@@ -28,7 +28,7 @@ MEMO:
 
 //PROGRAMM
 //interrupt vectors
-.cseg
+.cseg // абсолютный сегмент в области памяти программ
 .org 0x0
 rjmp RESET ; Reset Handler
 reti ;rjmp EXT_INT0 ; IRQ0 Handler
@@ -64,35 +64,38 @@ out SPL, Acc0
 
 ldi Acc0, (1<<SS)|(1<<MOSI)|(0<<MISO)|(1<<SCK) // 0 - вход, 1 - выход
 out DDRB, Acc0
-sbi PORTB, 4 // Вывод SS на +5
-sbi PORTB, 6 // На MISO подключаем подтягивающий резистор 
+sbi PORTB, 4 // Вывод SS на +5 (микросхема в режиме ожижания, работать начинаем, когда притянули к 0)
+sbi PORTB, 6
 
-ldi Acc0, 0b11010001 //(1<<SPIE)|(1<<SPE)|(0<<DORD)|(1<<DORD)|(1<<MSTR)|(0<<CPOL)|(0<<CPHA)|(0b00<<SPR0) // Разрешить прерывания и протокол;
+ldi Acc0, (1<<SPIE)|(1<<SPE)|(0<<DORD)|(1<<MSTR)|(0<<CPOL)|(0<<CPHA)|(0<<SPR1)|(1<<SPR0) // Разрешить прерывания и протокол;
 out SPCR, Acc0 // MSTR = 1 говорит что мы руководим посылкой, SPR = 01 предделитель SPI
 
 
 // Разрешить прерывания
 sei
 
+// генерируем в процессоре числа
+// отправляем через spi на микросхему
+// считываем обратно в оперативную память через spi
 loop:
-	// Свперва запишем набор данных во внешнюю микросхему. Операция записи 
-	ldi Acc1, 0 // sys = 0 это счетчик для прерывания
-	ldi Acc2, 0 // try = 0 это для того, чтобы узнать, что сейчас операция записи
-	sbi PORTB, 4 // Поднять SS на +5
-	cbi PORTB, 4 // Опрокинуть SS на землю, т.е. начинаем работать с микросхемой
-	ldi Acc0, 0b00000110 // Записываем разрешение на запись для начала(тех.док на микросхему)
-	out SPDR, Acc0 // Отправляем в регистр отвечающий за прием/передачу данных
-	rcall delay // Вызываем задержку в пару секунд
+	// Запись во внешнюю микросхему
+	ldi Acc1, 0 // счетчик для прерывания
+	ldi Acc2, 0 // 0 - операция записи, 1 - чтения
+	sbi PORTB, 4 // SS на +5
+	cbi PORTB, 4 // земля = начало работы с микросхемой
+	ldi Acc0, (1<<SPDR1)|(1<<SPDR2)// разрешение на запись
+	out SPDR, Acc0 // SPDR - регистр приема-передачи данных
+	rcall delay
 
-	// А тут почитаем из микросхемы в ОЗУ чипа. Операция чтения
+	// Чтение из микросхемы в ОЗУ чипа
 	ldi Acc1, 0 // счетчик для прерывания
 	ldi Acc2, 1 // 1 - это операция чтения
-	ldi XH, HIGH(MEMO) // Запишем указатель на 1 ячейку MEMO через регистр косвенной адресации
+	ldi XH, HIGH(MEMO) // запись указателя на 1 ячейку MEMO через регистр косвенной адресации
 	ldi XL, LOW(MEMO)
-	sbi PORTB, 4 // Поднять SS на +5
-	cbi PORTB, 4 // Опрокинуть SS на землю, т.е. начинаем работать с микросхемой
-	ldi Acc0, 0b00000011 // Операция о том, что будем сейчас читать(тех.док на микросхему)
-	out SPDR, Acc0 // Отправляем в регистр отвечающий за прием/передачу данных
+	sbi PORTB, 4 // SS на +5
+	cbi PORTB, 4 // SS на землю, начали работать с микросхемой
+	ldi Acc0, (1<<SPDR0)|(1<<SPDR1) // разрешение на чтение
+	out SPDR, Acc0
 	rcall delay
 rjmp loop
 
@@ -102,72 +105,76 @@ SPI_STC:
 	rjmp SPI_STC
 
 	cpi Acc2, 0
-	breq WriteSPI // 0 - операция записи
+	breq SS_WriteSPI // 0 - операция записи
 	cpi Acc2, 1
-	breq ReadSPI // 1 - операция чтения
-	SS_stop: 
-reti
-
+	breq SS_ReadSPI // 1 - операция чтения
+	
+	rjmp SS_stop
 
 // Операции записи
-WriteSPI: 
-	inc Acc1 // Повышаем sys на 1
+SS_WriteSPI: 
+	inc Acc1
 	cpi Acc1, 1
-	breq WriteSPIWR // переход, если разрешена запись в микросхему
+	breq SS_WriteSPIWR // переход, если разрешена запись в микросхему
 	cpi Acc1, 2
-	breq WriteSPIADR // переход, для указания адреса для записи в микросхему
+	breq SS_WriteSPIADR // переход, для указания адреса для записи в микросхему
+
+	// генерируем числа для записи в память (10 шт)
 	cpi Acc1, 10
-	breq STOP
+	breq SS_RESET
 	inc count // count - произвольные данные, для записи в память
 	out SPDR, count // отправка на SPI
-rjmp SS_stop
+	rjmp SS_stop
 
 
-WriteSPIWR:
+SS_WriteSPIWR:
 	sbi PORTB, 4 // перезагрузим вывод SS, подняв его на +5 и опрокинув на землю (только для операции записи)
 	cbi PORTB, 4
-	ldi Acc0, 0b00000010 
+	ldi Acc0, (1<<SPDR1)
 	out SPDR, Acc0 // команду записи отправить на SPI
-rjmp SS_stop
+	rjmp SS_stop
 
 
-WriteSPIADR:
+SS_WriteSPIADR:
 	ldi Acc0, 0x00
 	out SPDR, Acc0
-rjmp SS_stop
+	rjmp SS_stop
 
 
-STOP:
+SS_RESET:
 	sbi PORTB, 4 // SS на +5
-rjmp SS_stop
+	rjmp SS_stop
 
 
 // Операции чтения
-ReadSPI: 
+SS_ReadSPI: 
 	inc Acc1
 	cpi Acc1, 1
-	breq ReadSPIADR // переход, когда отослали команду на чтение
+	breq SS_ReadSPIADR // переход, когда отослали команду на чтение
 	cpi Acc1, 2
-	breq ReadSPI2 // переход, когда отправили на SPI адрес чтения
+	breq SS_ReadSPI2 // переход, когда отправили на SPI адрес чтения
 	cpi Acc1, 10
-	breq STOP // конец передачи
+	breq SS_RESET // конец передачи
 	in Acc0, SPDR // считать пришедшие данные
 	st X+, Acc0 // запись в ОЗУ чипа через косвенную адресацию
 	ldi Acc0, 0xFF // для начала обмена отправить любой байт
 	out SPDR,Acc0
-rjmp SS_stop
+	rjmp SS_stop
 
 
-ReadSPIADR:
+SS_ReadSPIADR:
 	ldi Acc0, 0x00 // какой адрес считываем
 	out SPDR, Acc0 // отправка на SPI
-rjmp SS_stop
+	rjmp SS_stop
 
 
-ReadSPI2:
+SS_ReadSPI2:
 	ldi Acc0, 0xFF // отправить любой байт
 	out SPDR,Acc0 // в ответ будем получать с микросхемы нужные байты
-rjmp SS_stop
+	rjmp SS_stop
+
+SS_stop: 
+reti
 
 
 Delay: // задержка ~2 сек
