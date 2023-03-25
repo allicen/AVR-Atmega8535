@@ -39,9 +39,9 @@ rjmp RESET ; Reset Handler
 RESET:
 //init stack pointer
 ldi Acc0, LOW(RAMEND) // RAMEND = 0x25F
-out SPL, Acc0 // SPL - спец регистр для стека
+out SPL, Acc0 // SPL - special register for the stack
 ldi Acc0, HIGH(RAMEND)
-out SPH, Acc0 // SPH - спец регистр для стека
+out SPH, Acc0 // SPH - special register for the stack
 //init SFR (special function reg)
 
 //Interrupt Enable
@@ -49,103 +49,103 @@ out SPH, Acc0 // SPH - спец регистр для стека
 
 //Main programm
 
-ldi r18, 0x00 // загрузка константы в регистр
-// X, Z - сдвоенные регистры, основное назначение - косвенная адресация
-ldi ZL, LOW(DataByte*2) // LOW - взять младший байт слова, 2 - 2 байта в памяти, кажд адрес содержит 2 байта (0x100 * 2 = 0x200)
-ldi ZH, HIGH(DataByte*2) // HIGH - взять старший байт слова
-// (1) Запись по адресу 100
+ldi r18, 0x00 // loading a constant into a register
+// X, Z - dual registers, the main purpose is indirect addressing
+ldi ZL, LOW(DataByte*2) // LOW - take the lowest byte of the word, 2 - 2 bytes in memory, each address contains 2 bytes (0x100 * 2 = 0x200)
+ldi ZH, HIGH(DataByte*2) // HIGH - take the highest byte of the word
+// (1) Write at address 100
 ldi XL, LOW(0x100)
 ldi XH, HIGH(0x100)
 
 ///SRAM
-// (1) Дозаписать все слова из словаря по адресу 100
+// (1) Add all the words from the dictionary to the address 100
 Write_SRAM:
-	lpm R2,Z
-	st X,R2 // косвенная адресация, R2 в X
-	inc XL // инкремент
-	inc R18
-	inc ZL
-	cpi R18,10 // сравнение регистра
-	brne Write_SRAM // Branch if Not Equal
+    lpm R2,Z
+    st X,R2 // indirect addressing, R2 in X
+    inc XL // increment
+    inc R18
+    inc ZL
+    cpi R18,10 // case comparison
+    brne Write_SRAM // Branch if Not Equal
 
 ///Flash Programm
 ldi ZL, LOW(DataByte*2)
 ldi ZH, HIGH(DataByte*2)
 
-// (2) Записать в память 0x50
+// (2) Write to memory 0x50
 ldi R17, LOW(0x50)
 ldi R18, HIGH(0x50)
 ldi R20, 0x00
-lpm // без аргументов - берет из Z и кладет в R0
-	
-// (2) Записать в память EEPROM
+lpm // without arguments - takes from Z and puts in R0
+    
+// (2) Write to EEPROM memory
 Write_EEpr:
-	lpm R2,Z // память программ, с памятью программ работает только Z
-	mov R16,R2 // перемещение из регистра в регистр
-	rcall EEPROM_write // вызов подпрограммы
-	inc R17 // инкремент
-	inc ZL
-	inc R20
-	cpi R20,10 // сравнение регистра с 10
-	brne Write_EEpr
-	ret
+    lpm R2,Z // program memory, only Z works with program memory
+    mov R16,R2 // moving from register to register
+    rcall EEPROM_write // calling a subroutine
+    inc R17 // increment
+    inc ZL
+    inc R20
+    cpi R20,10 // comparing the register with 10
+    brne Write_EEpr
+    ret
 
-lpm // без аргументов - берет из Z и кладет в R0
-///EEPROM DATA - энергонезависимая память
-lpm R2,Z // Загрузка программной памяти
+lpm // without arguments - takes from Z and puts in R0
+///EEPROM DATA - non-volatile memory
+lpm R2,Z // loading program memory
 ldi R17, LOW(0x50)
 ldi R18, HIGH(0x50)
 
-rcall EEPROM_write // вызов подпрограммы
+rcall EEPROM_write // calling a subroutine
 
 //SubProgamm
-// Код из документации 
+// Code from the documentation
 EEPROM_write:
-	; Wait for completion of previous write
-	sbic EECR,EEWE // ждет окончания записи, анализ флага EEWE в регистре EECR
-	rjmp EEPROM_write
-	; Set up address (r18:r17) in address register
-	out EEARH, r18
-	out EEARL, r17
-	; Write data (r16) to Data Register
-	out EEDR,r16
-	; Write logical one to EEMWE
-	sbi EECR,EEMWE // установить в регистр ввода-вывода 1
-	; Start eeprom write by setting EEWE
-	sbi EECR,EEWE
-	ret
+    ; Wait for completion of previous write
+    sbic EECR,EEWE // waiting for the end of the recording, analyzing the EEWE flag in the EECR register
+    rjmp EEPROM_write
+    ; Set up address (r18:r17) in address register
+    out EEARH, r18
+    out EEARL, r17
+    ; Write data (r16) to Data Register
+    out EEDR,r16
+    ; Write logical one to EEMWE
+    sbi EECR,EEMWE // set to I/O register 1
+    ; Start eeprom write by setting EEWE
+    sbi EECR,EEWE
+    ret
 
-// Код из документации 
+// Code from the documentation
 EEPROM_read:
-	; Wait for completion of previous write
-	sbic EECR,EEWE
-	rjmp EEPROM_read
-	; Set up address (r18:r17) in Address Register
-	out EEARH, r18
-	out EEARL, r17
-	; Start eeprom read by writing EERE
-	sbi EECR,EERE
-	; Read data from Data Register
-	in r16,EEDR
-	ret
+    ; Wait for completion of previous write
+    sbic EECR,EEWE
+    rjmp EEPROM_read
+    ; Set up address (r18:r17) in Address Register
+    out EEARH, r18
+    out EEARL, r17
+    ; Start eeprom read by writing EERE
+    sbi EECR,EERE
+    ; Read data from Data Register
+    in r16,EEDR
+    ret
 
 Delay:
-	nop
-	nop
-	ret // выход из подпрограммы
+    nop
+    nop
+    ret // exit from the subroutine
 
 //Interrupt Routines
 EXT_INT0:
-	push Acc0 // положить в стек
-	push Acc1
+    push Acc0 // put it on the stack
+    push Acc1
 
-	pop Acc1 // взять из стека
-	pop Acc0
+    pop Acc1 // take from the stack
+    pop Acc0
 
-	reti // выход из прерывания
+    reti // exiting the interrupt
 
 //Dat
-.org 0x100 // DataByte складываем по адресу 0x100
+.org 0x100 // DataByte СЃРєР»Р°РґС‹РІР°РµРј РїРѕ Р°РґСЂРµСЃСѓ 0x100
 DataByte:
 .DB 0x1f, 0x1C, 0x6a, 0xe9, 0xbb, 0xc6, 0x11, 0xa5, 0x9d,0xee
 DataWord:

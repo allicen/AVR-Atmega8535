@@ -6,11 +6,11 @@
 .equ LED = 3
 .equ TX = 1
 
-.equ Bitrate = 9600 // 9600 бод равно 0.00768 мегабит/сек
-//Режим Asynchronous Normal Mode
-.equ BAUD = 8000000 / (16 * Bitrate) - 1 // 51! формула в даташите, 8000000 - тактовая частота 8МГц
+.equ Bitrate = 9600 // 9600 Р±РѕРґ СЂР°РІРЅРѕ 0.00768 РјРµРіР°Р±РёС‚/СЃРµРє
+//Р РµР¶РёРј Asynchronous Normal Mode
+.equ BAUD = 8000000 / (16 * Bitrate) - 1 // 51! С„РѕСЂРјСѓР»Р° РІ РґР°С‚Р°С€РёС‚Рµ, 8000000 - С‚Р°РєС‚РѕРІР°СЏ С‡Р°СЃС‚РѕС‚Р° 8РњР“С†
 .equ AsciiCode = 48
-.equ numCode = 0x31 // код единицы
+.equ numCode = 0x31 // РєРѕРґ РµРґРёРЅРёС†С‹
 .equ memAddr = 0x100
 .equ tact = 30
 
@@ -18,30 +18,30 @@
 .def Acc0 = R16
 .def Acc1 = R17
 
-// Статус печати в USART
-// 0 - не печатать ничего
-// 1 - запуск таймера
-// 2 - остановка таймера и печать результата
-// 3 - очистить данные
-// 4 - неверная команда (ошибка)
+// РЎС‚Р°С‚СѓСЃ РїРµС‡Р°С‚Рё РІ USART
+// 0 - РЅРµ РїРµС‡Р°С‚Р°С‚СЊ РЅРёС‡РµРіРѕ
+// 1 - Р·Р°РїСѓСЃРє С‚Р°Р№РјРµСЂР°
+// 2 - РѕСЃС‚Р°РЅРѕРІРєР° С‚Р°Р№РјРµСЂР° Рё РїРµС‡Р°С‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚Р°
+// 3 - РѕС‡РёСЃС‚РёС‚СЊ РґР°РЅРЅС‹Рµ
+// 4 - РЅРµРІРµСЂРЅР°СЏ РєРѕРјР°РЅРґР° (РѕС€РёР±РєР°)
 .def PrintState = R18
 
-// Статус печати строки
-// 0 - ожидание ввода символа от пользователя
-// 1 - печать идет
-// 2 - строка закончена, печать переноса строки
+// РЎС‚Р°С‚СѓСЃ РїРµС‡Р°С‚Рё СЃС‚СЂРѕРєРё
+// 0 - РѕР¶РёРґР°РЅРёРµ РІРІРѕРґР° СЃРёРјРІРѕР»Р° РѕС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+// 1 - РїРµС‡Р°С‚СЊ РёРґРµС‚
+// 2 - СЃС‚СЂРѕРєР° Р·Р°РєРѕРЅС‡РµРЅР°, РїРµС‡Р°С‚СЊ РїРµСЂРµРЅРѕСЃР° СЃС‚СЂРѕРєРё
 .def LinePrintState = R19
 
-.def CharIndex = R20 // индекс символа строки
-.def Char = R21 // печатный символ
+.def CharIndex = R20 // РёРЅРґРµРєСЃ СЃРёРјРІРѕР»Р° СЃС‚СЂРѕРєРё
+.def Char = R21 // РїРµС‡Р°С‚РЅС‹Р№ СЃРёРјРІРѕР»
 
-// Регистры для работы с памятью
+// Р РµРіРёСЃС‚СЂС‹ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РїР°РјСЏС‚СЊСЋ
 .def AccMem1 = R22
 .def AccMem2 = R23
-.def PrintMemData = R24 // 1 - печатать, 0 - не печатать, 3 - запоминать данные
+.def PrintMemData = R24 // 1 - РїРµС‡Р°С‚Р°С‚СЊ, 0 - РЅРµ РїРµС‡Р°С‚Р°С‚СЊ, 3 - Р·Р°РїРѕРјРёРЅР°С‚СЊ РґР°РЅРЅС‹Рµ
 .def PrevMemChar = R25
-.def TactCount = R15 // Количество тактов
-.def DataMemSave = R14 // Была ли запись в серию тактов, 0 - не было, 1 - была
+.def TactCount = R15 // РљРѕР»РёС‡РµСЃС‚РІРѕ С‚Р°РєС‚РѕРІ
+.def DataMemSave = R14 // Р‘С‹Р»Р° Р»Рё Р·Р°РїРёСЃСЊ РІ СЃРµСЂРёСЋ С‚Р°РєС‚РѕРІ, 0 - РЅРµ Р±С‹Р»Рѕ, 1 - Р±С‹Р»Р°
 
 
 //PROGRAMM
@@ -79,54 +79,54 @@ out SPH, Acc0
 
 //init SFR (special function reg)
 in Acc0, SFIOR
-sbr Acc0, ACME // sbr - установить бит в регистр, включить аналоговый компаратор
+sbr Acc0, ACME // sbr - СѓСЃС‚Р°РЅРѕРІРёС‚СЊ Р±РёС‚ РІ СЂРµРіРёСЃС‚СЂ, РІРєР»СЋС‡РёС‚СЊ Р°РЅР°Р»РѕРіРѕРІС‹Р№ РєРѕРјРїР°СЂР°С‚РѕСЂ
 
 out SFIOR, Acc0
-ldi Acc0, (0<<ACBG) | (1<<ACIC) | (0b10<<ACIS0)| (1<<ACD) // ACIC - включить захват, ACIS0 - включить прерывания
-out ACSR, Acc0 // ACSR - регистр аналогового компаратора
-ldi Acc0, (0<<ACBG) | (1<<ACIC) | (0b10<<ACIS0)| (0<<ACD) // ACBG - сигнал берем со входа
+ldi Acc0, (0<<ACBG) | (1<<ACIC) | (0b10<<ACIS0)| (1<<ACD) // ACIC - РІРєР»СЋС‡РёС‚СЊ Р·Р°С…РІР°С‚, ACIS0 - РІРєР»СЋС‡РёС‚СЊ РїСЂРµСЂС‹РІР°РЅРёСЏ
+out ACSR, Acc0 // ACSR - СЂРµРіРёСЃС‚СЂ Р°РЅР°Р»РѕРіРѕРІРѕРіРѕ РєРѕРјРїР°СЂР°С‚РѕСЂР°
+ldi Acc0, (0<<ACBG) | (1<<ACIC) | (0b10<<ACIS0)| (0<<ACD) // ACBG - СЃРёРіРЅР°Р» Р±РµСЂРµРј СЃРѕ РІС…РѕРґР°
 out ACSR, Acc0
-ldi Acc0, (0b00000<<MUX0) // нулевой канал
+ldi Acc0, (0b00000<<MUX0) // РЅСѓР»РµРІРѕР№ РєР°РЅР°Р»
 out ADMUX, Acc0
-ldi Acc0, (0b001<<CS10)| (1<<ICES1) // ICES1 - нарастающий/спадающий фронт, CS10 - делитель частоты
-out TCCR1B, Acc0 // таймер по захвату
+ldi Acc0, (0b001<<CS10)| (1<<ICES1) // ICES1 - РЅР°СЂР°СЃС‚Р°СЋС‰РёР№/СЃРїР°РґР°СЋС‰РёР№ С„СЂРѕРЅС‚, CS10 - РґРµР»РёС‚РµР»СЊ С‡Р°СЃС‚РѕС‚С‹
+out TCCR1B, Acc0 // С‚Р°Р№РјРµСЂ РїРѕ Р·Р°С…РІР°С‚Сѓ
 ldi Acc0, (1<<WGM01)|(0<<WGM00)|(0b101<<CS00)
-out TCCR0, Acc0 // таймер по переполнению
+out TCCR0, Acc0 // С‚Р°Р№РјРµСЂ РїРѕ РїРµСЂРµРїРѕР»РЅРµРЅРёСЋ
 ldi Acc0, 0xFF
 out OCR0, Acc0
 in Acc0, TIMSK
-ori Acc0, (1<<TICIE1) | (1<<TOIE0) // TICIE1 - прерывание по захвату
+ori Acc0, (1<<TICIE1) | (1<<TOIE0) // TICIE1 - РїСЂРµСЂС‹РІР°РЅРёРµ РїРѕ Р·Р°С…РІР°С‚Сѓ
 out TIMSK, Acc0
 
-// Настройка usart
+// РќР°СЃС‚СЂРѕР№РєР° usart
 ldi Acc0, HIGH(BAUD)
 out UBRRH,Acc0 
 ldi Acc0, LOW(BAUD) 
 out UBRRL,Acc0
 
-ldi Acc0, (1<<TXEN) | (1<<RXEN) | (1<<RXCIE) | (1<<TXCIE) // эти биты разрешают прерывания
+ldi Acc0, (1<<TXEN) | (1<<RXEN) | (1<<RXCIE) | (1<<TXCIE) // СЌС‚Рё Р±РёС‚С‹ СЂР°Р·СЂРµС€Р°СЋС‚ РїСЂРµСЂС‹РІР°РЅРёСЏ
 out UCSRB, Acc0 
-ldi Acc0, (1<<URSEL)| (1<<UCSZ0) |(1<<UCSZ1) // UCSZ0 и UCSZ1 т.к.8 бит
+ldi Acc0, (1<<URSEL)| (1<<UCSZ0) |(1<<UCSZ1) // UCSZ0 Рё UCSZ1 С‚.Рє.8 Р±РёС‚
 out UCSRC,Acc0
 
 sbi DDRD, TX
 sbi DDRB, LED
 
-ldi PrintState, 0 // Статус печати в USART
-ldi CharIndex, 0 // Индекс символа строки
+ldi PrintState, 0 // РЎС‚Р°С‚СѓСЃ РїРµС‡Р°С‚Рё РІ USART
+ldi CharIndex, 0 // РРЅРґРµРєСЃ СЃРёРјРІРѕР»Р° СЃС‚СЂРѕРєРё
 ldi Char, 1
-ldi LinePrintState, 1 // При запуске программы печатаем строку
+ldi LinePrintState, 1 // РџСЂРё Р·Р°РїСѓСЃРєРµ РїСЂРѕРіСЂР°РјРјС‹ РїРµС‡Р°С‚Р°РµРј СЃС‚СЂРѕРєСѓ
 ldi PrintMemData, 0
 ldi PrevMemChar, 0
 ldi Acc0, 0
 ldi Acc1, 0
 mov TactCount, Acc0
 
-ldi AccMem1, LOW(memAddr) //Адрес записи данных
+ldi AccMem1, LOW(memAddr) //РђРґСЂРµСЃ Р·Р°РїРёСЃРё РґР°РЅРЅС‹С…
 ldi AccMem2, HIGH(memAddr)
 
 
-// Печать инструкции
+// РџРµС‡Р°С‚СЊ РёРЅСЃС‚СЂСѓРєС†РёРё
 ldi ZL, LOW(StartNote*2)
 ldi ZH, HIGH(StartNote*2)
 rcall PrintStartLine
@@ -143,7 +143,7 @@ rjmp loop
 
 //////////////////////////////////
 //                              // 
-//        Печать в USART        //
+//        РџРµС‡Р°С‚СЊ РІ USART        //
 //                              //
 //////////////////////////////////
 
@@ -156,7 +156,7 @@ ret
 
 PrintStartLine:
 	lpm Char, Z+
-	cpi Char, '$' // проверка на конец строки
+	cpi Char, '$' // РїСЂРѕРІРµСЂРєР° РЅР° РєРѕРЅРµС† СЃС‚СЂРѕРєРё
 	breq LC_end
 	rcall PrintUSART
 	rjmp PrintStartLine
@@ -219,7 +219,7 @@ PTRN_clear:
 	rcall ClearAndEndLine
 	ldi PrintMemData, 1
 	ldi CharIndex, 0
-	ldi Acc0, 0 // для записи разрядов
+	ldi Acc0, 0 // РґР»СЏ Р·Р°РїРёСЃРё СЂР°Р·СЂСЏРґРѕРІ
 	ldi Acc1, 0
 PTRN_stop:
 ret
@@ -259,14 +259,14 @@ ret
 
 //////////////////////////////////
 //                              // 
-//   Чтение и запись  EEPROM    //
+//   Р§С‚РµРЅРёРµ Рё Р·Р°РїРёСЃСЊ  EEPROM    //
 //                              //
 //////////////////////////////////
 
 
 EEPROM_write:
 	; Wait for completion of previous write
-	sbic EECR,EEWE // ждет окончания записи, анализ флага EEWE в регистре EECR
+	sbic EECR,EEWE // Р¶РґРµС‚ РѕРєРѕРЅС‡Р°РЅРёСЏ Р·Р°РїРёСЃРё, Р°РЅР°Р»РёР· С„Р»Р°РіР° EEWE РІ СЂРµРіРёСЃС‚СЂРµ EECR
 	rjmp EEPROM_write
 	; Set up address (r18:r17) in address register
 	out EEARH, AccMem2
@@ -274,7 +274,7 @@ EEPROM_write:
 	; Write data (r16) to Data Register
 	out EEDR, Char
 	; Write logical one to EEMWE
-	sbi EECR,EEMWE // установить в регистр ввода-вывода 1
+	sbi EECR,EEMWE // СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РІ СЂРµРіРёСЃС‚СЂ РІРІРѕРґР°-РІС‹РІРѕРґР° 1
 	; Start eeprom write by setting EEWE
 	sbi EECR,EEWE
 ret
@@ -298,7 +298,7 @@ ret
 
 //////////////////////////////////
 //                              // 
-//      Очистить данные         //
+//      РћС‡РёСЃС‚РёС‚СЊ РґР°РЅРЅС‹Рµ         //
 //                              //
 //////////////////////////////////
 
@@ -323,20 +323,20 @@ ret
 
 //////////////////////////////////
 //                              // 
-//   Получение разрядов числа   //
+//   РџРѕР»СѓС‡РµРЅРёРµ СЂР°Р·СЂСЏРґРѕРІ С‡РёСЃР»Р°   //
 //                              //
 //////////////////////////////////
 
 GetDigit:
-	cpi Char, 0xFF // пусто
+	cpi Char, 0xFF // РїСѓСЃС‚Рѕ
 	breq GD_stop
 	cpi Char, 0x10
 	brlo GD_stop
 	subi Char, 0x10
-	inc Acc1 // Acc1 десятки
+	inc Acc1 // Acc1 РґРµСЃСЏС‚РєРё
 	rjmp GetDigit
 GD_stop:
-	mov Acc0, Char // Acc0 единицы
+	mov Acc0, Char // Acc0 РµРґРёРЅРёС†С‹
 	ldi Char, 0
 ret
 
@@ -345,7 +345,7 @@ ret
 
 //////////////////////////////////
 //                              // 
-//      Таймер по захвату       //
+//      РўР°Р№РјРµСЂ РїРѕ Р·Р°С…РІР°С‚Сѓ       //
 //                              //
 //////////////////////////////////
 
@@ -356,13 +356,13 @@ TIM1_CAPT:
 	in Acc0,SREG
 	push Acc0
 
-	cpi PrintMemData, 3 // Сохранять данные только в режиме 1
+	cpi PrintMemData, 3 // РЎРѕС…СЂР°РЅСЏС‚СЊ РґР°РЅРЅС‹Рµ С‚РѕР»СЊРєРѕ РІ СЂРµР¶РёРјРµ 1
 	breq TC_save
 	rjmp TC_stop
 
 TC_save:
 	in Acc0,UCSRA
-	sbrs Acc0, UDRE // пропустить следующую строку, если UDRE=1
+	sbrs Acc0, UDRE // РїСЂРѕРїСѓСЃС‚РёС‚СЊ СЃР»РµРґСѓСЋС‰СѓСЋ СЃС‚СЂРѕРєСѓ, РµСЃР»Рё UDRE=1
 	rjmp TC_save
 
 	ldi Acc0, 1
@@ -388,24 +388,24 @@ reti
 
 //////////////////////////////////
 //                              // 
-// Получение данных из в USART  //
+// РџРѕР»СѓС‡РµРЅРёРµ РґР°РЅРЅС‹С… РёР· РІ USART  //
 //                              //
 //////////////////////////////////
 
-USART_RXC: // прерывание при получении данных
-	sbis UCSRA, RXC // RXC - бит входа в прерывание по USART
+USART_RXC: // РїСЂРµСЂС‹РІР°РЅРёРµ РїСЂРё РїРѕР»СѓС‡РµРЅРёРё РґР°РЅРЅС‹С…
+	sbis UCSRA, RXC // RXC - Р±РёС‚ РІС…РѕРґР° РІ РїСЂРµСЂС‹РІР°РЅРёРµ РїРѕ USART
 	rjmp USART_RXC
 	
 	ldi Acc0, numCode
 	in Char, UDR
 	out UDR, Char
-	cp Char, Acc0 // 1 - запуск таймера
+	cp Char, Acc0 // 1 - Р·Р°РїСѓСЃРє С‚Р°Р№РјРµСЂР°
 	breq UR_timer_start
 	inc Acc0
-	cp Char, Acc0 // 2 - остановить таймер и вывести результат
+	cp Char, Acc0 // 2 - РѕСЃС‚Р°РЅРѕРІРёС‚СЊ С‚Р°Р№РјРµСЂ Рё РІС‹РІРµСЃС‚Рё СЂРµР·СѓР»СЊС‚Р°С‚
 	breq UR_timer_res
 	inc Acc0
-	cp Char, Acc0 // 3 - очистить таймер
+	cp Char, Acc0 // 3 - РѕС‡РёСЃС‚РёС‚СЊ С‚Р°Р№РјРµСЂ
 	breq UR_timer_clear
 	rjmp UR_error
 UR_timer_start:
@@ -427,8 +427,8 @@ UR_clear_mem:
 UR_stop:
 	cpi PrintMemData, 1
 	breq UR_clear_mem
-	ldi CharIndex, 0 // Индекс символа в 0
-	ldi LinePrintState, 2 // символ введен - строка закончена
+	ldi CharIndex, 0 // РРЅРґРµРєСЃ СЃРёРјРІРѕР»Р° РІ 0
+	ldi LinePrintState, 2 // СЃРёРјРІРѕР» РІРІРµРґРµРЅ - СЃС‚СЂРѕРєР° Р·Р°РєРѕРЅС‡РµРЅР°
 	ldi AccMem1, LOW(memAddr)
 reti
 
@@ -436,11 +436,11 @@ reti
 
 ////////////////////////////////
 //                            // 
-//      Печать в USART        //
+//      РџРµС‡Р°С‚СЊ РІ USART        //
 //                            //
 ////////////////////////////////
 
-USART_TXC: // передача выполнена
+USART_TXC: // РїРµСЂРµРґР°С‡Р° РІС‹РїРѕР»РЅРµРЅР°
 	sbis UCSRA, UDRE
 	rjmp USART_TXC
 
@@ -485,7 +485,7 @@ US_ps_data:
 	cpi CharIndex, 0
 	breq USPD_print
 	rcall PrintEndLine
-	sbrc CharIndex, 0 // пропустить, если бит 0 не установлен
+	sbrc CharIndex, 0 // РїСЂРѕРїСѓСЃС‚РёС‚СЊ, РµСЃР»Рё Р±РёС‚ 0 РЅРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅ
 	ldi CharIndex, 0
 	rjmp US_stop
 USPD_print:
@@ -494,14 +494,14 @@ USPD_print:
 	rjmp USPD_end_line
 USPD_get_digit:
 	rcall EEPROM_read
-	cpi Char, 0xFF // последний пустой символ не выводить
+	cpi Char, 0xFF // РїРѕСЃР»РµРґРЅРёР№ РїСѓСЃС‚РѕР№ СЃРёРјРІРѕР» РЅРµ РІС‹РІРѕРґРёС‚СЊ
 	breq US_stop
 	rcall GetDigit
 	ldi Char, AsciiCode
 	add Acc1, Char
 	cpi Acc1, 0x3A
 	brlo USPD_1
-	ldi Char, 0x7 // разница между буквами
+	ldi Char, 0x7 // СЂР°Р·РЅРёС†Р° РјРµР¶РґСѓ Р±СѓРєРІР°РјРё
 	add Acc1, Char
 USPD_1:
 	ldi Char, 0
@@ -510,14 +510,14 @@ USPD_1:
 USPD_end_line:
 	ldi Char, AsciiCode
 	add Acc0, Char
-	cpi Acc0, 0x3A // если буквы
+	cpi Acc0, 0x3A // РµСЃР»Рё Р±СѓРєРІС‹
 	brlo USPD_0
-	ldi Char, 7 // разница между буквами
+	ldi Char, 7 // СЂР°Р·РЅРёС†Р° РјРµР¶РґСѓ Р±СѓРєРІР°РјРё
 	add Acc0, Char
 USPD_0:
 	out UDR, Acc0
 	ldi CharIndex, 1
-	ldi LinePrintState, 2 // конец строки
+	ldi LinePrintState, 2 // РєРѕРЅРµС† СЃС‚СЂРѕРєРё
 	inc AccMem1
 	ldi Char, 1
 	ldi Acc0, 0
@@ -535,7 +535,7 @@ USPD_clear:
 	rjmp US_stop
 
 US_clear_mem:
-	ldi PrintMemData, 0 // очищаем только при PrintMemData=1
+	ldi PrintMemData, 0 // РѕС‡РёС‰Р°РµРј С‚РѕР»СЊРєРѕ РїСЂРё PrintMemData=1
 	rjmp US_stop
 
 US_print_clear:
@@ -552,7 +552,7 @@ reti
 
 ////////////////////////////////
 //                            // 
-//   Таймер по переполнению   //
+//   РўР°Р№РјРµСЂ РїРѕ РїРµСЂРµРїРѕР»РЅРµРЅРёСЋ   //
 //                            //
 ////////////////////////////////
 
@@ -561,7 +561,7 @@ TIM0_OVF:
 	push Acc1
 	in Acc0, SREG
 	push Acc0
-	ldi Acc0, 30 // 8 МГц = 30 тактов в 1 сек
+	ldi Acc0, 30 // 8 РњР“С† = 30 С‚Р°РєС‚РѕРІ РІ 1 СЃРµРє
 	cp TactCount, Acc0
 	brne TO0_1
 	ldi Acc0, 0

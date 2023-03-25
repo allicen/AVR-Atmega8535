@@ -10,8 +10,8 @@
 .def Acc0 = R16
 .def Acc1 = R17
 .def Acc2 = R18
-.def numkey = R19 // номер клавиши
-.def MASK = R20 // маска для поиска нажатой кнопки
+.def numkey = R19 // key number
+.def MASK = R20 // mask for searching for the pressed button
 
 
 //PROGRAMM
@@ -46,11 +46,11 @@ RESET:
 	ldi Acc0, HIGH(RAMEND)	
 	out SPH, Acc0
 //init SFR (special function reg)
-	ldi Acc0, 0b11110000|(1<<LED) // настроить на выход для всех устройств (включая светодиод)
-	out DDRB, Acc0 // ddr направление порта
+	ldi Acc0, 0b11110000|(1<<LED) // set to output for all devices (including LED)
+	out DDRB, Acc0 // ddr port direction
 	
-	sbi DDRC, CLK // установить бит в 0 регистр, настроено на выход
-	sbi DDRC, DATA // установить бит в 1 регистр, настроено на выход
+	sbi DDRC, CLK // set the bit to 0 register, set to output
+	sbi DDRC, DATA // set the bit to 1 register, set to output
 //Interrupt Enable
 //	sei
 //Main programm
@@ -60,20 +60,20 @@ RESET:
 
 loop:
 	rcall Key 	
-	cpi numkey, 0 // если кнопка не нажата	
-	breq loop // если не нажата, уйти в loop
+	cpi numkey, 0 // if the button is not pressed
+	breq loop // if not pressed, go to loop
 
 L1:
 	ldi Acc2,20 
-	ldi ZL, LOW(DataByte*2-1) // LOW - взять младший байт слова, 2 - 2 байта в памяти, кажд адрес содержит 2 байта (0x100 * 2 = 0x200)
-	ldi ZH, HIGH(DataByte*2) // HIGH - взять старший байт слова
-	add ZL, numkey // сложение
-	lpm Acc0, Z	// загрузить в память программы
+	ldi ZL, LOW(DataByte*2-1) // LOW - take the lowest byte of the word, 2 - 2 bytes in memory, each address contains 2 bytes (0x100 * 2 = 0x200)
+	ldi ZH, HIGH(DataByte*2) // HIGH - take the highest byte of the word
+	add ZL, numkey // addition
+	lpm Acc0, Z	// load the program into memory
 	rcall SevSeg
 
 E1:	dec Acc2
-	rcall Delay // задержка
-	cpi Acc2,0 // если Acc2=0, зауиклить E1
+	rcall Delay // delay
+	cpi Acc2,0 // if Acc2=0, loop E1
 	brne E1
 
 	rjmp loop	
@@ -82,40 +82,40 @@ E1:	dec Acc2
 //OUT: numkey - number of push key, if keyboard free -> numkey = 0 
 Key:
 //reg mask
-	ldi MASK, 0b11101111 // маска для бегущего нуля
-	clr numkey // проинициализировать numkey 0
-	ldi Acc2, 0x3 // инициализирует Acc2 3
+	ldi MASK, 0b11101111 // mask for running zero
+	clr numkey // initialize numkey 0
+	ldi Acc2, 0x3 // initializes Acc2 3
 
 //set portB
-//считать, модифицировать и записать
+//read, modify and write
 
-K1: // Блок для считывания/записи с/в порт
-	ori MASK, 0x1 // младший бит в 1
-	in Acc0, PORTB // считать данные из PORTB
-	ori Acc0, 0b11110000 // ori - логичнское побитовое И с константой, ставим 4 старших бита в 1 и накладываем маску
-	and Acc0, MASK  // наложение маски
-	out PORTB, Acc0 // записать результат в порт
+K1: // Block for reading/writing from/to the port
+	ori MASK, 0x1 // lowest bit in 1
+	in Acc0, PORTB // read data from PORTB
+	ori Acc0, 0b11110000 // ori - logical bitwise And with a constant, we put the 4 highest bits in 1 and apply a mask
+	and Acc0, MASK  // applying a mask
+	out PORTB, Acc0 // write the result to the port
 
 	//read column portD
-	nop // выставляем задержку, чтобы успеть считать установленные данные
+	nop // we set a delay in order to have time to read the set data
 	nop
-	in Acc0, PIND // считать PIND
+	in Acc0, PIND // count PIND
 	//analys in data
-	ldi Acc1, 0x3 // 3 раза будем сдвигать влево
+	ldi Acc1, 0x3 // 3 times we will shift to the left
 
-ankey: // Блок анализирует нажатие кнопки
+ankey: // The block analyzes the button press
 //if key push to ret
 //else <<mask and rjmp K1	
-	lsl Acc0 // сдвиг влево
-	brcc pushkey // если 0, то уйти в pushkey, если 1 - идти дальше
-	dec Acc1 // декремент
-	brne ankey // если не 0, то уйти в ankey, иначе идти дальше
+	lsl Acc0 // left shift
+	brcc pushkey // if 0, then go to the push key, if 1 - go further
+	dec Acc1 // decrement
+	brne ankey // if not 0, then go to ankey, otherwise go further
 	//numkey+3
 	add numkey, Acc2
 
 	lsl MASK
-	brcs K1 // если флаг С=1, уйти в K1
-	clr numkey // ни одна клавиша не была нажата = обнулить numkey
+	brcs K1 // РµСЃР»Рё С„Р»Р°Рі РЎ=1, СѓР№С‚Рё РІ K1
+	clr numkey // no key was pressed = reset numkey
 	rjmp endkey
 
 pushkey:
@@ -128,27 +128,27 @@ endkey:
 //Seven Segment
 //IN: Acc0 <- Data for Segment
 SevSeg:
-ldi Acc1, 8 // нужно вывести 8 битов для каждлого числа
+ldi Acc1, 8 // you need to output 8 bits for each number
 SS0:
 	// set data
-	lsl Acc0 // сдвиг слево, в бит С
-	brcc SS1 // если флаг 0, то перейти на метку SS1
-	sbi PORTC, DATA // на линию данных установить 1
+	lsl Acc0 // left shift, in bits РЎ
+	brcc SS1 // if the flag is 0, then go to the SS1 label
+	sbi PORTC, DATA // set 1 on the data line
 	rjmp SS2
 SS1:
 	cbi PORTC, DATA
 SS2:
-	// taсt
+	// taСЃt
 	nop
 	nop
-	sbi PORTC, CLK // установить бит
+	sbi PORTC, CLK // set the bit
 	nop
 	nop
-	cbi PORTC, CLK // сбросить бит
+	cbi PORTC, CLK // reset the bit
 	// dec CNT
-	dec Acc1 // декремент
+	dec Acc1 // decrement
 	// test CNT
-	brne SS0 // переходить в SS0, пока флаг 0 не будет установлен
+	brne SS0 // switch to SS0 until the 0 flag is set
 
 	ret
 
@@ -178,7 +178,7 @@ EXT_INT0:
 
 	reti
 
-//Data Записал коды для цифр семисегментного индикатора
+// Codes for the digits of the seven-segment indicator
 DataByte:
 .DB 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90
 DataWord:

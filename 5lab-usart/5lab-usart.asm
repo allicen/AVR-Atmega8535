@@ -2,10 +2,10 @@
 .include "m8535def.inc" 
  
 //init constant 
-.equ Bitrate = 9600 // 9600 бод равно 0.00768 мегабит/сек
-//Режим Asynchronous Normal Mode
-.equ BAUD = 8000000 / (16 * Bitrate) - 1 // 51! формула в даташите, 8000000 - тактовая частота 8МГц
-.equ numCode = 0x31 // код единицы
+.equ Bitrate = 9600 // 9600 under is equal to 0.00768 megabits/sec
+//Р РµР¶РёРј Asynchronous Normal Mode
+.equ BAUD = 8000000 / (16 * Bitrate) - 1 // 51! the formula in datasheet, 8000000 - clock frequency 8MHz
+.equ numCode = 0x31 // 1 code
  
 //init registers 
 .def Acc0 = R16 
@@ -55,9 +55,9 @@ out UBRRH,Acc0
 ldi Acc0, LOW(BAUD) 
 out UBRRL,Acc0
 
-ldi Acc0, (1<<TXEN) | (1<<RXEN) | (1<<RXCIE) | (1<<TXCIE) // эти биты разрешают прерывания
+ldi Acc0, (1<<TXEN) | (1<<RXEN) | (1<<RXCIE) | (1<<TXCIE) // these bits allow interrupts
 out UCSRB, Acc0 
-ldi Acc0, (1<<URSEL)| (1<<UCSZ0) |(1<<UCSZ1) // UCSZ0 и UCSZ1 т.к.8 бит
+ldi Acc0, (1<<URSEL)| (1<<UCSZ0) |(1<<UCSZ1) // UCSZ0 Рё UCSZ1 because 8 bits
 out UCSRC,Acc0
 
 ldi print, 0
@@ -81,10 +81,10 @@ Delay:
 ret
 
 //Inerrupt Routines 
-USART_RXC: // прерывание при получении данных
-	sbis UCSRA, RXC // RXC - бит входа в прерывание по USART
+USART_RXC: // interruption when receiving data
+	sbis UCSRA, RXC // RXC - USART interrupt entry bit
 	rjmp USART_RXC
-	in Acc1, UDR // получить данные из терминала
+	in Acc1, UDR // get data from the terminal
 	cpi print, 1
 	breq UR_print_stop
 	cpi Acc1, numCode
@@ -93,7 +93,7 @@ USART_RXC: // прерывание при получении данных
 UR_print_stop:
 	ldi print, 0
 UR_stop:
-	out UDR, Acc1 // отослать обратно данные в терминал
+	out UDR, Acc1 // send the data back to the terminal
 	rjmp stop
 UR_print_start:
 	ldi Acc2, 0x1
@@ -102,10 +102,10 @@ stop:
 reti
 
 
-USART_TXC: // передача выполнена
-	sbis UCSRA, UDRE // UDRE - бит входа в прерывание
+USART_TXC: // transfer completed
+	sbis UCSRA, UDRE // UDRE - interrupt entry bit
 	rjmp USART_TXC
-	cpi Acc1, numCode // если пришла 1, то повторять 1
+	cpi Acc1, numCode // if 1 came, then repeat 1
 	breq UT_print
 	rjmp UT_stop
 UT_print:
