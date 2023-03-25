@@ -12,9 +12,9 @@
 .def Acc0 = R16
 .def Acc1 = R17
 .def Acc2 = R18
-.def numkey = R19 // номер клавиши
-.def numkeyTmp = R25 // сохранить номер клавиши для обратного отсчета
-.def MASK = R24 // маска для поиска нажатой кнопки
+.def numkey = R19 // РЅРѕРјРµСЂ РєР»Р°РІРёС€Рё
+.def numkeyTmp = R25 // СЃРѕС…СЂР°РЅРёС‚СЊ РЅРѕРјРµСЂ РєР»Р°РІРёС€Рё РґР»СЏ РѕР±СЂР°С‚РЅРѕРіРѕ РѕС‚СЃС‡РµС‚Р°
+.def MASK = R24 // РјР°СЃРєР° РґР»СЏ РїРѕРёСЃРєР° РЅР°Р¶Р°С‚РѕР№ РєРЅРѕРїРєРё
 .def TactCount = R20
 .def DBCount = R22
 .def Start = R23
@@ -22,57 +22,57 @@
 //PROGRAMM
 //interrupt vectors
 .org 0x0
-	rjmp RESET ; Reset Handler
-//	rjmp EXT_INT0 ; IRQ0 Handler
-//	rjmp EXT_INT1 ; IRQ1 Handler
-//	rjmp TIM2_COMP ; Timer2 Compare Handler
-//	rjmp TIM2_OVF ; Timer2 Overflow Handler
-//	rjmp TIM1_CAPT ; Timer1 Capture Handler
-//	rjmp TIM1_COMPA ; Timer1 Compare A Handler
-//	rjmp TIM1_COMPB ; Timer1 Compare B Handler
-//	rjmp TIM1_OVF ; Timer1 Overflow Handler
-.org 0x009 // адрес для регистра TIM0_OVF из даташита
-	rjmp TIM0_OVF ; Timer0 Overflow Handler
-//	rjmp SPI_STC ; SPI Transfer Complete Handler
-//	rjmp USART_RXC ; USART RX Complete Handler
-//	rjmp USART_UDRE ; UDR Empty Handler
-//	rjmp USART_TXC ; USART TX Complete Handler
-//	rjmp ADC ; ADC Conversion Complete Handler
-//	rjmp EE_RDY ; EEPROM Ready Handler
-//	rjmp ANA_COMP ; Analog Comparator Handler
-//	rjmp TWSI ; Two-wire Serial Interface Handler
-//	rjmp EXT_INT2 ; IRQ2 Handler
-//	rjmp TIM0_COMP ; Timer0 Compare Handler
-//	rjmp SPM_RDY ; Store Program Memory Ready Handler
+    rjmp RESET ; Reset Handler
+//    rjmp EXT_INT0 ; IRQ0 Handler
+//    rjmp EXT_INT1 ; IRQ1 Handler
+//    rjmp TIM2_COMP ; Timer2 Compare Handler
+//    rjmp TIM2_OVF ; Timer2 Overflow Handler
+//    rjmp TIM1_CAPT ; Timer1 Capture Handler
+//    rjmp TIM1_COMPA ; Timer1 Compare A Handler
+//    rjmp TIM1_COMPB ; Timer1 Compare B Handler
+//    rjmp TIM1_OVF ; Timer1 Overflow Handler
+.org 0x009 // Р°РґСЂРµСЃ РґР»СЏ СЂРµРіРёСЃС‚СЂР° TIM0_OVF РёР· РґР°С‚Р°С€РёС‚Р°
+    rjmp TIM0_OVF ; Timer0 Overflow Handler
+//    rjmp SPI_STC ; SPI Transfer Complete Handler
+//    rjmp USART_RXC ; USART RX Complete Handler
+//    rjmp USART_UDRE ; UDR Empty Handler
+//    rjmp USART_TXC ; USART TX Complete Handler
+//    rjmp ADC ; ADC Conversion Complete Handler
+//    rjmp EE_RDY ; EEPROM Ready Handler
+//    rjmp ANA_COMP ; Analog Comparator Handler
+//    rjmp TWSI ; Two-wire Serial Interface Handler
+//    rjmp EXT_INT2 ; IRQ2 Handler
+//    rjmp TIM0_COMP ; Timer0 Compare Handler
+//    rjmp SPM_RDY ; Store Program Memory Ready Handler
 .org 0x15
 RESET:
 //init stack pointer
-	ldi Acc0, LOW(RAMEND)
-	out SPL, Acc0
-	ldi Acc0, HIGH(RAMEND)	
-	out SPH, Acc0
+    ldi Acc0, LOW(RAMEND)
+    out SPL, Acc0
+    ldi Acc0, HIGH(RAMEND)    
+    out SPH, Acc0
 //init SFR (special function reg)
-	ldi Acc0, 0b11110000|(1<<LED) // настроить на выход для всех устройств (включая светодиод)
-	out DDRB, Acc0 // ddr направление порта
+    ldi Acc0, 0b11110000|(1<<LED) // РЅР°СЃС‚СЂРѕРёС‚СЊ РЅР° РІС‹С…РѕРґ РґР»СЏ РІСЃРµС… СѓСЃС‚СЂРѕР№СЃС‚РІ (РІРєР»СЋС‡Р°СЏ СЃРІРµС‚РѕРґРёРѕРґ)
+    out DDRB, Acc0 // ddr РЅР°РїСЂР°РІР»РµРЅРёРµ РїРѕСЂС‚Р°
 
-	sbi DDRC, CLK // установить бит в 0 регистр, настроено на выход
-	sbi DDRC, DATA // установить бит в 1 регистр, настроено на выход
-	// настроить на выход для всех устройств
-	// WGM01 - настройка ctc в 1
-	// WGM00 - настройка ctc в 0
-	ldi Acc0, (1<<WGM01)|(0<<WGM00)|(0b101<<CS00) // CS00 - частота/1024 (стр 84)
-	out TCCR0, Acc0 // запись в регистр спец назначения для настройки таймера
+    sbi DDRC, CLK // СѓСЃС‚Р°РЅРѕРІРёС‚СЊ Р±РёС‚ РІ 0 СЂРµРіРёСЃС‚СЂ, РЅР°СЃС‚СЂРѕРµРЅРѕ РЅР° РІС‹С…РѕРґ
+    sbi DDRC, DATA // СѓСЃС‚Р°РЅРѕРІРёС‚СЊ Р±РёС‚ РІ 1 СЂРµРіРёСЃС‚СЂ, РЅР°СЃС‚СЂРѕРµРЅРѕ РЅР° РІС‹С…РѕРґ
+    // РЅР°СЃС‚СЂРѕРёС‚СЊ РЅР° РІС‹С…РѕРґ РґР»СЏ РІСЃРµС… СѓСЃС‚СЂРѕР№СЃС‚РІ
+    // WGM01 - РЅР°СЃС‚СЂРѕР№РєР° ctc РІ 1
+    // WGM00 - РЅР°СЃС‚СЂРѕР№РєР° ctc РІ 0
+    ldi Acc0, (1<<WGM01)|(0<<WGM00)|(0b101<<CS00) // CS00 - С‡Р°СЃС‚РѕС‚Р°/1024 (СЃС‚СЂ 84)
+    out TCCR0, Acc0 // Р·Р°РїРёСЃСЊ РІ СЂРµРіРёСЃС‚СЂ СЃРїРµС† РЅР°Р·РЅР°С‡РµРЅРёСЏ РґР»СЏ РЅР°СЃС‚СЂРѕР№РєРё С‚Р°Р№РјРµСЂР°
 
 
-	ldi Acc0, 0xFF // 255 - максимальный период счета
-	out OCR0, Acc0 // OCR0 - Регистр сравнения
+    ldi Acc0, 0xFF // 255 - РјР°РєСЃРёРјР°Р»СЊРЅС‹Р№ РїРµСЂРёРѕРґ СЃС‡РµС‚Р°
+    out OCR0, Acc0 // OCR0 - Р РµРіРёСЃС‚СЂ СЃСЂР°РІРЅРµРЅРёСЏ
 
-	ldi Acc0, (1<<TOIE0) // разрешить прерывание по переполнению
-	out TIMSK, Acc0 // записать в регистр разрешения прерываний
-	clr numkey
+    ldi Acc0, (1<<TOIE0) // СЂР°Р·СЂРµС€РёС‚СЊ РїСЂРµСЂС‹РІР°РЅРёРµ РїРѕ РїРµСЂРµРїРѕР»РЅРµРЅРёСЋ
+    out TIMSK, Acc0 // Р·Р°РїРёСЃР°С‚СЊ РІ СЂРµРіРёСЃС‚СЂ СЂР°Р·СЂРµС€РµРЅРёСЏ РїСЂРµСЂС‹РІР°РЅРёР№
+    clr numkey
 
 //Interrupt Enable 
-	sei // разрешить прерывания
+    sei // СЂР°Р·СЂРµС€РёС‚СЊ РїСЂРµСЂС‹РІР°РЅРёСЏ
 //Main programm
 
 rcall Init
@@ -83,43 +83,43 @@ rcall SetZero
 
 loop:
 
-	rcall Key 	
-	cpi numkey, 0 // если кнопка не нажата	
-	breq loop // если не нажата, уйти в loop
+    rcall Key     
+    cpi numkey, 0 // РµСЃР»Рё РєРЅРѕРїРєР° РЅРµ РЅР°Р¶Р°С‚Р°    
+    breq loop // РµСЃР»Рё РЅРµ РЅР°Р¶Р°С‚Р°, СѓР№С‚Рё РІ loop
 
 L1:
-	rcall Init
-	rcall Init
-	rcall Init
-	ldi Acc2,20 
-	ldi ZL, LOW(DataByte*2-1) // LOW - взять младший байт слова, 2 - 2 байта в памяти, кажд адрес содержит 2 байта (0x100 * 2 = 0x200)
-	ldi ZH, HIGH(DataByte*2) // HIGH - взять старший байт слова
-	
-	// Перебор массива с конца
-	ldi Acc1, 10
-	sub Acc1, numkey
-	mov numkeyTmp, Acc1
-	add ZL, Acc1 // сложение
-	lpm Acc0, Z	// загрузить в память программы
-	rcall SevSeg
+    rcall Init
+    rcall Init
+    rcall Init
+    ldi Acc2,20 
+    ldi ZL, LOW(DataByte*2-1) // LOW - РІР·СЏС‚СЊ РјР»Р°РґС€РёР№ Р±Р°Р№С‚ СЃР»РѕРІР°, 2 - 2 Р±Р°Р№С‚Р° РІ РїР°РјСЏС‚Рё, РєР°Р¶Рґ Р°РґСЂРµСЃ СЃРѕРґРµСЂР¶РёС‚ 2 Р±Р°Р№С‚Р° (0x100 * 2 = 0x200)
+    ldi ZH, HIGH(DataByte*2) // HIGH - РІР·СЏС‚СЊ СЃС‚Р°СЂС€РёР№ Р±Р°Р№С‚ СЃР»РѕРІР°
+    
+    // РџРµСЂРµР±РѕСЂ РјР°СЃСЃРёРІР° СЃ РєРѕРЅС†Р°
+    ldi Acc1, 10
+    sub Acc1, numkey
+    mov numkeyTmp, Acc1
+    add ZL, Acc1 // СЃР»РѕР¶РµРЅРёРµ
+    lpm Acc0, Z    // Р·Р°РіСЂСѓР·РёС‚СЊ РІ РїР°РјСЏС‚СЊ РїСЂРѕРіСЂР°РјРјС‹
+    rcall SevSeg
 
-E1:	
-	dec Acc2
-	rcall Delay // задержка
-	cpi Acc2,0 // если Acc2=0, зауиклить E1
-	brne E1
+E1:    
+    dec Acc2
+    rcall Delay // Р·Р°РґРµСЂР¶РєР°
+    cpi Acc2,0 // РµСЃР»Рё Acc2=0, Р·Р°СѓРёРєР»РёС‚СЊ E1
+    brne E1
 
 
 //SubProgamm
 //Delay
 
 Delay:
-	ldi R21, 255
+    ldi R21, 255
 delay1: ldi R20, 255
 delay2: dec R20
-	brne delay2
-	dec R21
-	brne delay1
+    brne delay2
+    dec R21
+    brne delay1
 ret
 
 
@@ -127,168 +127,168 @@ ret
 //OUT: numkey - number of push key, if keyboard free -> numkey = 0 
 Key:
 //reg mask
-	ldi MASK, 0b11101111 // маска для бегущего нуля
-	clr numkey // проинициализировать numkey 0
-	ldi Acc2, 0x3 // инициализирует Acc2 3
+    ldi MASK, 0b11101111 // РјР°СЃРєР° РґР»СЏ Р±РµРіСѓС‰РµРіРѕ РЅСѓР»СЏ
+    clr numkey // РїСЂРѕРёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°С‚СЊ numkey 0
+    ldi Acc2, 0x3 // РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµС‚ Acc2 3
 
 //set portB
-//считать, модифицировать и записать
+//СЃС‡РёС‚Р°С‚СЊ, РјРѕРґРёС„РёС†РёСЂРѕРІР°С‚СЊ Рё Р·Р°РїРёСЃР°С‚СЊ
 
-K1: // Блок для считывания/записи с/в порт
-	ori MASK, 0x1 // младший бит в 1
-	in Acc0, PORTB // считать данные из PORTB
-	ori Acc0, 0b11110000 // ori - логичнское побитовое И с константой, ставим 4 старших бита в 1 и накладываем маску
-	and Acc0, MASK  // наложение маски
-	out PORTB, Acc0 // записать результат в порт
+K1: // Р‘Р»РѕРє РґР»СЏ СЃС‡РёС‚С‹РІР°РЅРёСЏ/Р·Р°РїРёСЃРё СЃ/РІ РїРѕСЂС‚
+    ori MASK, 0x1 // РјР»Р°РґС€РёР№ Р±РёС‚ РІ 1
+    in Acc0, PORTB // СЃС‡РёС‚Р°С‚СЊ РґР°РЅРЅС‹Рµ РёР· PORTB
+    ori Acc0, 0b11110000 // ori - Р»РѕРіРёС‡РЅСЃРєРѕРµ РїРѕР±РёС‚РѕРІРѕРµ Р СЃ РєРѕРЅСЃС‚Р°РЅС‚РѕР№, СЃС‚Р°РІРёРј 4 СЃС‚Р°СЂС€РёС… Р±РёС‚Р° РІ 1 Рё РЅР°РєР»Р°РґС‹РІР°РµРј РјР°СЃРєСѓ
+    and Acc0, MASK  // РЅР°Р»РѕР¶РµРЅРёРµ РјР°СЃРєРё
+    out PORTB, Acc0 // Р·Р°РїРёСЃР°С‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚ РІ РїРѕСЂС‚
 
-	//read column portD
-	nop // выставляем задержку, чтобы успеть считать установленные данные
-	nop
-	in Acc0, PIND // считать PIND
-	//analys in data
-	ldi Acc1, 0x3 // 3 раза будем сдвигать влево
+    //read column portD
+    nop // РІС‹СЃС‚Р°РІР»СЏРµРј Р·Р°РґРµСЂР¶РєСѓ, С‡С‚РѕР±С‹ СѓСЃРїРµС‚СЊ СЃС‡РёС‚Р°С‚СЊ СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹Рµ РґР°РЅРЅС‹Рµ
+    nop
+    in Acc0, PIND // СЃС‡РёС‚Р°С‚СЊ PIND
+    //analys in data
+    ldi Acc1, 0x3 // 3 СЂР°Р·Р° Р±СѓРґРµРј СЃРґРІРёРіР°С‚СЊ РІР»РµРІРѕ
 
-ankey: // Блок анализирует нажатие кнопки
+ankey: // Р‘Р»РѕРє Р°РЅР°Р»РёР·РёСЂСѓРµС‚ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё
 //if key push to ret
-//else <<mask and rjmp K1	
-	lsl Acc0 // сдвиг влево
-	brcc pushkey // если 0, то уйти в pushkey, если 1 - идти дальше
-	dec Acc1 // декремент
-	brne ankey // если не 0, то уйти в ankey, иначе идти дальше
-	//numkey+3
-	add numkey, Acc2
+//else <<mask and rjmp K1    
+    lsl Acc0 // СЃРґРІРёРі РІР»РµРІРѕ
+    brcc pushkey // РµСЃР»Рё 0, С‚Рѕ СѓР№С‚Рё РІ pushkey, РµСЃР»Рё 1 - РёРґС‚Рё РґР°Р»СЊС€Рµ
+    dec Acc1 // РґРµРєСЂРµРјРµРЅС‚
+    brne ankey // РµСЃР»Рё РЅРµ 0, С‚Рѕ СѓР№С‚Рё РІ ankey, РёРЅР°С‡Рµ РёРґС‚Рё РґР°Р»СЊС€Рµ
+    //numkey+3
+    add numkey, Acc2
 
-	lsl MASK
-	brcs K1 // если флаг С=1, уйти в K1
-	clr numkey // ни одна клавиша не была нажата = обнулить numkey
-	rjmp endkey
+    lsl MASK
+    brcs K1 // РµСЃР»Рё С„Р»Р°Рі РЎ=1, СѓР№С‚Рё РІ K1
+    clr numkey // РЅРё РѕРґРЅР° РєР»Р°РІРёС€Р° РЅРµ Р±С‹Р»Р° РЅР°Р¶Р°С‚Р° = РѕР±РЅСѓР»РёС‚СЊ numkey
+    rjmp endkey
 
 pushkey:
-	ldi Start, 1 // Разрешить счет вниз
-	add numkey, Acc1 // кладем номер нажатой кнопки
-	sbi PORTB, LED // выключить светодиод
-	ldi DBCount, 10
+    ldi Start, 1 // Р Р°Р·СЂРµС€РёС‚СЊ СЃС‡РµС‚ РІРЅРёР·
+    add numkey, Acc1 // РєР»Р°РґРµРј РЅРѕРјРµСЂ РЅР°Р¶Р°С‚РѕР№ РєРЅРѕРїРєРё
+    sbi PORTB, LED // РІС‹РєР»СЋС‡РёС‚СЊ СЃРІРµС‚РѕРґРёРѕРґ
+    ldi DBCount, 10
 
 endkey:
-	ret
+    ret
 
 
-// Семисегментный индикатор
+// РЎРµРјРёСЃРµРіРјРµРЅС‚РЅС‹Р№ РёРЅРґРёРєР°С‚РѕСЂ
 SevSeg:
-	ldi Acc1, 8
+    ldi Acc1, 8
 
 SS0:
-	lsl Acc0
-	brcc SS1
-	sbi PORTC, DATA
-	rjmp SS2
+    lsl Acc0
+    brcc SS1
+    sbi PORTC, DATA
+    rjmp SS2
 
 SS1:
-	cbi PORTC, DATA
+    cbi PORTC, DATA
 
 SS2:
-	// taсt
-	nop
-	nop
-	sbi PORTC, CLK // установить бит
-	nop
-	nop
-	cbi PORTC, CLK // сбросить бит
-	// dec CNT
-	dec Acc1 // декремент
-	// test CNT
-	brne SS0 // переходить в SS0, пока флаг 0 не будет установлен
+    // taСЃt
+    nop
+    nop
+    sbi PORTC, CLK // СѓСЃС‚Р°РЅРѕРІРёС‚СЊ Р±РёС‚
+    nop
+    nop
+    cbi PORTC, CLK // СЃР±СЂРѕСЃРёС‚СЊ Р±РёС‚
+    // dec CNT
+    dec Acc1 // РґРµРєСЂРµРјРµРЅС‚
+    // test CNT
+    brne SS0 // РїРµСЂРµС…РѕРґРёС‚СЊ РІ SS0, РїРѕРєР° С„Р»Р°Рі 0 РЅРµ Р±СѓРґРµС‚ СѓСЃС‚Р°РЅРѕРІР»РµРЅ
 
 ret
 
-// запись значений на индикаторы
+// Р·Р°РїРёСЃСЊ Р·РЅР°С‡РµРЅРёР№ РЅР° РёРЅРґРёРєР°С‚РѕСЂС‹
 
 CountSevSegInit:
-	rcall Init
-	rcall Init
-	rcall Init
-	cpi Start, 0
-	brne CountSevSeg
-	rcall SetZero
-	ret
+    rcall Init
+    rcall Init
+    rcall Init
+    cpi Start, 0
+    brne CountSevSeg
+    rcall SetZero
+    ret
 
 CountSevSeg:
-	rcall Init
-	rcall Init
-	rcall Init
-	cpi DBCount, 10
-	brne C0 // переходить в C0, пока флаг 0 не будет установлен
-	ldi DBCount, 0
+    rcall Init
+    rcall Init
+    rcall Init
+    cpi DBCount, 10
+    brne C0 // РїРµСЂРµС…РѕРґРёС‚СЊ РІ C0, РїРѕРєР° С„Р»Р°Рі 0 РЅРµ Р±СѓРґРµС‚ СѓСЃС‚Р°РЅРѕРІР»РµРЅ
+    ldi DBCount, 0
 
 C0:
-	ldi ZL, LOW(DataByte*2)
-	ldi ZH, HIGH(DataByte*2)
-	add ZL, DBCount
-	add ZL, numkeyTmp
-	lpm Acc0, Z
-	mov Acc2, Acc0
-	rcall SevSeg
-	cpi Acc2, Zero
-	brne C1_cont
+    ldi ZL, LOW(DataByte*2)
+    ldi ZH, HIGH(DataByte*2)
+    add ZL, DBCount
+    add ZL, numkeyTmp
+    lpm Acc0, Z
+    mov Acc2, Acc0
+    rcall SevSeg
+    cpi Acc2, Zero
+    brne C1_cont
 
-	cbi PORTB, LED
-	ldi Acc2, 0
-	ldi Start, 0
+    cbi PORTB, LED
+    ldi Acc2, 0
+    ldi Start, 0
 
 C1_cont:
-	cpi Start, 1
-	brne C2_stop
-	inc DBCount
+    cpi Start, 1
+    brne C2_stop
+    inc DBCount
 
 C2_stop:
-		
+        
 ret
 
 Init:
-	ldi Acc0, 0xff
-	rcall SevSeg
+    ldi Acc0, 0xff
+    rcall SevSeg
 ret
 
 SetZero:
-	cpi Start, 0
-	brne SZ_tmp 
-	ldi Acc0, Zero
-	rcall SevSeg
-	rjmp SZ_end
-SZ_tmp: // если устанолено значение, записываем его
-	ldi ZL, LOW(DataByte*2)
-	ldi ZH, HIGH(DataByte*2)
-	add ZL, numkeyTmp
-	lpm Acc0, Z
-	rcall SevSeg
+    cpi Start, 0
+    brne SZ_tmp 
+    ldi Acc0, Zero
+    rcall SevSeg
+    rjmp SZ_end
+SZ_tmp: // РµСЃР»Рё СѓСЃС‚Р°РЅРѕР»РµРЅРѕ Р·РЅР°С‡РµРЅРёРµ, Р·Р°РїРёСЃС‹РІР°РµРј РµРіРѕ
+    ldi ZL, LOW(DataByte*2)
+    ldi ZH, HIGH(DataByte*2)
+    add ZL, numkeyTmp
+    lpm Acc0, Z
+    rcall SevSeg
 SZ_end:
-	
+    
 ret
 
 
 //Interrupt Routines
-TIM0_OVF: // название берется из вектора прерывания
-	//rcall Delay
-	push Acc0
-	push Acc1
-	in Acc0, SREG // сохраняем статусный регистр
-	push Acc0
+TIM0_OVF: // РЅР°Р·РІР°РЅРёРµ Р±РµСЂРµС‚СЃСЏ РёР· РІРµРєС‚РѕСЂР° РїСЂРµСЂС‹РІР°РЅРёСЏ
+    //rcall Delay
+    push Acc0
+    push Acc1
+    in Acc0, SREG // СЃРѕС…СЂР°РЅСЏРµРј СЃС‚Р°С‚СѓСЃРЅС‹Р№ СЂРµРіРёСЃС‚СЂ
+    push Acc0
 
-	rjmp TO0_0
-	
+    rjmp TO0_0
+    
 TO0_0:
-	inc TactCount
-	cpi TactCount, 4 // сравниваем регистр с 4 (т.к. 1 такт = 1/сек.)
-	brne TO0_1
-	ldi TactCount, 0
-	rcall CountSevSegInit // записать значения на индикаторы
+    inc TactCount
+    cpi TactCount, 4 // СЃСЂР°РІРЅРёРІР°РµРј СЂРµРіРёСЃС‚СЂ СЃ 4 (С‚.Рє. 1 С‚Р°РєС‚ = 1/СЃРµРє.)
+    brne TO0_1
+    ldi TactCount, 0
+    rcall CountSevSegInit // Р·Р°РїРёСЃР°С‚СЊ Р·РЅР°С‡РµРЅРёСЏ РЅР° РёРЅРґРёРєР°С‚РѕСЂС‹
 
 TO0_1:
-	pop Acc0
-	out SREG, Acc0
-	pop Acc1
-	pop Acc0
-	reti // окончание прерывания
+    pop Acc0
+    out SREG, Acc0
+    pop Acc1
+    pop Acc0
+    reti // РѕРєРѕРЅС‡Р°РЅРёРµ РїСЂРµСЂС‹РІР°РЅРёСЏ
 
 //Data
 DataByte:

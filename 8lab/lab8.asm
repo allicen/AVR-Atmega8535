@@ -78,115 +78,115 @@ sei
 // отправляем через spi на микросхему
 // считываем обратно в оперативную память через spi
 loop:
-	// Запись во внешнюю микросхему
-	ldi Acc1, 0 // счетчик для прерывания
-	ldi Acc2, 0 // 0 - операция записи, 1 - чтения
-	sbi PORTB, 4 // SS на +5
-	cbi PORTB, 4 // земля = начало работы с микросхемой
-	ldi Acc0, (1<<SPDR1)|(1<<SPDR2)// разрешение на запись
-	out SPDR, Acc0 // SPDR - регистр приема-передачи данных
-	rcall delay
+    // Запись во внешнюю микросхему
+    ldi Acc1, 0 // счетчик для прерывания
+    ldi Acc2, 0 // 0 - операция записи, 1 - чтения
+    sbi PORTB, 4 // SS на +5
+    cbi PORTB, 4 // земля = начало работы с микросхемой
+    ldi Acc0, (1<<SPDR1)|(1<<SPDR2)// разрешение на запись
+    out SPDR, Acc0 // SPDR - регистр приема-передачи данных
+    rcall delay
 
-	// Чтение из микросхемы в ОЗУ чипа
-	ldi Acc1, 0 // счетчик для прерывания
-	ldi Acc2, 1 // 1 - это операция чтения
-	ldi XH, HIGH(MEMO) // запись указателя на 1 ячейку MEMO через регистр косвенной адресации
-	ldi XL, LOW(MEMO)
-	sbi PORTB, 4 // SS на +5
-	cbi PORTB, 4 // SS на землю, начали работать с микросхемой
-	ldi Acc0, (1<<SPDR0)|(1<<SPDR1) // разрешение на чтение
-	out SPDR, Acc0
-	rcall delay
+    // Чтение из микросхемы в ОЗУ чипа
+    ldi Acc1, 0 // счетчик для прерывания
+    ldi Acc2, 1 // 1 - это операция чтения
+    ldi XH, HIGH(MEMO) // запись указателя на 1 ячейку MEMO через регистр косвенной адресации
+    ldi XL, LOW(MEMO)
+    sbi PORTB, 4 // SS на +5
+    cbi PORTB, 4 // SS на землю, начали работать с микросхемой
+    ldi Acc0, (1<<SPDR0)|(1<<SPDR1) // разрешение на чтение
+    out SPDR, Acc0
+    rcall delay
 rjmp loop
 
 
 SPI_STC:
-	sbis SPSR, SPIF
-	rjmp SPI_STC
+    sbis SPSR, SPIF
+    rjmp SPI_STC
 
-	cpi Acc2, 0
-	breq SS_WriteSPI // 0 - операция записи
-	cpi Acc2, 1
-	breq SS_ReadSPI // 1 - операция чтения
-	
-	rjmp SS_stop
+    cpi Acc2, 0
+    breq SS_WriteSPI // 0 - операция записи
+    cpi Acc2, 1
+    breq SS_ReadSPI // 1 - операция чтения
+    
+    rjmp SS_stop
 
 // Операции записи
 SS_WriteSPI: 
-	inc Acc1
-	cpi Acc1, 1
-	breq SS_WriteSPIWR // переход, если разрешена запись в микросхему
-	cpi Acc1, 2
-	breq SS_WriteSPIADR // переход, для указания адреса для записи в микросхему
+    inc Acc1
+    cpi Acc1, 1
+    breq SS_WriteSPIWR // переход, если разрешена запись в микросхему
+    cpi Acc1, 2
+    breq SS_WriteSPIADR // переход, для указания адреса для записи в микросхему
 
-	// генерируем числа для записи в память (10 шт)
-	cpi Acc1, 10
-	breq SS_RESET
-	inc count // count - произвольные данные, для записи в память
-	out SPDR, count // отправка на SPI
-	rjmp SS_stop
+    // генерируем числа для записи в память (10 шт)
+    cpi Acc1, 10
+    breq SS_RESET
+    inc count // count - произвольные данные, для записи в память
+    out SPDR, count // отправка на SPI
+    rjmp SS_stop
 
 
 SS_WriteSPIWR:
-	sbi PORTB, 4 // перезагрузим вывод SS, подняв его на +5 и опрокинув на землю (только для операции записи)
-	cbi PORTB, 4
-	ldi Acc0, (1<<SPDR1)
-	out SPDR, Acc0 // команду записи отправить на SPI
-	rjmp SS_stop
+    sbi PORTB, 4 // перезагрузим вывод SS, подняв его на +5 и опрокинув на землю (только для операции записи)
+    cbi PORTB, 4
+    ldi Acc0, (1<<SPDR1)
+    out SPDR, Acc0 // команду записи отправить на SPI
+    rjmp SS_stop
 
 
 SS_WriteSPIADR:
-	ldi Acc0, 0x00
-	out SPDR, Acc0
-	rjmp SS_stop
+    ldi Acc0, 0x00
+    out SPDR, Acc0
+    rjmp SS_stop
 
 
 SS_RESET:
-	sbi PORTB, 4 // SS на +5
-	rjmp SS_stop
+    sbi PORTB, 4 // SS на +5
+    rjmp SS_stop
 
 
 // Операции чтения
 SS_ReadSPI: 
-	inc Acc1
-	cpi Acc1, 1
-	breq SS_ReadSPIADR // переход, когда отослали команду на чтение
-	cpi Acc1, 2
-	breq SS_ReadSPI2 // переход, когда отправили на SPI адрес чтения
-	cpi Acc1, 10
-	breq SS_RESET // конец передачи
-	in Acc0, SPDR // считать пришедшие данные
-	st X+, Acc0 // запись в ОЗУ чипа через косвенную адресацию
-	ldi Acc0, 0xFF // для начала обмена отправить любой байт
-	out SPDR,Acc0
-	rjmp SS_stop
+    inc Acc1
+    cpi Acc1, 1
+    breq SS_ReadSPIADR // переход, когда отослали команду на чтение
+    cpi Acc1, 2
+    breq SS_ReadSPI2 // переход, когда отправили на SPI адрес чтения
+    cpi Acc1, 10
+    breq SS_RESET // конец передачи
+    in Acc0, SPDR // считать пришедшие данные
+    st X+, Acc0 // запись в ОЗУ чипа через косвенную адресацию
+    ldi Acc0, 0xFF // для начала обмена отправить любой байт
+    out SPDR,Acc0
+    rjmp SS_stop
 
 
 SS_ReadSPIADR:
-	ldi Acc0, 0x00 // какой адрес считываем
-	out SPDR, Acc0 // отправка на SPI
-	rjmp SS_stop
+    ldi Acc0, 0x00 // какой адрес считываем
+    out SPDR, Acc0 // отправка на SPI
+    rjmp SS_stop
 
 
 SS_ReadSPI2:
-	ldi Acc0, 0xFF // отправить любой байт
-	out SPDR,Acc0 // в ответ будем получать с микросхемы нужные байты
-	rjmp SS_stop
+    ldi Acc0, 0xFF // отправить любой байт
+    out SPDR,Acc0 // в ответ будем получать с микросхемы нужные байты
+    rjmp SS_stop
 
 SS_stop: 
 reti
 
 
 Delay: // задержка ~2 сек
-	ldi delay1, 255
-	ldi delay2, 255
-	ldi delay3, 100
+    ldi delay1, 255
+    ldi delay2, 255
+    ldi delay3, 100
 
-	PDelay:
-	dec delay1
-	brne PDelay
-	dec delay2
-	brne PDelay
-	dec delay3
-	brne PDelay
+    PDelay:
+    dec delay1
+    brne PDelay
+    dec delay2
+    brne PDelay
+    dec delay3
+    brne PDelay
 ret

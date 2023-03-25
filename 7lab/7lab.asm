@@ -52,15 +52,15 @@ reti ; rjmp EXT_INT0 ; IRQ0 Handler
 reti ; rjmp EXT_INT1 ; IRQ1 Handler
 reti ; rjmp TIM2_COMP ; Timer2 Compare Handler
 reti ; rjmp TIM2_OVF ;Timer2 Overflow Handler
-	rjmp TIM1_CAPT ; Timer1 Capture Handler
+    rjmp TIM1_CAPT ; Timer1 Capture Handler
 reti ; rjmp TIM1_COMPA ; Timer1 Compare A Handler
 reti ; rjmp TIM1_COMPB ; Timer1 Compare B Handler
 reti ; rjmp TIM1_OVF ; Timer1 Overflow Handler
-	rjmp TIM0_OVF ; Timer0 Overflow Handler
+    rjmp TIM0_OVF ; Timer0 Overflow Handler
 reti ; rjmp SPI_STC ; SPI Transfer Complete Handler
-	rjmp USART_RXC ; USART RX Complete Handler
+    rjmp USART_RXC ; USART RX Complete Handler
 reti ; rjmp USART_UDRE ; UDR Empty Handler
-	rjmp USART_TXC ; USART TX Complete Handler
+    rjmp USART_TXC ; USART TX Complete Handler
 reti ; rjmp ADC ; ADC Conversion Complete Handler
 reti ; rjmp EE_RDY ; EEPROM Ready Handler
 reti ; rjmp ANA_COMP ; Analog Comparator Handler
@@ -148,110 +148,110 @@ rjmp loop
 //////////////////////////////////
 
 PrintUSART:
-	sbis UCSRA, UDRE
-	rjmp PrintUSART
-	out UDR, Char
+    sbis UCSRA, UDRE
+    rjmp PrintUSART
+    out UDR, Char
 ret
 
 
 PrintStartLine:
-	lpm Char, Z+
-	cpi Char, '$' // проверка на конец строки
-	breq LC_end
-	rcall PrintUSART
-	rjmp PrintStartLine
+    lpm Char, Z+
+    cpi Char, '$' // проверка на конец строки
+    breq LC_end
+    rcall PrintUSART
+    rjmp PrintStartLine
 LC_end:
-	ldi CharIndex, 0
-	ldi Char, 1
-	ldi LinePrintState, 0
+    ldi CharIndex, 0
+    ldi Char, 1
+    ldi LinePrintState, 0
 ret
 
 
 PrintEndLine:
-	cpi LinePrintState, 2
-	brne PEL_stop
-	ldi Char, 0x0D
-	out UDR, Char
-	ldi CharIndex, 0
-	ldi Char, 1
-	ldi LinePrintState, 0
+    cpi LinePrintState, 2
+    brne PEL_stop
+    ldi Char, 0x0D
+    out UDR, Char
+    ldi CharIndex, 0
+    ldi Char, 1
+    ldi LinePrintState, 0
 PEL_stop:
 ret
 
 
 ClearAndEndLine:
-	ldi LinePrintState, 2
-	rcall PrintEndLine
-	ldi CharIndex, 0
-	ldi LinePrintState, 0
-	ldi PrintState, 0
+    ldi LinePrintState, 2
+    rcall PrintEndLine
+    ldi CharIndex, 0
+    ldi LinePrintState, 0
+    ldi PrintState, 0
 ret
 
 
 PrintTimerStartNote:
-	ldi ZL, LOW(TimerStartNote*2)
-	ldi ZH, HIGH(TimerStartNote*2)
-	add ZL, CharIndex
-	lpm Char, Z
-	cpi Char, '$'
-	breq PTSN_clear
-	out UDR, Char
-	inc CharIndex
-	rjmp PTSN_stop
+    ldi ZL, LOW(TimerStartNote*2)
+    ldi ZH, HIGH(TimerStartNote*2)
+    add ZL, CharIndex
+    lpm Char, Z
+    cpi Char, '$'
+    breq PTSN_clear
+    out UDR, Char
+    inc CharIndex
+    rjmp PTSN_stop
 PTSN_clear:
-	rcall ClearAndEndLine
-	ldi PrintMemData, 3
+    rcall ClearAndEndLine
+    ldi PrintMemData, 3
 PTSN_stop:
 ret
 
 
 PrintTimerResultNote:
-	ldi ZL, LOW(TimerResultNote*2)
-	ldi ZH, HIGH(TimerResultNote*2)
-	add ZL, CharIndex
-	lpm Char, Z
-	cpi Char, '$'
-	breq PTRN_clear
-	out UDR, Char
-	inc CharIndex
-	rjmp PTRN_stop
+    ldi ZL, LOW(TimerResultNote*2)
+    ldi ZH, HIGH(TimerResultNote*2)
+    add ZL, CharIndex
+    lpm Char, Z
+    cpi Char, '$'
+    breq PTRN_clear
+    out UDR, Char
+    inc CharIndex
+    rjmp PTRN_stop
 PTRN_clear:
-	rcall ClearAndEndLine
-	ldi PrintMemData, 1
-	ldi CharIndex, 0
-	ldi Acc0, 0 // для записи разрядов
-	ldi Acc1, 0
+    rcall ClearAndEndLine
+    ldi PrintMemData, 1
+    ldi CharIndex, 0
+    ldi Acc0, 0 // для записи разрядов
+    ldi Acc1, 0
 PTRN_stop:
 ret
 
 
 PrintTimerClearNote:
-	ldi ZL, LOW(TimerClearNote*2)
-	ldi ZH, HIGH(TimerClearNote*2)
-	add ZL, CharIndex
-	lpm Char, Z
-	cpi Char, '$'
-	breq PTCN_clear
-	out UDR, Char
-	inc CharIndex
-	rjmp PTCN_stop
+    ldi ZL, LOW(TimerClearNote*2)
+    ldi ZH, HIGH(TimerClearNote*2)
+    add ZL, CharIndex
+    lpm Char, Z
+    cpi Char, '$'
+    breq PTCN_clear
+    out UDR, Char
+    inc CharIndex
+    rjmp PTCN_stop
 PTCN_clear:
-	rcall ClearAndEndLine
+    rcall ClearAndEndLine
 PTCN_stop:
 ret
 
 PrintKeyErrorNote:
-	ldi ZL, LOW(KeyErrorNote*2)
-	ldi ZH, HIGH(KeyErrorNote*2)
-	add ZL, CharIndex
-	lpm Char, Z
-	cpi Char, '$'
-	breq PKEN_clear
-	out UDR, Char
-	inc CharIndex
-	rjmp PKEN_stop
+    ldi ZL, LOW(KeyErrorNote*2)
+    ldi ZH, HIGH(KeyErrorNote*2)
+    add ZL, CharIndex
+    lpm Char, Z
+    cpi Char, '$'
+    breq PKEN_clear
+    out UDR, Char
+    inc CharIndex
+    rjmp PKEN_stop
 PKEN_clear:
-	rcall ClearAndEndLine
+    rcall ClearAndEndLine
 PKEN_stop:
 ret
 
@@ -265,33 +265,33 @@ ret
 
 
 EEPROM_write:
-	; Wait for completion of previous write
-	sbic EECR,EEWE // ждет окончания записи, анализ флага EEWE в регистре EECR
-	rjmp EEPROM_write
-	; Set up address (r18:r17) in address register
-	out EEARH, AccMem2
-	out EEARL, AccMem1
-	; Write data (r16) to Data Register
-	out EEDR, Char
-	; Write logical one to EEMWE
-	sbi EECR,EEMWE // установить в регистр ввода-вывода 1
-	; Start eeprom write by setting EEWE
-	sbi EECR,EEWE
+    ; Wait for completion of previous write
+    sbic EECR,EEWE // ждет окончания записи, анализ флага EEWE в регистре EECR
+    rjmp EEPROM_write
+    ; Set up address (r18:r17) in address register
+    out EEARH, AccMem2
+    out EEARL, AccMem1
+    ; Write data (r16) to Data Register
+    out EEDR, Char
+    ; Write logical one to EEMWE
+    sbi EECR,EEMWE // установить в регистр ввода-вывода 1
+    ; Start eeprom write by setting EEWE
+    sbi EECR,EEWE
 ret
 
 
 EEPROM_read:
-	; Wait for completion of previous write
-	sbic EECR,EEWE
-	rjmp EEPROM_read
-	; Set up address (r18:r17) in Address Register
-	out EEARH, AccMem2
-	out EEARL, AccMem1
-	; Start eeprom read by writing EERE
-	sbi EECR,EERE
-	; Read data from Data Register
-	in Char,EEDR
-	mov PrevMemChar, Char
+    ; Wait for completion of previous write
+    sbic EECR,EEWE
+    rjmp EEPROM_read
+    ; Set up address (r18:r17) in Address Register
+    out EEARH, AccMem2
+    out EEARL, AccMem1
+    ; Start eeprom read by writing EERE
+    sbi EECR,EERE
+    ; Read data from Data Register
+    in Char,EEDR
+    mov PrevMemChar, Char
 ret
 
 
@@ -303,19 +303,19 @@ ret
 //////////////////////////////////
 
 DataClear:
-	cpi AccMem1, LOW(memAddr)
-	brne DC_index
-	rjmp DC_start
+    cpi AccMem1, LOW(memAddr)
+    brne DC_index
+    rjmp DC_start
 DC_index:
-	ldi AccMem1, LOW(memAddr)
+    ldi AccMem1, LOW(memAddr)
 DC_start:
-	rcall EEPROM_read
-	cpi Char, 0xFF
-	breq DC_stop
-	ldi Char, 0xFF
-	rcall EEPROM_write
-	inc AccMem1
-	rjmp DC_start
+    rcall EEPROM_read
+    cpi Char, 0xFF
+    breq DC_stop
+    ldi Char, 0xFF
+    rcall EEPROM_write
+    inc AccMem1
+    rjmp DC_start
 DC_stop:
 ret
 
@@ -328,16 +328,16 @@ ret
 //////////////////////////////////
 
 GetDigit:
-	cpi Char, 0xFF // пусто
-	breq GD_stop
-	cpi Char, 0x10
-	brlo GD_stop
-	subi Char, 0x10
-	inc Acc1 // Acc1 десятки
-	rjmp GetDigit
+    cpi Char, 0xFF // пусто
+    breq GD_stop
+    cpi Char, 0x10
+    brlo GD_stop
+    subi Char, 0x10
+    inc Acc1 // Acc1 десятки
+    rjmp GetDigit
 GD_stop:
-	mov Acc0, Char // Acc0 единицы
-	ldi Char, 0
+    mov Acc0, Char // Acc0 единицы
+    ldi Char, 0
 ret
 
 
@@ -350,37 +350,37 @@ ret
 //////////////////////////////////
 
 TIM1_CAPT:
-	push Acc0
-	push Acc1
-	push Char
-	in Acc0,SREG
-	push Acc0
+    push Acc0
+    push Acc1
+    push Char
+    in Acc0,SREG
+    push Acc0
 
-	cpi PrintMemData, 3 // Сохранять данные только в режиме 1
-	breq TC_save
-	rjmp TC_stop
+    cpi PrintMemData, 3 // Сохранять данные только в режиме 1
+    breq TC_save
+    rjmp TC_stop
 
 TC_save:
-	in Acc0,UCSRA
-	sbrs Acc0, UDRE // пропустить следующую строку, если UDRE=1
-	rjmp TC_save
+    in Acc0,UCSRA
+    sbrs Acc0, UDRE // пропустить следующую строку, если UDRE=1
+    rjmp TC_save
 
-	ldi Acc0, 1
-	cp DataMemSave, Acc0
-	breq TC_stop
+    ldi Acc0, 1
+    cp DataMemSave, Acc0
+    breq TC_stop
 
-	in Acc0, ICR1L
-	mov Char, Acc0
-	rcall EEPROM_write
-	inc AccMem1
-	rjmp TC_stop
+    in Acc0, ICR1L
+    mov Char, Acc0
+    rcall EEPROM_write
+    inc AccMem1
+    rjmp TC_stop
 
 TC_stop:
-	pop Acc0
-	out SREG,Acc0
-	pop Char
-	pop Acc1
-	pop Acc0
+    pop Acc0
+    out SREG,Acc0
+    pop Char
+    pop Acc1
+    pop Acc0
 
 reti
 
@@ -393,43 +393,43 @@ reti
 //////////////////////////////////
 
 USART_RXC: // прерывание при получении данных
-	sbis UCSRA, RXC // RXC - бит входа в прерывание по USART
-	rjmp USART_RXC
-	
-	ldi Acc0, numCode
-	in Char, UDR
-	out UDR, Char
-	cp Char, Acc0 // 1 - запуск таймера
-	breq UR_timer_start
-	inc Acc0
-	cp Char, Acc0 // 2 - остановить таймер и вывести результат
-	breq UR_timer_res
-	inc Acc0
-	cp Char, Acc0 // 3 - очистить таймер
-	breq UR_timer_clear
-	rjmp UR_error
+    sbis UCSRA, RXC // RXC - бит входа в прерывание по USART
+    rjmp USART_RXC
+    
+    ldi Acc0, numCode
+    in Char, UDR
+    out UDR, Char
+    cp Char, Acc0 // 1 - запуск таймера
+    breq UR_timer_start
+    inc Acc0
+    cp Char, Acc0 // 2 - остановить таймер и вывести результат
+    breq UR_timer_res
+    inc Acc0
+    cp Char, Acc0 // 3 - очистить таймер
+    breq UR_timer_clear
+    rjmp UR_error
 UR_timer_start:
-	ldi PrintState, 1
-	ldi PrintMemData, 3
-	rjmp UR_stop
+    ldi PrintState, 1
+    ldi PrintMemData, 3
+    rjmp UR_stop
 UR_timer_res:
-	ldi PrintState, 2
-	rjmp UR_stop
+    ldi PrintState, 2
+    rjmp UR_stop
 UR_timer_clear:
-	ldi PrintState, 3
-	rcall DataClear
-	rjmp UR_stop
+    ldi PrintState, 3
+    rcall DataClear
+    rjmp UR_stop
 UR_error:
-	ldi PrintState, 4
-	rjmp UR_stop
+    ldi PrintState, 4
+    rjmp UR_stop
 UR_clear_mem:
-	ldi PrintMemData, 0
+    ldi PrintMemData, 0
 UR_stop:
-	cpi PrintMemData, 1
-	breq UR_clear_mem
-	ldi CharIndex, 0 // Индекс символа в 0
-	ldi LinePrintState, 2 // символ введен - строка закончена
-	ldi AccMem1, LOW(memAddr)
+    cpi PrintMemData, 1
+    breq UR_clear_mem
+    ldi CharIndex, 0 // Индекс символа в 0
+    ldi LinePrintState, 2 // символ введен - строка закончена
+    ldi AccMem1, LOW(memAddr)
 reti
 
 
@@ -441,110 +441,110 @@ reti
 ////////////////////////////////
 
 USART_TXC: // передача выполнена
-	sbis UCSRA, UDRE
-	rjmp USART_TXC
+    sbis UCSRA, UDRE
+    rjmp USART_TXC
 
-	cpi LinePrintState, 2
-	breq US_print_end
+    cpi LinePrintState, 2
+    breq US_print_end
 
-	cpi PrintState, 1
-	breq US_print_start
+    cpi PrintState, 1
+    breq US_print_start
 
-	cpi PrintState, 2
-	breq US_print_stop
+    cpi PrintState, 2
+    breq US_print_stop
 
-	cpi PrintState, 3
-	breq US_print_clear
+    cpi PrintState, 3
+    breq US_print_clear
 
-	cpi PrintState, 4
-	breq US_print_error
+    cpi PrintState, 4
+    breq US_print_error
 
-	cpi PrintMemData, 1
-	breq US_ps_data
+    cpi PrintMemData, 1
+    breq US_ps_data
 
-	rjmp US_stop
+    rjmp US_stop
 
 US_print_end:
-	rcall PrintEndLine
-	rjmp US_stop
+    rcall PrintEndLine
+    rjmp US_stop
 
 US_print_start:
-	rcall PrintTimerStartNote
-	rjmp US_stop
+    rcall PrintTimerStartNote
+    rjmp US_stop
 
 US_print_stop:
-	rcall PrintTimerResultNote
-	ldi AccMem1, LOW(memAddr)
-	rjmp US_stop
+    rcall PrintTimerResultNote
+    ldi AccMem1, LOW(memAddr)
+    rjmp US_stop
 
 US_ps_data:
-	cpi AccMem1, LOW(memAddr)
-	breq USPD_print
-	cpi PrevMemChar, 0xFF
-	breq US_stop
-	cpi CharIndex, 0
-	breq USPD_print
-	rcall PrintEndLine
-	sbrc CharIndex, 0 // пропустить, если бит 0 не установлен
-	ldi CharIndex, 0
-	rjmp US_stop
+    cpi AccMem1, LOW(memAddr)
+    breq USPD_print
+    cpi PrevMemChar, 0xFF
+    breq US_stop
+    cpi CharIndex, 0
+    breq USPD_print
+    rcall PrintEndLine
+    sbrc CharIndex, 0 // пропустить, если бит 0 не установлен
+    ldi CharIndex, 0
+    rjmp US_stop
 USPD_print:
-	cpi Char, 0
-	brne USPD_get_digit
-	rjmp USPD_end_line
+    cpi Char, 0
+    brne USPD_get_digit
+    rjmp USPD_end_line
 USPD_get_digit:
-	rcall EEPROM_read
-	cpi Char, 0xFF // последний пустой символ не выводить
-	breq US_stop
-	rcall GetDigit
-	ldi Char, AsciiCode
-	add Acc1, Char
-	cpi Acc1, 0x3A
-	brlo USPD_1
-	ldi Char, 0x7 // разница между буквами
-	add Acc1, Char
+    rcall EEPROM_read
+    cpi Char, 0xFF // последний пустой символ не выводить
+    breq US_stop
+    rcall GetDigit
+    ldi Char, AsciiCode
+    add Acc1, Char
+    cpi Acc1, 0x3A
+    brlo USPD_1
+    ldi Char, 0x7 // разница между буквами
+    add Acc1, Char
 USPD_1:
-	ldi Char, 0
-	out UDR, Acc1
-	rjmp US_stop
+    ldi Char, 0
+    out UDR, Acc1
+    rjmp US_stop
 USPD_end_line:
-	ldi Char, AsciiCode
-	add Acc0, Char
-	cpi Acc0, 0x3A // если буквы
-	brlo USPD_0
-	ldi Char, 7 // разница между буквами
-	add Acc0, Char
+    ldi Char, AsciiCode
+    add Acc0, Char
+    cpi Acc0, 0x3A // если буквы
+    brlo USPD_0
+    ldi Char, 7 // разница между буквами
+    add Acc0, Char
 USPD_0:
-	out UDR, Acc0
-	ldi CharIndex, 1
-	ldi LinePrintState, 2 // конец строки
-	inc AccMem1
-	ldi Char, 1
-	ldi Acc0, 0
-	ldi Acc1, 0
-	rjmp US_stop
+    out UDR, Acc0
+    ldi CharIndex, 1
+    ldi LinePrintState, 2 // конец строки
+    inc AccMem1
+    ldi Char, 1
+    ldi Acc0, 0
+    ldi Acc1, 0
+    rjmp US_stop
 USPD_stop:
-	cpi PrintMemData, 1
-	breq USPD_clear
-	rjmp US_stop
+    cpi PrintMemData, 1
+    breq USPD_clear
+    rjmp US_stop
 USPD_clear:
-	ldi CharIndex, 0
-	rcall ClearAndEndLine
-	cpi PrintMemData, 1
-	breq US_clear_mem
-	rjmp US_stop
+    ldi CharIndex, 0
+    rcall ClearAndEndLine
+    cpi PrintMemData, 1
+    breq US_clear_mem
+    rjmp US_stop
 
 US_clear_mem:
-	ldi PrintMemData, 0 // очищаем только при PrintMemData=1
-	rjmp US_stop
+    ldi PrintMemData, 0 // очищаем только при PrintMemData=1
+    rjmp US_stop
 
 US_print_clear:
-	rcall PrintTimerClearNote
-	rjmp US_stop
+    rcall PrintTimerClearNote
+    rjmp US_stop
 
 US_print_error:
-	rcall PrintKeyErrorNote
-	rjmp US_stop
+    rcall PrintKeyErrorNote
+    rjmp US_stop
 
 US_stop:
 reti
@@ -557,28 +557,28 @@ reti
 ////////////////////////////////
 
 TIM0_OVF:
-	push Acc0
-	push Acc1
-	in Acc0, SREG
-	push Acc0
-	ldi Acc0, 30 // 8 МГц = 30 тактов в 1 сек
-	cp TactCount, Acc0
-	brne TO0_1
-	ldi Acc0, 0
-	mov TactCount, Acc0
-	mov DataMemSave, Acc0
-	sbis PORTB, LED
-	rjmp TO0_0
-	cbi PORTB, LED
-	rjmp TO0_1
+    push Acc0
+    push Acc1
+    in Acc0, SREG
+    push Acc0
+    ldi Acc0, 30 // 8 МГц = 30 тактов в 1 сек
+    cp TactCount, Acc0
+    brne TO0_1
+    ldi Acc0, 0
+    mov TactCount, Acc0
+    mov DataMemSave, Acc0
+    sbis PORTB, LED
+    rjmp TO0_0
+    cbi PORTB, LED
+    rjmp TO0_1
 TO0_0:
-	sbi PORTB, LED 
+    sbi PORTB, LED 
 TO0_1:
-	inc TactCount
-	pop Acc0
-	out SREG, Acc0
-	pop Acc1
-	pop Acc0
+    inc TactCount
+    pop Acc0
+    out SREG, Acc0
+    pop Acc1
+    pop Acc0
 reti
 
 

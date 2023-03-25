@@ -63,61 +63,61 @@ out UCSRC,Acc0
 ldi print, 0
 
 //Interrupt Enable 
-	sei
+    sei
 
 
 //Main programm 
 loop:
-	rjmp loop
+    rjmp loop
 
 
 //SubProgramm
 
 Delay:
-	nop
-	nop
-	nop
-	nop
+    nop
+    nop
+    nop
+    nop
 ret
 
 //Inerrupt Routines 
 USART_RXC: // interruption when receiving data
-	sbis UCSRA, RXC // RXC - USART interrupt entry bit
-	rjmp USART_RXC
-	in Acc1, UDR // get data from the terminal
-	cpi print, 1
-	breq UR_print_stop
-	cpi Acc1, numCode
-	brne UR_stop
-	rjmp UR_print_start
+    sbis UCSRA, RXC // RXC - USART interrupt entry bit
+    rjmp USART_RXC
+    in Acc1, UDR // get data from the terminal
+    cpi print, 1
+    breq UR_print_stop
+    cpi Acc1, numCode
+    brne UR_stop
+    rjmp UR_print_start
 UR_print_stop:
-	ldi print, 0
+    ldi print, 0
 UR_stop:
-	out UDR, Acc1 // send the data back to the terminal
-	rjmp stop
+    out UDR, Acc1 // send the data back to the terminal
+    rjmp stop
 UR_print_start:
-	ldi Acc2, 0x1
-	out UDR, Acc2
+    ldi Acc2, 0x1
+    out UDR, Acc2
 stop:
 reti
 
 
 USART_TXC: // transfer completed
-	sbis UCSRA, UDRE // UDRE - interrupt entry bit
-	rjmp USART_TXC
-	cpi Acc1, numCode // if 1 came, then repeat 1
-	breq UT_print
-	rjmp UT_stop
+    sbis UCSRA, UDRE // UDRE - interrupt entry bit
+    rjmp USART_TXC
+    cpi Acc1, numCode // if 1 came, then repeat 1
+    breq UT_print
+    rjmp UT_stop
 UT_print:
-	ldi print, 1
-	ldi Acc2, 0x1
-	out UDR, Acc2
-	rcall Delay
+    ldi print, 1
+    ldi Acc2, 0x1
+    out UDR, Acc2
+    rcall Delay
 UT_stop:
 reti
 
 Clear:
-	rjmp UT_stop
+    rjmp UT_stop
 
 
 //Data
